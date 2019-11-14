@@ -22,35 +22,6 @@ public class User implements UserDetails {
     private String login;
     @NotBlank(message = "Password is required")
     private String password;
-    @NotBlank(message = "Name is required")
-    private String fullName;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return getId() == user.getId() &&
-                Objects.equals(getLogin(), user.getLogin()) &&
-                Objects.equals(getPassword(), user.getPassword()) &&
-                Objects.equals(getFullName(), user.getFullName()) &&
-                Objects.equals(getJobDescription(), user.getJobDescription()) &&
-                Objects.equals(getProfile(), user.getProfile());
-    }
-
-    @Override
-    public int hashCode() {
-
-        return hash(getId(), getLogin(), getPassword(), getFullName(), getJobDescription(), getProfile());
-    }
-
-    @NotBlank(message = "Name is required")
-
-    private String jobDescription;
-
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Profile profile;
 
     public User() {
     }
@@ -71,38 +42,37 @@ public class User implements UserDetails {
         this.login = login;
     }
 
-    public Profile getProfile() {
-        return profile;
-    }
-
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-    }
-
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public String getUsername() {
         return null;
     }
 
+    @Override
     public boolean isAccountNonExpired() {
         return false;
     }
 
+    @Override
     public boolean isAccountNonLocked() {
         return false;
     }
 
+    @Override
     public boolean isCredentialsNonExpired() {
         return false;
     }
 
+    @Override
     public boolean isEnabled() {
         return false;
     }
@@ -111,20 +81,19 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String getFullName() {
-        return fullName;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                Objects.equals(login, user.login) &&
+                Objects.equals(password, user.password);
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getJobDescription() {
-        return jobDescription;
-    }
-
-    public void setJobDescription(String jobDescription) {
-        this.jobDescription = jobDescription;
+    @Override
+    public int hashCode() {
+        return hash(id, login, password);
     }
 
     @Override
@@ -133,9 +102,6 @@ public class User implements UserDetails {
                 "id=" + id +
                 ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", jobDescription='" + jobDescription + '\'' +
-                ", profile=" + profile +
                 '}';
     }
 }

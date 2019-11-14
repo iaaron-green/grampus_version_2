@@ -1,8 +1,10 @@
 package com.app.repository;
 
-import org.springframework.security.core.userdetails.User;
+import com.app.entities.User;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository {
-    User findByUsername(String username);
-    User getById(Long id);
+@Repository
+public interface UserRepository extends CrudRepository<User, Long> {
+
 }
