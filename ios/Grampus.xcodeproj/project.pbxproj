@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		0436D54B229413B600BE2612 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0436D54A229413B600BE2612 /* SignUpViewController.swift */; };
 		04DE7C21229BCE6B00BB8B88 /* TableViewCellForPieChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DE7C20229BCE6B00BB8B88 /* TableViewCellForPieChart.swift */; };
-		3F4324AE237AF540005D744D /* NetworkServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4324AD237AF540005D744D /* NetworkServices.swift */; };
+		3F4324AE237AF540005D744D /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4324AD237AF540005D744D /* NetworkService.swift */; };
+		3F7529CD237D7F380021B8AE /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7529CC237D7F380021B8AE /* StorageService.swift */; };
 		410DF94970F197AFAE034B4E /* Pods_Grampus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */; };
 		D90CFD9F22948204002B8871 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D90CFD9D22948204002B8871 /* SWRevealViewController.m */; };
 		D90CFDA122948747002B8871 /* MenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90CFDA022948747002B8871 /* MenuTableViewController.swift */; };
@@ -31,13 +32,13 @@
 		D9E73665229FD7F000D56849 /* PieChartViewControllerOLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E73661229FD7EF00D56849 /* PieChartViewControllerOLD.swift */; };
 		D9E73667229FE9D600D56849 /* Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E73666229FE9D600D56849 /* Methods.swift */; };
 		D9E73669229FEA4900D56849 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E73668229FEA4900D56849 /* AlertView.swift */; };
-		D9E9E87922B0E17D004B220D /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E9E87822B0E17D004B220D /* Utilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0436D54A229413B600BE2612 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		04DE7C20229BCE6B00BB8B88 /* TableViewCellForPieChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellForPieChart.swift; sourceTree = "<group>"; };
-		3F4324AD237AF540005D744D /* NetworkServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServices.swift; sourceTree = "<group>"; };
+		3F4324AD237AF540005D744D /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		3F7529CC237D7F380021B8AE /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Grampus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0300824BAF5CC14DEF384AC /* Pods-Grampus.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grampus.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Grampus/Pods-Grampus.debug.xcconfig"; sourceTree = "<group>"; };
 		D90CFD9C22948203002B8871 /* Grampus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Grampus-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -64,7 +65,6 @@
 		D9E73661229FD7EF00D56849 /* PieChartViewControllerOLD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PieChartViewControllerOLD.swift; sourceTree = "<group>"; };
 		D9E73666229FE9D600D56849 /* Methods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Methods.swift; sourceTree = "<group>"; };
 		D9E73668229FEA4900D56849 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
-		D9E9E87822B0E17D004B220D /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		E2094CC2A80A1DC04FBFB3D9 /* Pods-Grampus.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grampus.release.xcconfig"; path = "Pods/Target Support Files/Pods-Grampus/Pods-Grampus.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -136,7 +136,6 @@
 				D90CFDA2229488B4002B8871 /* ProfileViewController.swift */,
 				D9E73666229FE9D600D56849 /* Methods.swift */,
 				D9E73668229FEA4900D56849 /* AlertView.swift */,
-				D9E9E87822B0E17D004B220D /* Utilities.swift */,
 			);
 			path = Grampus;
 			sourceTree = "<group>";
@@ -144,7 +143,8 @@
 		D965BC9B22949ACF001B71C3 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				3F4324AD237AF540005D744D /* NetworkServices.swift */,
+				3F4324AD237AF540005D744D /* NetworkService.swift */,
+				3F7529CC237D7F380021B8AE /* StorageService.swift */,
 				D93B26F12292BFEF00741E7F /* SignInViewController.swift */,
 				0436D54A229413B600BE2612 /* SignUpViewController.swift */,
 				D921AF9C2296BC3E00C714E2 /* ProfileTableViewController.swift */,
@@ -289,16 +289,16 @@
 				D93B26F22292BFEF00741E7F /* SignInViewController.swift in Sources */,
 				D956BFA722A7A89B001D2CE5 /* ModalViewController.swift in Sources */,
 				D9E73663229FD7F000D56849 /* CompatibilityShimsOLD.swift in Sources */,
+				3F7529CD237D7F380021B8AE /* StorageService.swift in Sources */,
 				D90CFDA122948747002B8871 /* MenuTableViewController.swift in Sources */,
 				D960170D229572E80011C9E9 /* RatingTableViewCell.swift in Sources */,
 				D93B26F02292BFEF00741E7F /* AppDelegate.swift in Sources */,
 				D9E73662229FD7F000D56849 /* SimplePieChartViewOLD.swift in Sources */,
 				D90CFD9F22948204002B8871 /* SWRevealViewController.m in Sources */,
-				D9E9E87922B0E17D004B220D /* Utilities.swift in Sources */,
 				D9E73665229FD7F000D56849 /* PieChartViewControllerOLD.swift in Sources */,
 				D9E73669229FEA4900D56849 /* AlertView.swift in Sources */,
 				D9E73667229FE9D600D56849 /* Methods.swift in Sources */,
-				3F4324AE237AF540005D744D /* NetworkServices.swift in Sources */,
+				3F4324AE237AF540005D744D /* NetworkService.swift in Sources */,
 				D9E2A3C422AA4E4200F91E3D /* Enums.swift in Sources */,
 				D90CFDA5229488C5002B8871 /* RatingViewController.swift in Sources */,
 			);

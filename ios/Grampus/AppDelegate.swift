@@ -15,11 +15,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
-        let def = UserDefaults.standard
-        let is_authenticated = def.bool(forKey: UserDefKeys.isLoggedIn.rawValue)
-        def.set(true, forKey: UserDefKeys.profileState.rawValue)
-//        print(is_authenticated)
+        let storage = StorageService()
+        let is_authenticated = storage.isLoggedIn()
+        storage.saveProfileState(state: true)
         if is_authenticated {
             self.window = UIWindow(frame: UIScreen.main.bounds)
             let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)

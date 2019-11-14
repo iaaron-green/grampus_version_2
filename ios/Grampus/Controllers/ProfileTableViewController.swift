@@ -37,6 +37,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @IBOutlet weak var chartView: PieChartView!
     
     let network = NetworkService()
+    let store = StorageService()
     let alert = AlertView()
     let menuVC = MenuTableViewController()
     let reuseCell = "achievementCell"
@@ -66,17 +67,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func loadView() {
         super.loadView()
         
-        let def = UserDefaults.standard
-        let userId = def.string(forKey: UserDefKeys.userId.rawValue)
-        let selectedUserIdProfile = def.string(forKey: UserDefKeys.selectedUserIdProfile.rawValue)
-        let profileState = def.bool(forKey: UserDefKeys.profileState.rawValue)
-        
-        if profileState {
-            fetchUser(userId: userId!)
+        if store.getProfileState() {
+            fetchUser(userId: store.getUserId()!)
         } else {
             infoAddButton.isEnabled = false
             skillsAddButton.isEnabled = false
-            fetchUser(userId: selectedUserIdProfile!)
+            fetchUser(userId: store.getSelectedUserIdProfile()!)
         }
         tableView.reloadData()
     }
@@ -178,9 +174,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             achievementsArray.append(achive)
         }
         
-        //        print("ACHI COUNT ___________________________________________")
-        //        print(achievementsArray.count)
-        
         collectionView.reloadData()
         
     }
@@ -190,7 +183,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
         
             if let json = json {
-                print(json)
                 let user = json["user"] as! NSDictionary
                 
                 self.achievements = json["achievements"] as? [String: Int]
@@ -390,7 +382,14 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         }
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            self.editProfileText(key: "information", text: textField?.text ?? "No info")
+            self.network.editProfileText(key: "information", text: textField!.text!) { (success) in
+                if success {
+                    self.profileSkillsLabel.text = textField?.text
+                    self.tableView.reloadData()
+                } else {
+                    //////ALERT!!
+                }
+            }
             self.profileInformationLabel.text = textField?.text
             self.tableView.reloadData()
             
@@ -410,9 +409,14 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         }
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            self.editProfileText(key: "skills", text: textField?.text ?? "No skiils")
-            self.profileSkillsLabel.text = textField?.text
-            self.tableView.reloadData()
+            self.network.editProfileText(key: "skills", text: textField!.text!) { (success) in
+                if success {
+                    self.profileSkillsLabel.text = textField?.text
+                    self.tableView.reloadData()
+                } else {
+                    //////ALERT!!
+                }
+            }
             
         }))
         
@@ -421,35 +425,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         self.tableView.reloadData()
     }
     
-    func editProfileText( key: String, text: String) {
-        
-        let def = UserDefaults.standard
-        let token = def.string(forKey: UserDefKeys.token.rawValue)
-        //print(token)
-        let profilesURL: String = "\(DynamicURL.dynamicURL.rawValue)profiles/"
-        
-        let headers: HTTPHeaders = [
-            "Content-Type": "application/json; charset=utf-8",
-            "Authorization": "Bearer \(token!)"
-        ]
-        
-        let body: [String : Any] = [
-            key: text
-        ]
-        
-        Alamofire.request(profilesURL, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
-            
-            switch responseJSON.result {
-            case .success :
-                
-                self.tableView.reloadData()
-                
-            case .failure(let error) :
-                print(error)
-            }
-        }
-        
-    }
     
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

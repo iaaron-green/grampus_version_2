@@ -19,15 +19,13 @@ class MenuTableViewController: UITableViewController {
     var profilePicture: String?
     var fullName: String?
     var email: String?
+    let network = NetworkService()
+    let storage = StorageService()
     
-    override func loadView() {
-        super.loadView()
-        
-        fetchUserInformation()
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchUserInformation(userId: storage.getUserId()!)
         
         self.tableView.tableFooterView = UIView(frame: .zero)
         
@@ -40,34 +38,14 @@ class MenuTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
-    func fetchUserInformation() {
+    func fetchUserInformation(userId: String) {
         
-        let def = UserDefaults.standard
-        
-        let token = def.string(forKey: UserDefKeys.token.rawValue)
-        let userId = def.string(forKey: UserDefKeys.userId.rawValue)
-        
-        let API_URL: String = "\(DynamicURL.dynamicURL.rawValue)profiles/\(userId!)"
-        
-        let headers: HTTPHeaders = [
-            "Content-Type": "application/json; charset=utf-8",
-            "Authorization": "Bearer \(token!)"
-        ]
-        
-        Alamofire.request(API_URL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
-            
-            switch responseJSON.result {
-            case .success :
-                
-                if let result = responseJSON.result.value {
-                    
-                    let JSON = result as! NSDictionary
-                    //let profile = JSON["profile"] as! NSDictionary
-                    let user = JSON["user"] as! NSDictionary
-                    
-                    self.fullName = user["fullName"] as? String
+        network.fetchUserInformation(userId: userId) { (json) in
+            if let json = json {
+                let user = json["user"] as! NSDictionary
+                self.fullName = user["fullName"] as? String
                     self.email = user["username"] as? String
-                    self.profilePicture = JSON["profilePicture"] as? String
+                    self.profilePicture = json["profilePicture"] as? String
                     
                     if let unwrappedFullName = self.fullNameLabel {
                         self.fullNameLabel = unwrappedFullName
@@ -92,11 +70,9 @@ class MenuTableViewController: UITableViewController {
                     self.tableView.reloadData()
                 }
                 
-            case .failure(let error) :
-                print(error)
             }
         }
-    }
+        
     
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -112,25 +88,12 @@ class MenuTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if indexPath.row == 1 {
-            let def = UserDefaults.standard
-            def.set(true, forKey: UserDefKeys.profileState.rawValue)
+            storage.saveProfileState(state: true)
         }
         if indexPath.row == 6 {
-            saveLoggedState()
-            saveUserToken()
+            storage.saveLoggedState(state: false)
+            storage.saveUserToken(token: "")
         }
-    }
-    
-    func saveLoggedState() {
-        let def = UserDefaults.standard
-        def.set(false, forKey: UserDefKeys.isLoggedIn.rawValue)
-        def.synchronize()
-    }
-    
-    func saveUserToken() {
-        let def = UserDefaults.standard
-        def.set("", forKey: UserDefKeys.token.rawValue)
-        def.synchronize()
     }
     
 }

@@ -23,7 +23,8 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
     
     
     // MARK: - Properties
-    let allProfilesURL = "\(DynamicURL.dynamicURL.rawValue)profiles/all"
+    let network = NetworkService()
+    let storage = StorageService()
     var json = JSON()
     
     // MARK: - Functions
@@ -53,43 +54,16 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
     }
     
     func fetchAllUsers() {
-        
-        let def = UserDefaults.standard
-        
-        let token = def.string(forKey: UserDefKeys.token.rawValue)
-        
-        let headers: HTTPHeaders = [
-            "Content-Type": "application/json; charset=utf-8",
-            "Authorization": "Bearer \(token!)"
-        ]
-        
-        Alamofire.request(allProfilesURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
-            
-            switch responseJSON.result {
-            case .success :
-                
-                if let result = responseJSON.result.value {
-                    
-                    
-                    self.json = JSON(result)
-                    
-                    
-                    self.tableView.reloadData()
-                }
-                
-            case .failure(let error) :
-                print(error)
-                
+        network.fetchAllUsers { (json) in
+            if let json = json {
+                self.json = json
+                self.tableView.reloadData()
+            } else {
+                print("Error")
             }
         }
-        
     }
     
-    func parseJson() {
-        
-        
-        
-    }
     
     @objc func loadList(notification: NSNotification){
         DispatchQueue.main.async {
@@ -103,15 +77,10 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
         navigationBar.tintColor = UIColor.white
     }
     
-    func chooseLikeOrDislike( bool: Bool ) {
-        let def = UserDefaults.standard
-        def.set(bool, forKey: UserDefKeys.likeState.rawValue)
-        def.synchronize()
-    }
     
     // Actions
     @IBAction func likeButtonAction(_ sender: Any) {
-        chooseLikeOrDislike( bool: true )
+        storage.chooseLikeOrDislike(bool: true)
         
         self.performSegue(withIdentifier: "ShowModalView", sender: self)
         self.definesPresentationContext = true
@@ -121,8 +90,7 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
     }
     
     @IBAction func dislikeButtonAction(_ sender: Any) {
-        chooseLikeOrDislike(bool: false)
-        
+        storage.chooseLikeOrDislike(bool: false)
         self.performSegue(withIdentifier: "ShowModalView", sender: self)
         
         self.definesPresentationContext = true
@@ -162,21 +130,14 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
         }
     }
     
-    func saveSelectedUserId( selectedUserId: Int ) {
-        let def = UserDefaults.standard
-        def.set(selectedUserId, forKey: UserDefKeys.selectedUserId.rawValue)
-        def.synchronize()
-    }
     
     @objc func buttonClicked(sender:UIButton) {
         let buttonRow = sender.tag
-//        print("BUTTON ROW ==============")
-//        print(buttonRow)
         
         if let id = self.json[buttonRow]["profileId"].int {
-//            print("selectedUserId ==============")
-//            print(id)
-            saveSelectedUserId(selectedUserId: id)
+
+            storage.saveSelectedUserId(selectedUserId: id)
+            
         } else {
 //            print("HERE WE GO AGAIN 1")
         }
@@ -269,11 +230,8 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if let id = self.json[indexPath.row]["profileId"].int {
-            let def = UserDefaults.standard
-            def.set("\(id)", forKey: UserDefKeys.selectedUserIdProfile.rawValue)
-            def.set(false, forKey: UserDefKeys.profileState.rawValue)
-            def.synchronize()
-            
+            storage.saveSelectedUserIdProfile(id: id)
+            storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)
         } else {
 //            print("HERE WE GO AGAIN 1")

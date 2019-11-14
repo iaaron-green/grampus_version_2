@@ -26,22 +26,15 @@ class ModalViewController: UIViewController {
     var ratingType: String?
     var likeState: Bool? // if true like, if false dislike
     var selectedUserId: Int?
+    let network = NetworkService()
+    let storage = StorageService()
 
     weak var delegate: ModalViewControllerDelegate?
     
-    override func loadView() {
-        super.loadView()
-        
-        let def = UserDefaults.standard
-        likeState = def.bool(forKey: UserDefKeys.likeState.rawValue)
-        
-        configureButtons()
-        
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        likeState = storage.getLikeState()
+        configureButtons()
         textField.delegate = self
         
         textField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
@@ -60,38 +53,6 @@ class ModalViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         removeNotifications()
-    }
-    
-    func addLikeOrDislike( ratingType: String, apiUrl: String ) {
-        
-        let def = UserDefaults.standard
-        let token = def.string(forKey: UserDefKeys.token.rawValue)
-        
-//        print("func addLikeOrDislike ==================")
-//        print(token)
-//        print(apiUrl)
-//        print(ratingType)
-        
-        let headers: HTTPHeaders = [
-            "Content-Type": "application/json; charset=utf-8",
-            "Authorization": "Bearer \(token!)"
-        ]
-        
-        let body: [String : Any] = [
-            "ratingType": "\(String(describing: ratingType))"
-        ]
-        
-        Alamofire.request(apiUrl, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
-            
-            switch responseJSON.result {
-            case .success :
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)
-//                print("Success")
-                
-            case .failure(let error) :
-                print(error)
-            }
-        }
     }
     
     func configureButtons() {
@@ -156,20 +117,8 @@ class ModalViewController: UIViewController {
         
         if let unwrappedRatingType = ratingType {
             ratingType = unwrappedRatingType
-            
-            var likeOrDislikeURL = ""
-            
-            let def = UserDefaults.standard
-            selectedUserId = def.integer(forKey: UserDefKeys.selectedUserId.rawValue)
-            
-            if likeState! {
-                
-                likeOrDislikeURL = "\(DynamicURL.dynamicURL.rawValue)profiles/\(String(describing: selectedUserId!))/like"
-            } else {
-                likeOrDislikeURL = "\(DynamicURL.dynamicURL.rawValue)profiles/\(String(describing: selectedUserId!))/dislike"
-            }
-            
-            addLikeOrDislike(ratingType: ratingType!, apiUrl: likeOrDislikeURL)
+                        
+            network.addLikeOrDislike(ratingType: unwrappedRatingType, likeState: likeState!)
             dismiss(animated: true, completion: nil)
             delegate?.removeBlurredBackgroundView()
             
