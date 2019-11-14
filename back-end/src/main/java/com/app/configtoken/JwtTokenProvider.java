@@ -1,9 +1,9 @@
 package com.app.configtoken;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.app.entities.User;
+import io.jsonwebtoken.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import java.util.Map;
 import static com.app.configtoken.Constants.EXPIRATION_TIME;
 import static com.app.configtoken.Constants.SECRET;
 
+@Component
 public class JwtTokenProvider {
 
     public String provideToken(Authentication authentication){
@@ -25,7 +26,6 @@ public class JwtTokenProvider {
         Map<String,Object> claims = new HashMap<>();
         claims.put("id", (Long.toString(user.getId())));
         claims.put("username", user.getUsername());
-        claims.put("fullName", user.getFullName());
 
         return Jwts.builder()
                 .setSubject(userId)
