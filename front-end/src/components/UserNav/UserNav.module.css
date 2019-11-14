@@ -60,5 +60,9 @@
   width: 255px;
 }
 
-
+.btn:active {
+  color: #3cb833;
+  border-right: 3px solid #57dd49;
+  background-color: rgba(87, 221, 73, 0.1);
+}
 

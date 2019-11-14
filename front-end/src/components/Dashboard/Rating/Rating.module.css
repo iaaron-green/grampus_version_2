@@ -1,9 +1,12 @@
-.item {
-  display: flex;
-}
 
 .button {
   background-color: transparent;
   border: none;
   color: blue;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }

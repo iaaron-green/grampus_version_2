@@ -30,7 +30,6 @@ input::placeholder {
 .button {
   color: #fff;
   background-color: #57dd49;
-  border-color: #57dd49;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.035);
   padding: 0 15px;
