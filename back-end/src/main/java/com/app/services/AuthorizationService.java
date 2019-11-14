@@ -14,4 +14,8 @@ public class AuthorizationService {
     public void userRegister(User newUser){
         userRepository.save(newUser);
     }
+
+    public User loadUserByUsername(String username){
+      return userRepository.findByUsername(username);
+    }
 }
