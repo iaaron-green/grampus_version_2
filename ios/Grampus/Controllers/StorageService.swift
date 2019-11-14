@@ -13,6 +13,8 @@ class StorageService {
     
     let def = UserDefaults.standard
     
+    //MARK: - Read methods
+    
     func getTokenString() -> String? {
         return def.string(forKey: UserDefKeys.token.rawValue)
     }
@@ -41,6 +43,7 @@ class StorageService {
         return def.bool(forKey: UserDefKeys.isLoggedIn.rawValue)
     }
     
+    //MARK: - Save methods
     
     func chooseLikeOrDislike( bool: Bool ) {
         def.set(bool, forKey: UserDefKeys.likeState.rawValue)
@@ -61,10 +64,22 @@ class StorageService {
 
     }
     
+    func saveUserToken( token: String ) {
+        def.set("\(token)", forKey: UserDefKeys.token.rawValue)
+        def.synchronize()
+    }
     
+    func saveLoggedState(state: Bool?) {
+        def.set(state, forKey: UserDefKeys.isLoggedIn.rawValue)
+        def.synchronize()
+    }
     
+    func saveUserId( userId: String ) {
+        def.set("\(userId)", forKey: UserDefKeys.userId.rawValue)
+        def.synchronize()
+    }
     
-    
+    //MARK: - Decode jwt
     
     func decodeJwt( token: String) {
         
@@ -72,23 +87,5 @@ class StorageService {
         let userId = jwt.claim(name: "id").rawValue
         saveUserId(userId: userId! as! String)
         
-    }
-    
-    func saveUserToken( token: String ) {
-        let def = UserDefaults.standard
-        def.set("\(token)", forKey: UserDefKeys.token.rawValue)
-        def.synchronize()
-    }
-    
-    func saveLoggedState(state: Bool?) {
-        let def = UserDefaults.standard
-        def.set(state, forKey: UserDefKeys.isLoggedIn.rawValue)
-        def.synchronize()
-    }
-    
-    func saveUserId( userId: String ) {
-        let def = UserDefaults.standard
-        def.set("\(userId)", forKey: UserDefKeys.userId.rawValue)
-        def.synchronize()
     }
 }

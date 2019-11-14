@@ -38,7 +38,6 @@ class NetworkService {
                     let tokenWithBearer = (JSON["token"]! as! String)
                     let wordToRemove = "Bearer "
                     let tokenWithOutBearer = tokenWithBearer.deletingPrefix(wordToRemove)
-                    
                     self.storage.saveUserToken(token: tokenWithOutBearer)
                     self.storage.decodeJwt(token: tokenWithOutBearer)
                     self.storage.saveLoggedState(state: true)
@@ -182,21 +181,22 @@ class NetworkService {
         ]
         
         let body: [String : Any] = [
-            "ratingType": "\(String(describing: ratingType))"
+            "ratingType": ratingType
         ]
         
         var apiUrl = ""
-        
+        print(ratingType, likeState)
         if likeState {
             
-            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(String(describing: storage.getSelectedUserId()!))/like"
+            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/like"
         } else {
-            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(String(describing: storage.getSelectedUserId()!))/dislike"
+            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/dislike"
+
         }
         
         
         Alamofire.request(apiUrl, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
-            
+            print(responseJSON)
             switch responseJSON.result {
             case .success :
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)

@@ -162,7 +162,7 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
         
         var userNameToDisplay = ""
         var jobTitleToDisplay = ""
-        var likeDislikeButtonState = true
+        var likeDislikeButtonState: Bool?
         
         DispatchQueue.main.async {
             
@@ -203,13 +203,10 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
 //            print("likeDislikeButtonState -------------------------------")
 //            print(likeDislikeButtonState)
             
-        }
-        
-        DispatchQueue.main.async {
             cell.nameLabelCell.text = userNameToDisplay
             cell.professionLabelCell.text = jobTitleToDisplay
             
-            if likeDislikeButtonState {
+            if likeDislikeButtonState! {
                 cell.likeButton.isEnabled = true
                 cell.dislikeButton.isEnabled = true
             } else {
