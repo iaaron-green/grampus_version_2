@@ -13,7 +13,7 @@ import static java.util.Objects.hash;
 
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +24,11 @@ public class User implements UserDetails {
     private String password;
     @NotBlank(message = "Name is required")
     private String fullName;
+    @OneToOne(mappedBy = "user", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Profile profile;
+
+    private String jobTitle;
 
     @Override
     public boolean equals(Object o) {
@@ -48,11 +53,16 @@ public class User implements UserDetails {
 
     private String jobDescription;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Profile profile;
 
     public User() {
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
     public long getId() {
