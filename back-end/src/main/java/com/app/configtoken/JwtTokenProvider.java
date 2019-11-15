@@ -1,9 +1,9 @@
 package com.app.configtoken;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.app.entities.User;
+import io.jsonwebtoken.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import java.util.Map;
 import static com.app.configtoken.Constants.EXPIRATION_TIME;
 import static com.app.configtoken.Constants.SECRET;
 
+@Component
 public class JwtTokenProvider {
 
     public String provideToken(Authentication authentication){
@@ -25,7 +26,6 @@ public class JwtTokenProvider {
         Map<String,Object> claims = new HashMap<>();
         claims.put("id", (Long.toString(user.getId())));
         claims.put("username", user.getUsername());
-        claims.put("fullName", user.getFullName());
 
         return Jwts.builder()
                 .setSubject(userId)
@@ -36,5 +36,28 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public boolean validateToken(String token){
+        try{
+            Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token);
+            return true;
+        }catch (SignatureException ex){
+            System.out.println("Invalid JWT Signature");
+        }catch (MalformedJwtException ex){
+            System.out.println("Invalid JWT Token");
+        }catch (ExpiredJwtException ex){
+            System.out.println("Expired JWT token");
+        }catch (UnsupportedJwtException ex){
+            System.out.println("Unsupported JWT token");
+        }catch (IllegalArgumentException ex){
+            System.out.println("JWT claims string is empty");
+        }
+        return false;
+    }
 
+    public Long getUserIdFromJWT(String token){
+        Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
+        String id = (String)claims.get("id");
+
+        return Long.parseLong(id);
+    }
 }
