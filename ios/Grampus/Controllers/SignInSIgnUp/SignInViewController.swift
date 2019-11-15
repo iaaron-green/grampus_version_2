@@ -22,7 +22,7 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     let network = NetworkService()
     let predicate = EmailValidationPredicate()
     let alert = AlertView()
-
+    
     // MARK: - Functions
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,10 +44,10 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         removeNotifications()
     }
     
-
+    
     // MARK: - Actions
     @IBAction func SignInButton(_ sender: UIButton) {
-               
+        
         let email = userNameTextField.text
         let emailFormatBool = predicate.evaluate(with: email)
         

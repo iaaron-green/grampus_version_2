@@ -37,7 +37,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @IBOutlet weak var chartView: PieChartView!
     
     let network = NetworkService()
-    let store = StorageService()
+    let storage = StorageService()
     let alert = AlertView()
     let menuVC = MenuTableViewController()
     let reuseCell = "achievementCell"
@@ -67,12 +67,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func loadView() {
         super.loadView()
         
-        if store.getProfileState() {
-            fetchUser(userId: store.getUserId()!)
+        if storage.getProfileState() {
+            fetchUser(userId: storage.getUserId()!)
         } else {
             infoAddButton.isEnabled = false
             skillsAddButton.isEnabled = false
-            fetchUser(userId: store.getSelectedUserIdProfile()!)
+            fetchUser(userId: storage.getSelectedUserIdProfile()!)
         }
         tableView.reloadData()
     }
@@ -117,9 +117,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-        
-        let def = UserDefaults.standard
-        def.set(true, forKey: UserDefKeys.profileState.rawValue)
+        storage.saveProfileState(state: true)
     }
     
     
@@ -134,7 +132,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         if bestLooker! >= 1 {
             let count = (bestLooker! / 25)
             let image = UIImage(named: "best_looker")
-            //print(count)
             let achive = Achievements(type: "best looker", count: count, image: image)
             achievementsArray.append(achive)
         }
@@ -181,18 +178,19 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     func fetchUser(userId: String) {
         
         network.fetchUserInformation(userId: userId) { (json) in
-        
+            
             if let json = json {
                 let user = json["user"] as! NSDictionary
                 
+                //ACHIEVEMENTS FIX!
                 self.achievements = json["achievements"] as? [String: Int]
-                self.fullName = user["fullName"] as? String
-                self.profession = user["jobTitle"] as? String
-                self.email = user["username"] as? String
-                self.likes = json["likes"] as? Int
-                self.dislikes = json["dislikes"] as? Int
-                self.information = json["information"] as? String
-                self.skills = json["skills"] as? String
+                self.fullName = user["fullName"] as? String ?? "Full name"
+                self.profession = user["jobTitle"] as? String ?? "Job Title"
+                self.email = user["username"] as? String ?? "Email"
+                self.likes = json["likes"] as? Int ?? 0
+                self.dislikes = json["dislikes"] as? Int ?? 0
+                self.information = json["information"] as? String ?? "no info"
+                self.skills = json["skills"] as? String ?? "no skills"
                 
                 if let unwrappedbestLooker = self.bestLooker {
                     self.bestLooker = unwrappedbestLooker
@@ -228,48 +226,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     self.introvert = unwrappedintrovert
                 } else {
                     self.introvert = 0
-                }
-                
-                if let unwrappedFullName = self.fullName {
-                    self.fullName = unwrappedFullName
-                } else {
-                    self.fullName = "Full Name"
-                }
-                
-                if let unwrappedEmail = self.email {
-                    self.email = unwrappedEmail
-                } else {
-                    self.email = "email"
-                }
-                
-                if let unwrappedProfession = self.profession {
-                    self.profession = unwrappedProfession
-                } else {
-                    self.profession = "Job Title"
-                }
-                
-                if let unwrappedLikes = self.likes {
-                    self.likes = unwrappedLikes
-                } else {
-                    self.likes = 0
-                }
-                
-                if let unwrappedDislikes = self.dislikes {
-                    self.dislikes = unwrappedDislikes
-                } else {
-                    self.dislikes = 0
-                }
-                
-                if let unwrappedInformation = self.information {
-                    self.information = unwrappedInformation
-                } else {
-                    self.information = "no info"
-                }
-                
-                if let unwrappedSkills = self.skills {
-                    self.skills = unwrappedSkills
-                } else {
-                    self.skills = "no skills"
                 }
                 
                 self.setUpProfile(fullName: self.fullName!, profession: self.profession!, likes: self.likes!, dislikes: self.dislikes!, information: self.information!, skills: self.skills!)
@@ -347,7 +303,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             introvertColor = UIColor.blue
             colorArray.append(introvertColor)
         }
-        //print(entries)
         
         let dataSet = PieChartDataSet(entries: entries, label: "")
         dataSet.colors = colorArray
@@ -461,18 +416,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        //        print("Achievements COUNT ___________________________________________")
-        //        print(achievementsArray.count)
-        
         return achievementsArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "achievementCell", for: indexPath) as! AchievementsCollectionViewCell
-        
-        //        print("indexPath")
-        //        print(indexPath.count)
         
         cell.achievementsLabel.text = String(describing: achievementsArray[indexPath.row].count!)
         cell.achievementsImageView.image = achievementsArray[indexPath.row].image
@@ -485,10 +434,4 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
     }
     
-}
-
-struct Achievements {
-    var type: String?
-    var count: Int?
-    var image: UIImage?
 }

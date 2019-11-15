@@ -12,6 +12,7 @@
 		3F4324AE237AF540005D744D /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4324AD237AF540005D744D /* NetworkService.swift */; };
 		3F7529CD237D7F380021B8AE /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7529CC237D7F380021B8AE /* StorageService.swift */; };
 		410DF94970F197AFAE034B4E /* Pods_Grampus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */; };
+		761E1524237EC4490088CBF8 /* AchievementsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E1523237EC4490088CBF8 /* AchievementsModel.swift */; };
 		D90CFD9F22948204002B8871 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D90CFD9D22948204002B8871 /* SWRevealViewController.m */; };
 		D90CFDA122948747002B8871 /* MenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90CFDA022948747002B8871 /* MenuTableViewController.swift */; };
 		D90CFDA3229488B4002B8871 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90CFDA2229488B4002B8871 /* ProfileViewController.swift */; };
@@ -40,6 +41,7 @@
 		3F4324AD237AF540005D744D /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		3F7529CC237D7F380021B8AE /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Grampus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		761E1523237EC4490088CBF8 /* AchievementsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsModel.swift; sourceTree = "<group>"; };
 		C0300824BAF5CC14DEF384AC /* Pods-Grampus.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grampus.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Grampus/Pods-Grampus.debug.xcconfig"; sourceTree = "<group>"; };
 		D90CFD9C22948203002B8871 /* Grampus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Grampus-Bridging-Header.h"; sourceTree = "<group>"; };
 		D90CFD9D22948204002B8871 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
@@ -88,6 +90,24 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		761E1522237EC1080088CBF8 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				3F4324AD237AF540005D744D /* NetworkService.swift */,
+				3F7529CC237D7F380021B8AE /* StorageService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		761E1525237ECAA10088CBF8 /* SignInSIgnUp */ = {
+			isa = PBXGroup;
+			children = (
+				D93B26F12292BFEF00741E7F /* SignInViewController.swift */,
+				0436D54A229413B600BE2612 /* SignUpViewController.swift */,
+			);
+			path = SignInSIgnUp;
+			sourceTree = "<group>";
+		};
 		A986F647EE9CC437F0635AA1 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -118,8 +138,10 @@
 		D93B26EE2292BFEF00741E7F /* Grampus */ = {
 			isa = PBXGroup;
 			children = (
+				761E1522237EC1080088CBF8 /* Services */,
 				D965BC9B22949ACF001B71C3 /* Controllers */,
 				D93B26EF2292BFEF00741E7F /* AppDelegate.swift */,
+				761E1523237EC4490088CBF8 /* AchievementsModel.swift */,
 				D9E2A3C322AA4E4200F91E3D /* Enums.swift */,
 				04DE7C20229BCE6B00BB8B88 /* TableViewCellForPieChart.swift */,
 				D9E7365F229FD7EF00D56849 /* CompatibilityShimsOLD.swift */,
@@ -143,10 +165,7 @@
 		D965BC9B22949ACF001B71C3 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				3F4324AD237AF540005D744D /* NetworkService.swift */,
-				3F7529CC237D7F380021B8AE /* StorageService.swift */,
-				D93B26F12292BFEF00741E7F /* SignInViewController.swift */,
-				0436D54A229413B600BE2612 /* SignUpViewController.swift */,
+				761E1525237ECAA10088CBF8 /* SignInSIgnUp */,
 				D921AF9C2296BC3E00C714E2 /* ProfileTableViewController.swift */,
 				D90CFDA4229488C5002B8871 /* RatingViewController.swift */,
 				D960170C229572E80011C9E9 /* RatingTableViewCell.swift */,
@@ -297,6 +316,7 @@
 				D90CFD9F22948204002B8871 /* SWRevealViewController.m in Sources */,
 				D9E73665229FD7F000D56849 /* PieChartViewControllerOLD.swift in Sources */,
 				D9E73669229FEA4900D56849 /* AlertView.swift in Sources */,
+				761E1524237EC4490088CBF8 /* AchievementsModel.swift in Sources */,
 				D9E73667229FE9D600D56849 /* Methods.swift in Sources */,
 				3F4324AE237AF540005D744D /* NetworkService.swift in Sources */,
 				D9E2A3C422AA4E4200F91E3D /* Enums.swift in Sources */,
@@ -449,13 +469,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H9FL6Z93F8;
+				DEVELOPMENT_TEAM = 55CQ7XM2HV;
 				INFOPLIST_FILE = Grampus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.timur.Grampus;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tarastansky.Grampus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Grampus/Grampus-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -471,13 +491,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H9FL6Z93F8;
+				DEVELOPMENT_TEAM = 55CQ7XM2HV;
 				INFOPLIST_FILE = Grampus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.timur.Grampus;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tarastansky.Grampus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Grampus/Grampus-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

@@ -9,7 +9,7 @@
 import UIKit
 
 class RatingTableViewCell: UITableViewCell {
-
+    
     @IBOutlet weak var imageViewCell: UIImageView!
     @IBOutlet weak var nameLabelCell: UILabel!
     @IBOutlet weak var professionLabelCell: UILabel!
@@ -18,7 +18,7 @@ class RatingTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-
+        
         imageViewCell.layer.cornerRadius = 40
         imageViewCell.layer.borderWidth = 1.5
         imageViewCell.layer.borderColor = UIColor.darkGray.cgColor
@@ -34,7 +34,7 @@ class RatingTableViewCell: UITableViewCell {
         
         super.prepareForReuse()
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }

@@ -6,8 +6,6 @@
 //  Copyright © 2019 Тимур Кошевой. All rights reserved.
 //
 
-// like_best_looker
-
 import UIKit
 import Alamofire
 import SwiftyJSON
@@ -30,7 +28,6 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
     // MARK: - Functions
     override func loadView() {
         super.loadView()
-        
         fetchAllUsers()
     }
     
@@ -135,11 +132,11 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
         let buttonRow = sender.tag
         
         if let id = self.json[buttonRow]["profileId"].int {
-
+            
             storage.saveSelectedUserId(selectedUserId: id)
             
         } else {
-//            print("HERE WE GO AGAIN 1")
+            //            print("HERE WE GO AGAIN 1")
         }
     }
     
@@ -167,41 +164,38 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
         DispatchQueue.main.async {
             
             if let id = self.json[indexPath.row]["profileId"].int {
-//                print("/n")
-//                print(id)
+                //                print("/n")
+                //                print(id)
             } else {
-//                print("HERE WE GO AGAIN 1")
+                //                print("HERE WE GO AGAIN 1")
             }
             
             if let userName = self.json[indexPath.row]["fullName"].string {
-//                print(userName)
+                //                print(userName)
                 userNameToDisplay = userName
             } else {
-//                print("HERE WE GO AGAIN 2")
+                //                print("HERE WE GO AGAIN 2")
             }
             
             if let jobTitle = self.json[indexPath.row]["jobTitle"].string {
                 jobTitleToDisplay = jobTitle
             } else {
-//                print("HERE WE GO AGAIN 3")
+                //                print("HERE WE GO AGAIN 3")
             }
             
             if let profilePicture = self.json[indexPath.row]["picture"].string {
-//                print(profilePicture)
+                //                print(profilePicture)
             } else {
-//                print("HERE WE GO AGAIN 4")
+                //                print("HERE WE GO AGAIN 4")
             }
             
             if let isAbleToLike = self.json[indexPath.row]["isAbleToLike"].bool {
-//                print("IS ABLE TO LIKE -------------------------------")
-//                print(isAbleToLike)
+                //                print("IS ABLE TO LIKE -------------------------------")
+                //                print(isAbleToLike)
                 likeDislikeButtonState = isAbleToLike
             } else {
-//                print("HERE WE GO AGAIN 5")
+                //                print("HERE WE GO AGAIN 5")
             }
-            
-//            print("likeDislikeButtonState -------------------------------")
-//            print(likeDislikeButtonState)
             
             cell.nameLabelCell.text = userNameToDisplay
             cell.professionLabelCell.text = jobTitleToDisplay
@@ -231,7 +225,7 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
             storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)
         } else {
-//            print("HERE WE GO AGAIN 1")
+            //            print("HERE WE GO AGAIN 1")
         }
     }
     

@@ -9,7 +9,7 @@
 import UIKit
 
 class ProfileViewController: UIViewController {
-
+    
     // MARK: - Outlets
     @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var menuBarButton: UIBarButtonItem!
@@ -19,8 +19,8 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        _tableView.delegate = self
-//        _tableView.dataSource = self
+        //        _tableView.delegate = self
+        //        _tableView.dataSource = self
         
         navBarAppearance()
         
@@ -36,7 +36,7 @@ class ProfileViewController: UIViewController {
         navigationBar.barTintColor = UIColor.darkText
         navigationBar.tintColor = UIColor.white
     }
-
+    
 }
 
 //extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {

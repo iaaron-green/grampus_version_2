@@ -28,7 +28,7 @@ class ModalViewController: UIViewController {
     var selectedUserId: Int?
     let network = NetworkService()
     let storage = StorageService()
-
+    
     weak var delegate: ModalViewControllerDelegate?
     
     override func viewDidLoad() {
@@ -76,7 +76,7 @@ class ModalViewController: UIViewController {
         cancelButton.layer.cornerRadius = 5
         okButton.layer.cornerRadius = 5
     }
-
+    
     @IBAction func firstAction(_ sender: Any) {
         
         if likeState! {
@@ -117,7 +117,7 @@ class ModalViewController: UIViewController {
         
         if let unwrappedRatingType = ratingType {
             ratingType = unwrappedRatingType
-                        
+            
             network.addLikeOrDislike(ratingType: unwrappedRatingType, likeState: likeState!)
             dismiss(animated: true, completion: nil)
             delegate?.removeBlurredBackgroundView()
@@ -168,7 +168,7 @@ extension ModalViewController: UITextFieldDelegate {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-
+        
         if range.length + range.location > textField.text!.count {
             return false
         }

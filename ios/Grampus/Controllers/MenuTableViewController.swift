@@ -44,35 +44,35 @@ class MenuTableViewController: UITableViewController {
             if let json = json {
                 let user = json["user"] as! NSDictionary
                 self.fullName = user["fullName"] as? String
-                    self.email = user["username"] as? String
-                    self.profilePicture = json["profilePicture"] as? String
-                    
-                    if let unwrappedFullName = self.fullNameLabel {
-                        self.fullNameLabel = unwrappedFullName
-                    } else {
-                        self.fullName = "Full Name"
-                    }
-                    
-                    if let unwrappedEmail = self.email {
-                        self.email = unwrappedEmail
-                    } else {
-                        self.email = "email"
-                    }
-                    
-                    if let unwrappedProfilePicture = self.profilePicture {
-                        self.profilePicture = unwrappedProfilePicture
-                    } else {
-                        self.profilePicture = "some base64"
-                    }
-                    
-                    self.fullNameLabel.text = self.fullName!
-                    self.emailLabel.text = self.email!
-                    self.tableView.reloadData()
+                self.email = user["username"] as? String
+                self.profilePicture = json["profilePicture"] as? String
+                
+                if let unwrappedFullName = self.fullNameLabel {
+                    self.fullNameLabel = unwrappedFullName
+                } else {
+                    self.fullName = "Full Name"
                 }
                 
+                if let unwrappedEmail = self.email {
+                    self.email = unwrappedEmail
+                } else {
+                    self.email = "email"
+                }
+                
+                if let unwrappedProfilePicture = self.profilePicture {
+                    self.profilePicture = unwrappedProfilePicture
+                } else {
+                    self.profilePicture = "some base64"
+                }
+                
+                self.fullNameLabel.text = self.fullName!
+                self.emailLabel.text = self.email!
+                self.tableView.reloadData()
             }
+            
         }
-        
+    }
+    
     
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {

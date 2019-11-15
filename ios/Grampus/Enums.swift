@@ -7,14 +7,15 @@
 //
 
 import Foundation
- 
+
 enum SegueIdentifier: String {
     case login_to_profile = "login_to_profile"
     case rating_to_selected_profile = "rating_to_selected_profile"
 }
 
 enum DynamicURL: String {
-    case dynamicURL = "http://10.11.1.155:8081/api/"
+    case dynamicURL = "https://grampus.herokuapp.com/api/"
+    //case dynamicURL = "http://10.11.1.155:8081/api/"
 }
 
 enum UserDefKeys: String {

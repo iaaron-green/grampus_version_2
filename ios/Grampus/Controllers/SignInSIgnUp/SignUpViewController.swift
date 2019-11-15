@@ -17,7 +17,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var signUpButton: UIButton!
-
     
     let network = NetworkService()
     let predicate = EmailValidationPredicate()
@@ -76,7 +75,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     @IBAction func backButton(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
-    
     
     @IBAction func SignUpButton(_ sender: UIButton) {
         

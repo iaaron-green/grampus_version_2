@@ -47,12 +47,10 @@ class StorageService {
     
     func chooseLikeOrDislike( bool: Bool ) {
         def.set(bool, forKey: UserDefKeys.likeState.rawValue)
-        def.synchronize()
     }
     
     func saveSelectedUserId( selectedUserId: Int ) {
         def.set(selectedUserId, forKey: UserDefKeys.selectedUserId.rawValue)
-        def.synchronize()
     }
     
     func saveSelectedUserIdProfile(id: Int) {
@@ -61,22 +59,19 @@ class StorageService {
     
     func saveProfileState(state: Bool) {
         def.set(state, forKey: UserDefKeys.profileState.rawValue)
-
+        
     }
     
     func saveUserToken( token: String ) {
         def.set("\(token)", forKey: UserDefKeys.token.rawValue)
-        def.synchronize()
     }
     
     func saveLoggedState(state: Bool?) {
         def.set(state, forKey: UserDefKeys.isLoggedIn.rawValue)
-        def.synchronize()
     }
     
     func saveUserId( userId: String ) {
         def.set("\(userId)", forKey: UserDefKeys.userId.rawValue)
-        def.synchronize()
     }
     
     //MARK: - Decode jwt
@@ -86,6 +81,5 @@ class StorageService {
         let jwt = try! decode(jwt: token)
         let userId = jwt.claim(name: "id").rawValue
         saveUserId(userId: userId! as! String)
-        
     }
 }
