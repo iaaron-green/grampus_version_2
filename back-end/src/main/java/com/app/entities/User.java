@@ -26,6 +26,8 @@ public class User implements UserDetails {
     @NotBlank(message = "FullName is required")
     private String fullName;
 
+    private String jobTitle;
+
     public User() {
     }
 
