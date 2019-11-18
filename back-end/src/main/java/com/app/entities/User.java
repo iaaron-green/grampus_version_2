@@ -1,151 +1,79 @@
 package com.app.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
-import java.util.Objects;
 
-import static java.util.Objects.hash;
-
-
+@Getter
+@Setter
+@EqualsAndHashCode
 @Entity
-@Table(name = "user")
-public class User implements UserDetails {
+@Table(name = "users")
+public class User implements UserDetails{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
+
+    @Email(message = "Username needs to be an email")
     @NotBlank(message = "Email is required")
-    private String login;
+    @Column(unique = true)
+    private String username;
+
     @NotBlank(message = "Password is required")
     private String password;
-    @NotBlank(message = "Name is required")
+
+    @NotBlank(message = "FullName is required")
     private String fullName;
+
+    private String jobTitle;
+
     @OneToOne(mappedBy = "user", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Profile profile;
 
-    private String jobTitle;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return getId() == user.getId() &&
-                Objects.equals(getLogin(), user.getLogin()) &&
-                Objects.equals(getPassword(), user.getPassword()) &&
-                Objects.equals(getFullName(), user.getFullName()) &&
-                Objects.equals(getJobDescription(), user.getJobDescription()) &&
-                Objects.equals(getProfile(), user.getProfile());
-    }
-
-    @Override
-    public int hashCode() {
-
-        return hash(getId(), getLogin(), getPassword(), getFullName(), getJobDescription(), getProfile());
-    }
-
-    @NotBlank(message = "Name is required")
-
-    private String jobDescription;
-
-
     public User() {
     }
-
-    public String getJobTitle() {
-        return jobTitle;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public long getId() {
-        return id;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public Profile getProfile() {
-        return profile;
-    }
-
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-    }
-
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public String getUsername() {
-        return null;
-    }
-
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    public boolean isEnabled() {
-        return false;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getJobDescription() {
-        return jobDescription;
-    }
-
-    public void setJobDescription(String jobDescription) {
-        this.jobDescription = jobDescription;
-    }
-
     @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", jobDescription='" + jobDescription + '\'' +
-                ", profile=" + profile +
-                '}';
+    public String getUsername() {
+        return username;
     }
 }
