@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 
-class RatingViewController: RootViewController, ModalViewControllerDelegate {
+class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate {
     
     // MARK: - Outlets
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -24,6 +24,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate {
     let network = NetworkService()
     let storage = StorageService()
     var json = JSON()
+    var filteredJson = [JSON]()
     
     // MARK: - Functions
     override func loadView() {
@@ -33,9 +34,13 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+                
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.refreshControl = myRefreshControl
+        searchBar.delegate = self
+
         navBarAppearance()
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "load"), object: nil)
@@ -49,10 +54,34 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate {
         }
     }
     
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        filteredJson = [JSON]()
+
+        if searchText == "" {
+            for i in 0..<json.count {
+                self.filteredJson.append(json[i])
+            }
+        } else {
+            for item in 0..<json.count {
+                let name = json[item]["fullName"].string
+                if (name?.lowercased().contains(searchText.lowercased()))! {
+                    self.filteredJson.append(json[item])
+                }
+            }
+        }
+
+        tableView.reloadData()
+    }
+    
     func fetchAllUsers() {
         network.fetchAllUsers { (json) in
             if let json = json {
                 self.json = json
+                for i in 0..<json.count {
+                    self.filteredJson.append(json[i])
+                }
                 self.tableView.reloadData()
             } else {
                 print("Error")
@@ -155,7 +184,7 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return json.count
+        return filteredJson.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -168,32 +197,33 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
         
         DispatchQueue.main.async {
             
-            if let id = self.json[indexPath.row]["profileId"].int {
+            if let id = self.filteredJson[indexPath.row]["profileId"].int {
                 //                print(id)
+                
             } else {
                 //                print("HERE WE GO AGAIN 1")
             }
             
-            if let userName = self.json[indexPath.row]["fullName"].string {
+            if let userName = self.filteredJson[indexPath.row]["fullName"].string {
                 //                print(userName)
                 userNameToDisplay = userName
             } else {
                 //                print("HERE WE GO AGAIN 2")
             }
             
-            if let jobTitle = self.json[indexPath.row]["jobTitle"].string {
+            if let jobTitle = self.filteredJson[indexPath.row]["jobTitle"].string {
                 jobTitleToDisplay = jobTitle
             } else {
                 //                print("HERE WE GO AGAIN 3")
             }
             
-            if let profilePicture = self.json[indexPath.row]["picture"].string {
+            if let profilePicture = self.filteredJson[indexPath.row]["picture"].string {
                 //                print(profilePicture)
             } else {
                 //                print("HERE WE GO AGAIN 4")
             }
             
-            if let isAbleToLike = self.json[indexPath.row]["isAbleToLike"].bool {
+            if let isAbleToLike = self.filteredJson[indexPath.row]["isAbleToLike"].bool {
                 //                print("IS ABLE TO LIKE -------------------------------")
                 //                print(isAbleToLike)
                 likeDislikeButtonState = isAbleToLike
@@ -226,7 +256,7 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if let id = self.json[indexPath.row]["profileId"].int {
+        if let id = self.filteredJson[indexPath.row]["profileId"].int {
             storage.saveSelectedUserIdProfile(id: id)
             storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)

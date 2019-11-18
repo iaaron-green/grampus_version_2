@@ -9,6 +9,7 @@
 import UIKit
 import ValidationComponents
 import Alamofire
+import SVProgressHUD
 
 class SignUpViewController: UIViewController, UITextFieldDelegate {
     
@@ -25,6 +26,9 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Functions
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        SVProgressHUD.setMinimumDismissTimeInterval(2)
+        SVProgressHUD.setDefaultStyle(.dark)
         
         userNameTextField.delegate = self
         emailTextField.delegate = self
@@ -86,20 +90,18 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         // Check lenght of user name
         if let userName = userNameTextField.text {
             if userName.count < 2 {
-                showAlert("Name too short", "Write your correct name", handler: nil)
+                SVProgressHUD.showError(withStatus: "Name too short, write your correct name")
             }
         }
         
         // Email isEmpty check.
         if (email!.isEmpty) {
-            showAlert("Incorrect input", "Enter Email!", handler: nil)
-            
+            SVProgressHUD.showError(withStatus: "Incorrect input, enter email!")
             return
         } else {
             // Email validation.
             if (!emailFormatBool) {
-                showAlert("Incorrect input", "Email format not correct!", handler: nil)
-                
+                SVProgressHUD.showError(withStatus: "Incorrect input, email format not correct!")
                 return
             }
         }
@@ -107,9 +109,9 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         // Check lenght of password
         if let password = passwordTextField.text {
             if password.count < 6 {
-                showAlert("Password too short", "Password shoud be more than 5 characters!", handler: nil)
+                SVProgressHUD.showError(withStatus: "Password too short, password shoud be more than 5 characters!")
             } else if password.count >= 24 {
-                showAlert("Password too long", "Password shoud be less then 24 symbols", handler: nil)
+                SVProgressHUD.showError(withStatus: "Password too long, password shoud be less then 24 symbols")
             }
         }
         
@@ -117,13 +119,17 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         
         network.signUp(email: emailTextField.text!, password: passwordTextField.text!, fullName: userNameTextField.text!) { (success) in
             if success {
-                self.showAlert("Great!", "You are successfully Signed Up!", handler: { (action: UIAlertAction) in
-                    self.network.signIn(username: self.emailTextField.text!, password: self.passwordTextField.text!) { (true) in
-                        self.performSegue(withIdentifier: "goToProfile", sender: self)
-                    }
-                })
+                SVProgressHUD.showSuccess(withStatus: "Great! You are successfully Signed Up!")
+                self.network.signIn(username: self.emailTextField.text!, password: self.passwordTextField.text!) { (true) in
+                    self.performSegue(withIdentifier: "goToProfile", sender: self)
+                }
+//                self.showAlert("Great!", "You are successfully Signed Up!", handler: { (action: UIAlertAction) in
+//                    self.network.signIn(username: self.emailTextField.text!, password: self.passwordTextField.text!) { (true) in
+//                        self.performSegue(withIdentifier: "goToProfile", sender: self)
+//                    }
+//                })
             } else {
-                self.showAlert("Error", "Registration error", handler: nil)
+                SVProgressHUD.showError(withStatus: "Error, registration error")
             }
         }
     }

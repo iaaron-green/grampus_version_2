@@ -9,6 +9,7 @@
 import UIKit
 import Alamofire
 import ValidationComponents
+import SVProgressHUD
 
 class SignInViewController: UIViewController, UITextFieldDelegate {
     
@@ -26,6 +27,9 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Functions
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        SVProgressHUD.setMinimumDismissTimeInterval(2)
+        SVProgressHUD.setDefaultStyle(.dark)
         
         userNameTextField.delegate = self
         passwordTextField.delegate = self
@@ -53,14 +57,12 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         
         // Email isEmpty check.
         if (email!.isEmpty) {
-            showAlert("Incorrect input", "Enter Email!")
-            
+            SVProgressHUD.showError(withStatus: "Incorrect input, enter email!")
             return
         } else {
             // Email validation.
             if (!emailFormatBool) {
-                showAlert("Incorrect input", "Email format not correct!")
-                
+                SVProgressHUD.showError(withStatus: "Incorrect input, email format not correct!")
                 return
             }
         }
@@ -68,20 +70,20 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         // Check lenght of password
         if let password = passwordTextField.text {
             if password.count < 6 {
-                showAlert("Password too short", "Password shoud be more than 5 characters!")
-                
+                SVProgressHUD.showError(withStatus: "Password too short, password shoud be more than 5 characters!")
             } else if password.count >= 24 {
-                showAlert("Password too long", "Password shoud be less then 24 symbols")
-                
+                SVProgressHUD.showError(withStatus: "Password too long, password shoud be less then 24 symbols")
             }
             
         }
-        
-        network.signIn(username: userNameTextField.text!, password: passwordTextField.text!) { (success) in
-            if success {
-                self.performSegue(withIdentifier: SegueIdentifier.login_to_profile.rawValue, sender: self)
+        SVProgressHUD.show()
+        network.signIn(username: userNameTextField.text!, password: passwordTextField.text!) { (error) in
+            if let error = error {
+                SVProgressHUD.dismiss()
+                SVProgressHUD.showError(withStatus: "Error. \(error)")
             } else {
-                self.showAlert("Incorrect input", "User not found!")
+                SVProgressHUD.dismiss()
+                self.performSegue(withIdentifier: SegueIdentifier.login_to_profile.rawValue, sender: self)
             }
         }
         

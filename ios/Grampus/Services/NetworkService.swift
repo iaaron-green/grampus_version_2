@@ -14,7 +14,7 @@ class NetworkService {
     
     let storage = StorageService()
     
-    func signIn(username: String, password: String, completion: @escaping (Bool) -> ()) {
+    func signIn(username: String, password: String, completion: @escaping (String?) -> ()) {
         
         let loginURL: String = "\(DynamicURL.dynamicURL.rawValue)users/login"
         
@@ -40,11 +40,11 @@ class NetworkService {
                     //print(tokenWithOutBearer)
                     self.storage.decodeJwt(token: tokenWithOutBearer)
                     self.storage.saveLoggedState(state: true)
-                    completion(true)
+                    completion(nil)
                 }
                 
             case .failure(let error) :
-                completion(false)
+                completion(error.localizedDescription)
                 self.handleError(error: error)
             }
         }
@@ -176,9 +176,8 @@ class NetworkService {
             apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/like"
         } else {
             apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/dislike"
-            
         }
-        
+        print(apiUrl)
         Alamofire.request(apiUrl, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             print(responseJSON)
             switch responseJSON.result {

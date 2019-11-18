@@ -72,7 +72,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     override func loadView() {
         super.loadView()
-        
         if storage.getProfileState() {
             userID = storage.getUserId()!
             fetchUser(userId: storage.getUserId()!)

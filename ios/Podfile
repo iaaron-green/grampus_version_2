@@ -10,6 +10,7 @@ target 'Grampus' do
   pod 'Alamofire'
   pod 'SwiftyJSON'
   pod 'Charts'
+  pod 'SVProgressHUD'
   # Pods for Grampus
 
 end

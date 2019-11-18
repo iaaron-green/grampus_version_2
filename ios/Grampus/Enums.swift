@@ -14,8 +14,8 @@ enum SegueIdentifier: String {
 }
 
 enum DynamicURL: String {
-    case dynamicURL = "https://grampus.herokuapp.com/api/"
-    //case dynamicURL = "http://10.11.1.155:8081/api/"
+    //case dynamicURL = "https://grampus.herokuapp.com/api/"
+    case dynamicURL = "http://10.11.1.155:8081/api/"
 }
 
 enum UserDefKeys: String {
