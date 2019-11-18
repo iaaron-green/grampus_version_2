@@ -13,7 +13,7 @@
 		3F7529CD237D7F380021B8AE /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7529CC237D7F380021B8AE /* StorageService.swift */; };
 		410DF94970F197AFAE034B4E /* Pods_Grampus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */; };
 		761E1524237EC4490088CBF8 /* AchievementsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E1523237EC4490088CBF8 /* AchievementsModel.swift */; };
-		76A78D7F23803D22004C7209 /* RefreshControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76A78D7E23803D22004C7209 /* RefreshControl.swift */; };
+		76997BD62382985B00FD3F4F /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76997BD52382985B00FD3F4F /* RootViewController.swift */; };
 		D90CFD9F22948204002B8871 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D90CFD9D22948204002B8871 /* SWRevealViewController.m */; };
 		D90CFDA122948747002B8871 /* MenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90CFDA022948747002B8871 /* MenuTableViewController.swift */; };
 		D90CFDA3229488B4002B8871 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90CFDA2229488B4002B8871 /* ProfileViewController.swift */; };
@@ -43,7 +43,7 @@
 		3F7529CC237D7F380021B8AE /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Grampus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		761E1523237EC4490088CBF8 /* AchievementsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsModel.swift; sourceTree = "<group>"; };
-		76A78D7E23803D22004C7209 /* RefreshControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControl.swift; sourceTree = "<group>"; };
+		76997BD52382985B00FD3F4F /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		C0300824BAF5CC14DEF384AC /* Pods-Grampus.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grampus.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Grampus/Pods-Grampus.debug.xcconfig"; sourceTree = "<group>"; };
 		D90CFD9C22948203002B8871 /* Grampus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Grampus-Bridging-Header.h"; sourceTree = "<group>"; };
 		D90CFD9D22948204002B8871 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
@@ -144,7 +144,6 @@
 				D965BC9B22949ACF001B71C3 /* Controllers */,
 				D93B26EF2292BFEF00741E7F /* AppDelegate.swift */,
 				761E1523237EC4490088CBF8 /* AchievementsModel.swift */,
-				76A78D7E23803D22004C7209 /* RefreshControl.swift */,
 				D9E2A3C322AA4E4200F91E3D /* Enums.swift */,
 				04DE7C20229BCE6B00BB8B88 /* TableViewCellForPieChart.swift */,
 				D9E7365F229FD7EF00D56849 /* CompatibilityShimsOLD.swift */,
@@ -170,6 +169,7 @@
 			children = (
 				761E1525237ECAA10088CBF8 /* SignInSIgnUp */,
 				D921AF9C2296BC3E00C714E2 /* ProfileTableViewController.swift */,
+				76997BD52382985B00FD3F4F /* RootViewController.swift */,
 				D90CFDA4229488C5002B8871 /* RatingViewController.swift */,
 				D960170C229572E80011C9E9 /* RatingTableViewCell.swift */,
 				D90CFDA022948747002B8871 /* MenuTableViewController.swift */,
@@ -310,12 +310,12 @@
 				04DE7C21229BCE6B00BB8B88 /* TableViewCellForPieChart.swift in Sources */,
 				D93B26F22292BFEF00741E7F /* SignInViewController.swift in Sources */,
 				D956BFA722A7A89B001D2CE5 /* ModalViewController.swift in Sources */,
-				76A78D7F23803D22004C7209 /* RefreshControl.swift in Sources */,
 				D9E73663229FD7F000D56849 /* CompatibilityShimsOLD.swift in Sources */,
 				3F7529CD237D7F380021B8AE /* StorageService.swift in Sources */,
 				D90CFDA122948747002B8871 /* MenuTableViewController.swift in Sources */,
 				D960170D229572E80011C9E9 /* RatingTableViewCell.swift in Sources */,
 				D93B26F02292BFEF00741E7F /* AppDelegate.swift in Sources */,
+				76997BD62382985B00FD3F4F /* RootViewController.swift in Sources */,
 				D9E73662229FD7F000D56849 /* SimplePieChartViewOLD.swift in Sources */,
 				D90CFD9F22948204002B8871 /* SWRevealViewController.m in Sources */,
 				D9E73665229FD7F000D56849 /* PieChartViewControllerOLD.swift in Sources */,

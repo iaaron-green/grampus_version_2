@@ -61,6 +61,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     var deadLiner: Int?
     var extrovert: Int?
     var introvert: Int?
+    var userID: String?
     
     var achievementsArray = [Achievements]()
     let myRefreshControl: UIRefreshControl = {
@@ -73,10 +74,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         super.loadView()
         
         if storage.getProfileState() {
+            userID = storage.getUserId()!
             fetchUser(userId: storage.getUserId()!)
         } else {
             infoAddButton.isEnabled = false
             skillsAddButton.isEnabled = false
+            userID = storage.getSelectedUserIdProfile()!
             fetchUser(userId: storage.getSelectedUserIdProfile()!)
         }
         tableView.reloadData()
@@ -133,7 +136,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     }
     
     @objc func pullToRefresh(sender: UIRefreshControl) {
-        print("need fetch")
+        fetchUser(userId: userID!)
         tableView.reloadData()
         sender.endRefreshing()
     }

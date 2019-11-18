@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 
-class RatingViewController: UIViewController, ModalViewControllerDelegate {
+class RatingViewController: RootViewController, ModalViewControllerDelegate {
     
     // MARK: - Outlets
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -24,11 +24,6 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
     let network = NetworkService()
     let storage = StorageService()
     var json = JSON()
-    let myRefreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(pullToRefresh(sender:)), for: .valueChanged)
-        return refreshControl
-    }()
     
     // MARK: - Functions
     override func loadView() {
@@ -73,7 +68,7 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
         }
     }
     
-    @objc func pullToRefresh(sender: UIRefreshControl) {
+    @objc override func pullToRefresh(sender: UIRefreshControl) {
         fetchAllUsers()
         tableView.reloadData()
         sender.endRefreshing()

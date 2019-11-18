@@ -191,7 +191,7 @@
                                                         <attributedString key="attributedTitle">
                                                             <fragment content="Dislike">
                                                                 <attributes>
-                                                                    <font key="NSFont" size="14" name=".AppleSystemUIFont"/>
+                                                                    <font key="NSFont" metaFont="menu" size="14"/>
                                                                     <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                                     <integer key="NSUnderline" value="1"/>
                                                                 </attributes>
@@ -213,7 +213,7 @@
                                                         <attributedString key="attributedTitle">
                                                             <fragment content="Like">
                                                                 <attributes>
-                                                                    <font key="NSFont" size="14" name=".AppleSystemUIFont"/>
+                                                                    <font key="NSFont" metaFont="menu" size="14"/>
                                                                     <integer key="NSUnderline" value="1"/>
                                                                 </attributes>
                                                             </fragment>
