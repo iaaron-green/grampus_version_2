@@ -6,6 +6,9 @@ import UserNav from '../UserNav/UserNav';
 
 import Profile from './Profile/Profile';
 import RatingContainer from './Rating/RatingContainer';
+import News from './News/News';
+import Messenger from './Messenger/Messenger';
+
 
 import ProtectedRoute from '../../hocs/ProtectedRoute';
 
@@ -53,6 +56,18 @@ class Dashboard extends Component {
               exact
               path={routes.RATING}
               component={RatingContainer}
+              redirectTo="/"
+            />
+            <ProtectedRoute
+              exact
+              path={routes.NEWS}
+              component={News}
+              redirectTo="/"
+            />
+            <ProtectedRoute
+              exact
+              path={routes.MESSENGER}
+              component={Messenger}
               redirectTo="/"
             />
             <Redirect to="profile" />

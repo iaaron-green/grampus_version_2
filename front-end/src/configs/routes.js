@@ -3,5 +3,7 @@ export default Object.freeze({
   BUSINESS: '/business',
   ABOUT: '/about',
   PROFILE: '/profile',
-  RATING: '/rating'
+  RATING: '/rating',
+  NEWS: '/NEWS',
+  MESSENGER: '/MESSENGER'
 });

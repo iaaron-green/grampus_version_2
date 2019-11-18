@@ -12,6 +12,17 @@ class UserNav extends Component {
     isSettingsOpen: false
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const { isSettingsOpen } = this.state;
+
+    return nextState.isSettingsOpen !== isSettingsOpen;
+  }
+
+  toggleSettings = () => {
+    this.setState(state => ({ isSettingsOpen: !state.isSettingsOpen }));
+  };
+
+
   handleExitUser = () => {
     const { logOut, history } = this.props;
 

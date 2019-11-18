@@ -1,11 +1,13 @@
 .auth {
   background: #fff;
-  opacity: 0.88;
+  opacity: 0.75;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 0;
-  width: 35%;
-  height: 500px;
+  width: 23%;
+  padding-left: 20px;
+  height: 370px;
+  border-radius: 10px;
 }
