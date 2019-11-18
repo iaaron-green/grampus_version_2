@@ -24,6 +24,11 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
     let network = NetworkService()
     let storage = StorageService()
     var json = JSON()
+    let myRefreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(pullToRefresh(sender:)), for: .valueChanged)
+        return refreshControl
+    }()
     
     // MARK: - Functions
     override func loadView() {
@@ -33,10 +38,9 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.delegate = self
         tableView.dataSource = self
-        
+        tableView.refreshControl = myRefreshControl
         navBarAppearance()
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "load"), object: nil)
@@ -68,6 +72,13 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
             self.tableView.reloadData()
         }
     }
+    
+    @objc func pullToRefresh(sender: UIRefreshControl) {
+        fetchAllUsers()
+        tableView.reloadData()
+        sender.endRefreshing()
+    }
+    
     
     func navBarAppearance() {
         navigationBar.barTintColor = UIColor.darkText
@@ -132,11 +143,10 @@ class RatingViewController: UIViewController, ModalViewControllerDelegate {
         let buttonRow = sender.tag
         
         if let id = self.json[buttonRow]["profileId"].int {
-            
             storage.saveSelectedUserId(selectedUserId: id)
             
         } else {
-            //            print("HERE WE GO AGAIN 1")
+                        print("HERE WE GO AGAIN 1")
         }
     }
     
@@ -164,7 +174,6 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
         DispatchQueue.main.async {
             
             if let id = self.json[indexPath.row]["profileId"].int {
-                //                print("/n")
                 //                print(id)
             } else {
                 //                print("HERE WE GO AGAIN 1")
@@ -212,7 +221,9 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         cell.likeButton.tag = indexPath.row
+        cell.dislikeButton.tag = indexPath.row
         cell.likeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
+        cell.dislikeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
         
         return cell
         

@@ -63,6 +63,11 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     var introvert: Int?
     
     var achievementsArray = [Achievements]()
+    let myRefreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(pullToRefresh(sender:)), for: .valueChanged)
+        return refreshControl
+    }()
     
     override func loadView() {
         super.loadView()
@@ -111,7 +116,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         }
         collectionView.delegate = self
         collectionView.dataSource = self
-        
+        tableView.refreshControl = myRefreshControl
         tableView.reloadData()
     }
     
@@ -125,6 +130,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
+    }
+    
+    @objc func pullToRefresh(sender: UIRefreshControl) {
+        print("need fetch")
+        tableView.reloadData()
+        sender.endRefreshing()
     }
     
     func mapAchievements() {
@@ -339,13 +350,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             self.network.editProfileText(key: "information", text: textField!.text!) { (success) in
                 if success {
-                    self.profileSkillsLabel.text = textField?.text
+                    self.profileInformationLabel.text = textField?.text
                     self.tableView.reloadData()
                 } else {
                     //////ALERT!!
                 }
             }
-            self.profileInformationLabel.text = textField?.text
             self.tableView.reloadData()
             
         }))

@@ -37,7 +37,7 @@ class NetworkService {
                     let wordToRemove = "Bearer "
                     let tokenWithOutBearer = tokenWithBearer.deletingPrefix(wordToRemove)
                     self.storage.saveUserToken(token: tokenWithOutBearer)
-                    print(tokenWithOutBearer)
+                    //print(tokenWithOutBearer)
                     self.storage.decodeJwt(token: tokenWithOutBearer)
                     self.storage.saveLoggedState(state: true)
                     completion(true)
