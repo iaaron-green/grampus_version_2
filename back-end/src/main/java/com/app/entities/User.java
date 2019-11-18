@@ -1,5 +1,6 @@
 package com.app.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,10 @@ public class User implements UserDetails {
     private String fullName;
 
     private String jobTitle;
+
+    @OneToOne(mappedBy = "user", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Profile profile;
 
     public User() {
     }
