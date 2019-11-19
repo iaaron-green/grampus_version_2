@@ -19,8 +19,6 @@ const Person = ({profile, user}) => {
       <div className={styles.container}>
       <div className={styles.userName}>{user.fullName}</div>
       <div className={styles.jobTitle}>{user.jobTitle}</div>
-      <div className={styles.likes}>{user.likes}</div>
-      <div className={styles.dislikes}>{user.dislikes}</div>
       </div>
     </div>
   );

@@ -61,5 +61,5 @@ export default combineReducers({
   userId,
   userName,
   fullName,
-  jobTitle,
+  jobTitle
 });
