@@ -3,6 +3,8 @@ import React from 'react';
 
 import styles from './Person.module.css';
 
+
+
 const Person = ({profile, user}) => {
   return (
     <div className={styles.person}>
@@ -13,7 +15,7 @@ const Person = ({profile, user}) => {
         width="180px"
         height="110px"
       />
-      <input type='file' />
+        <input  type="file" onChange={UploadImage()}/>
       <div className={styles.userName}>{user.fullName}</div>
       <div className={styles.jobTitle}>{user.jobTitle}</div>
       <div className={styles.likes}>{user.likes}</div>
@@ -22,19 +24,27 @@ const Person = ({profile, user}) => {
   );
 };
 
-export default Person;
 
-window.addEventListener('load', function() {
-  document.querySelector('input[type="file"]').addEventListener('change', function() {
-    if (this.files && this.files[0]) {
-      const img = document.querySelector('img');  // $('img')[0]
-      img.src = URL.createObjectURL(this.files[0]); // set src to blob url
-      img.onload = imageIsLoaded;
-    }
+
+
+function UploadImage() {
+  window.addEventListener('load', function() {
+    document.querySelector('input[type="file"]').addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const img = document.querySelector('img');
+        img.src = URL.createObjectURL(this.files[0]);
+        img.onload = imageIsLoaded;
+      }
+    });
   });
-});
+}
 
 function imageIsLoaded() {
-  // alert(this.src);  // blob url
-  // update width and height ...
 }
+
+
+export default Person;
+
+
+
+
