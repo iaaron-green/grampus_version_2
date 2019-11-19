@@ -8,9 +8,16 @@ import java.util.Optional;
 
 @Repository
 public interface ProfileRepository extends CrudRepository<Profile, Long> {
+   Optional<Profile> findById(Long profileId);
 
-   Profile findOneById(Long profileId);
+    Profile findOneById(Long profileId);
 
    @Override
    Iterable<Profile> findAll();
+
+//   Profile updateById(Long profileId);
+
+//   Profile findProfileByUserName(String );
+
+   Profile findProfileById(Long id);
 }

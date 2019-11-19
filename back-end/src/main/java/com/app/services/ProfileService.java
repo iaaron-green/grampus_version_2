@@ -9,8 +9,9 @@ import java.io.IOException;
 
 @Service
 public interface ProfileService {
+   public <S extends Profile> S saveProfile(S entity);
 
-   <S extends Profile> S saveProfile(S entity);
+    public Profile updateProfile(Profile updatedProfile, String principalName);
+
    Profile saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException;
-
 }
