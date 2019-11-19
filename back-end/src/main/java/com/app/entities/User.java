@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -26,6 +27,8 @@ public class User implements UserDetails {
     private String password;
     @NotBlank(message = "FullName is required")
     private String fullName;
+
+    private String activationCode;
 
     private String jobTitle;
 

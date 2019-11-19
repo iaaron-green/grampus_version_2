@@ -109,5 +109,6 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-context:5.1.7.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.sun.mail:javax.mail:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-mail:2.1.5.RELEASE" level="project" />
   </component>
 </module>
