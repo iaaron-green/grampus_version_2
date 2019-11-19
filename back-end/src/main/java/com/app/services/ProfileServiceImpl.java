@@ -16,4 +16,5 @@ public class ProfileServiceImpl implements ProfileService {
    public <S extends Profile> S saveProfile(S entity) {
       return profileRepository.save(entity);
    }
+
 }
