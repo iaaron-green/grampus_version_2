@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -33,7 +34,7 @@ public class ProfileController {
 
     @GetMapping("/{profileId}")
     public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws ProfileIdentifierException {
-        Profile profile = profileService.findProfileByIdentifier(profileId);
+        Optional<Profile> profile = profileService.getProfileById(profileId);
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
