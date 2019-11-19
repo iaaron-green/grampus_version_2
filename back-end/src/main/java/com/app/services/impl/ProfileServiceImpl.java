@@ -5,14 +5,22 @@ import com.app.entities.User;
 import com.app.repository.ProfileRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
+import com.app.util.CustomException;
+import com.app.util.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
+    @Value("${upload.path}")
+    private String uploadPath;
 
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
@@ -28,12 +36,13 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.save(entity);
     }
 
-    public Optional<Profile> getProfileById(Long id) {
-        Optional<Profile> profile = profileRepository.findById(id);
-        if (profile != null){
-
-        } else return null;
-        return profile;
+    @Override
+    public Profile getProfileById(Long id) throws CustomException {
+        Profile profile = profileRepository.findProfileById(id);
+        if (profile != null) {
+            return profile;
+        }
+        else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -71,10 +80,25 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
-    public Profile findProfileByIdentifier(Long profileId) throws ProfileIdentifierException {
-        if (profileId == null) {
-            throw new ProfileIdentifierException("Profile ID '" + profileId + "' doesn't exists");
+    @Override
+    public Profile saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException {
+
+        Profile profile = profileRepository.findOneById(id);
+        if (profile != null) {
+            if (file != null) {
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) uploadDir.mkdir();
+                String contentType = file.getContentType();
+                String pictureType = contentType.substring(contentType.indexOf("/")+1);
+                String resultFileName = "picture" + profile.getId() + "." + pictureType;
+                file.transferTo(new File(uploadPath + "/" + resultFileName));
+                profile.setProfilePicture(resultFileName);
+                saveProfile(profile);
+            }
+            else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_BAD);
         }
-        return profileRepository.findById(profileId).get();
+        else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+
+        return profile;
     }
 }
