@@ -41,7 +41,7 @@ public class ProfileServiceImpl implements ProfileService {
             profile.setProfilePicture(resultFileName);
             saveProfile(profile);
          }
-         else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_NULL);
+         else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_BAD);
       }
       else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
 
