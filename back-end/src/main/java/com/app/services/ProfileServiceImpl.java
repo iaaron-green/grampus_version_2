@@ -34,7 +34,9 @@ public class ProfileServiceImpl implements ProfileService {
          if (file != null) {
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) uploadDir.mkdir();
-            String resultFileName = "profilePicture" + profile.getId();
+            String contentType = file.getContentType();
+            String pictureType = contentType.substring(contentType.indexOf("/")+1);
+            String resultFileName = "picture" + profile.getId() + "." + pictureType;
             file.transferTo(new File(uploadPath + "/" + resultFileName));
             profile.setProfilePicture(resultFileName);
             saveProfile(profile);
