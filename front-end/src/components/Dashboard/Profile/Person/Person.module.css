@@ -38,3 +38,9 @@
 input[type="file"] {
   margin-left: -225px;
 }
+
+.container {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 100px;
+}
