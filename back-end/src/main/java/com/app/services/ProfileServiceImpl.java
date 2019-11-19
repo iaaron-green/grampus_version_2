@@ -2,8 +2,8 @@ package com.app.services;
 
 import com.app.entities.Profile;
 import com.app.repository.ProfileRepository;
+import com.app.util.Errors;
 import com.app.util.CustomException;
-import com.app.util.ExceptionsCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,9 +41,9 @@ public class ProfileServiceImpl implements ProfileService {
             profile.setProfilePicture(resultFileName);
             saveProfile(profile);
          }
-         else throw new CustomException(ExceptionsCode.ProfilePicture.getId());
+         else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_NULL);
       }
-      else throw new CustomException(ExceptionsCode.Profile.getId());
+      else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
 
       return profile;
    }
