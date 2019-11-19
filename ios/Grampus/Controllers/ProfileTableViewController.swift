@@ -9,8 +9,9 @@
 import UIKit
 import Alamofire
 import Charts
+import SVProgressHUD
 
-class ProfileTableViewController: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class ProfileTableViewController: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet weak var menuBarButton: UIBarButtonItem!
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -38,7 +39,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     let network = NetworkService()
     let storage = StorageService()
-    let alert = AlertView()
+    let imageService = ImageService()
     let menuVC = MenuTableViewController()
     let reuseCell = "achievementCell"
     
@@ -86,6 +87,13 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        SVProgressHUD.setMinimumDismissTimeInterval(1)
+        SVProgressHUD.setDefaultStyle(.dark)
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
+        profileImageView.isUserInteractionEnabled = true
+        profileImageView.addGestureRecognizer(tapGestureRecognizer)
         
         screenSize = UIScreen.main.bounds
         screenWidth = screenSize.width
@@ -138,6 +146,30 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         fetchUser(userId: userID!)
         tableView.reloadData()
         sender.endRefreshing()
+    }
+    
+    @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
+    {
+        handleProfilePicker()
+        
+    }
+    
+    func handleProfilePicker() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        self.present(picker,animated: true,completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+      var selectedImage: UIImage?
+        if let editedImage = info[.editedImage] as? UIImage {
+      selectedImage = editedImage
+        } else if let originalImage = info[.originalImage] as? UIImage {
+      selectedImage = originalImage
+      }
+        network.uploadImage(selectedImage: selectedImage)
+        self.dismiss(animated: true, completion: nil)
     }
     
     func mapAchievements() {
@@ -194,7 +226,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             
             if let json = json {
                 let user = json["user"] as! NSDictionary
-                
                 //ACHIEVEMENTS FIX!
                 self.achievements = json["achievements"] as? [String: Int]
                 self.fullName = user["fullName"] as? String ?? "Full name"
@@ -202,8 +233,15 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 self.email = user["username"] as? String ?? "Email"
                 self.likes = json["likes"] as? Int ?? 0
                 self.dislikes = json["dislikes"] as? Int ?? 0
-                self.information = json["information"] as? String ?? "no info"
-                self.skills = json["skills"] as? String ?? "no skills"
+                self.information = json["information"] as? String
+                if self.information == "" || self.information == nil {
+                    self.information = "no info"
+                }
+                self.skills = json["skills"] as? String
+                if self.skills == "" || self.skills == nil {
+                    self.skills = "no skills"
+                }
+                self.profilePicture = json["photo"] as? String ?? ""
                 
                 if let unwrappedbestLooker = self.bestLooker {
                     self.bestLooker = unwrappedbestLooker
@@ -241,7 +279,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     self.introvert = 0
                 }
                 
-                self.setUpProfile(fullName: self.fullName!, profession: self.profession!, likes: self.likes!, dislikes: self.dislikes!, information: self.information!, skills: self.skills!)
+                self.setUpProfile(fullName: self.fullName!, profession: self.profession!, likes: self.likes!, dislikes: self.dislikes!, information: self.information!, skills: self.skills!, photo: self.profilePicture!)
                 self.setUpCharts()
                 self.mapAchievements()
                 self.tableView.reloadData()
@@ -324,7 +362,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
     }
     
-    func setUpProfile( fullName: String, profession: String, likes: Int, dislikes: Int, information: String, skills: String) {
+    func setUpProfile( fullName: String, profession: String, likes: Int, dislikes: Int, information: String, skills: String, photo: String) {
         
         profileFullNameLabel.text = fullName
         profileProfessionLabel.text = profession
@@ -332,6 +370,15 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         profileDislikeLabel.text = "Dislikes: \(String(describing: dislikes))"
         profileInformationLabel.text = information
         profileSkillsLabel.text = skills
+        DispatchQueue.main.async {
+            self.imageService.getImage(withURL: self.profilePicture!) { (image) in
+                if let image = image {
+                    self.profileImageView.image = image
+                } else {
+                    self.profileImageView.image = UIImage(named: "deadliner")
+                }
+            }
+        }
         self.tableView.reloadData()
     }
     
@@ -346,13 +393,23 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         let alert = UIAlertController(title: "Enter information about yourself:", message: nil, preferredStyle: .alert)
         
         alert.addTextField { (textField) in
-            textField.text = self.profileInformationLabel.text
+            if self.information == "" || self.information == "no info" {
+                textField.text = ""
+            } else {
+                textField.text = self.profileInformationLabel.text
+            }
         }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             self.network.editProfileText(key: "information", text: textField!.text!) { (success) in
                 if success {
-                    self.profileInformationLabel.text = textField?.text
+                    if textField?.text != "" {
+                        self.profileInformationLabel.text = textField?.text
+                        SVProgressHUD.showSuccess(withStatus: "Done!")
+                    } else {
+                        self.profileInformationLabel.text = "no info"
+                    }
                     self.tableView.reloadData()
                 } else {
                     //////ALERT!!
@@ -372,13 +429,23 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
         
         alert.addTextField { (textField) in
-            textField.text = self.profileSkillsLabel.text
+            if self.skills == "" || self.skills == "no skills" {
+                textField.text = ""
+            } else {
+                textField.text = self.profileSkillsLabel.text
+            }
         }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             self.network.editProfileText(key: "skills", text: textField!.text!) { (success) in
                 if success {
-                    self.profileSkillsLabel.text = textField?.text
+                    if textField?.text != "" {
+                        self.profileSkillsLabel.text = textField?.text
+                        SVProgressHUD.showSuccess(withStatus: "Done!")
+                    } else {
+                        self.profileSkillsLabel.text = "no skills"
+                    }
                     self.tableView.reloadData()
                 } else {
                     //////ALERT!!

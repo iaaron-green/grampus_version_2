@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 
-class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate {
+class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, UITextFieldDelegate {
     
     // MARK: - Outlets
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -34,7 +34,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -49,9 +48,13 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         if revealViewController() != nil {
             menuBarButton.target = self.revealViewController()
             menuBarButton.action = #selector(SWRevealViewController().revealToggle(_:))
-            
             self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
         }
+        
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.searchTextField.resignFirstResponder()
     }
     
     
@@ -79,6 +82,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         network.fetchAllUsers { (json) in
             if let json = json {
                 self.json = json
+                self.filteredJson = [JSON]()
                 for i in 0..<json.count {
                     self.filteredJson.append(json[i])
                 }
@@ -195,7 +199,7 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
         var jobTitleToDisplay = ""
         var likeDislikeButtonState: Bool?
         
-        DispatchQueue.main.async {
+        DispatchQueue.global(qos: .userInteractive).async {
             
             if let id = self.filteredJson[indexPath.row]["profileId"].int {
                 //                print(id)
@@ -231,24 +235,26 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
                 //                print("HERE WE GO AGAIN 5")
             }
             
-            cell.nameLabelCell.text = userNameToDisplay
-            cell.professionLabelCell.text = jobTitleToDisplay
-            
-            if likeDislikeButtonState! {
-                cell.likeButton.isEnabled = true
-                cell.dislikeButton.isEnabled = true
-            } else {
-                cell.likeButton.isEnabled = false
-                cell.likeButton.tintColor = UIColor.gray
-                cell.dislikeButton.isEnabled = false
-                cell.dislikeButton.tintColor = UIColor.gray
-            }
+            DispatchQueue.main.async {
+                cell.nameLabelCell.text = userNameToDisplay
+                cell.professionLabelCell.text = jobTitleToDisplay
+                                
+                if likeDislikeButtonState! {
+                    cell.likeButton.isEnabled = true
+                    cell.dislikeButton.isEnabled = true
+                } else {
+                    cell.likeButton.isEnabled = false
+                    cell.likeButton.tintColor = UIColor.gray
+                    cell.dislikeButton.isEnabled = false
+                    cell.dislikeButton.tintColor = UIColor.gray
+                }
+                
+                cell.likeButton.tag = indexPath.row
+                cell.dislikeButton.tag = indexPath.row
+                cell.likeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
+                cell.dislikeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
+            }            
         }
-        
-        cell.likeButton.tag = indexPath.row
-        cell.dislikeButton.tag = indexPath.row
-        cell.likeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
-        cell.dislikeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
         
         return cell
         

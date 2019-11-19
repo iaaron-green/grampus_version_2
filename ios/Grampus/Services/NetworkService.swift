@@ -146,7 +146,6 @@ class NetworkService {
             case .success :
                 
                 if let result = responseJSON.result.value {
-                    
                     completion(JSON(result))
                 }
                 
@@ -221,6 +220,44 @@ class NetworkService {
                 completion(nil)
             }
         }
+    }
+    
+    func uploadImage(selectedImage: UIImage?){
+        
+        let imageURL = "\(DynamicURL.dynamicURL.rawValue)profiles/photo"
+        
+        let headers : HTTPHeaders = [
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer \(storage.getTokenString()!)"
+        ]
+        
+        let userID = storage.getUserId()
+        let parameters: Parameters = [
+        "id" : userID!
+        ]
+        
+        Alamofire.upload(multipartFormData: { (multipart: MultipartFormData) in
+            let imageData = selectedImage!.jpegData(compressionQuality: 0.8)
+            multipart.append(imageData!, withName: "file", fileName: "file.png", mimeType: "image/png")
+            for (key,value) in parameters {
+                 multipart.append((value as! String).data(using: .utf8)!, withName: key)
+            }
+            
+        },usingThreshold: UInt64.init(),
+           to: imageURL,
+           method: .post,
+           headers: headers,
+           encodingCompletion: { (result) in
+            switch result {
+            case .success(let upload, _, _):
+                upload.uploadProgress(closure: { (progress) in
+                })
+                break
+            case .failure(let error):
+                self.handleError(error: error)
+                    break
+                }
+            })
     }
     
     func handleError(error: Error) {

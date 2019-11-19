@@ -21,10 +21,12 @@ class MenuTableViewController: UITableViewController {
     var email: String?
     let network = NetworkService()
     let storage = StorageService()
+    let imageService = ImageService()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         fetchUserInformation(userId: storage.getUserId()!)
         
         self.tableView.tableFooterView = UIView(frame: .zero)
@@ -37,6 +39,7 @@ class MenuTableViewController: UITableViewController {
         tableView.reloadData()
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
+
     
     func fetchUserInformation(userId: String) {
         
@@ -45,7 +48,7 @@ class MenuTableViewController: UITableViewController {
                 let user = json["user"] as! NSDictionary
                 self.fullName = user["fullName"] as? String
                 self.email = user["username"] as? String
-                self.profilePicture = json["profilePicture"] as? String
+                self.profilePicture = json["photo"] as? String
                 
                 if let unwrappedFullName = self.fullNameLabel {
                     self.fullNameLabel = unwrappedFullName
@@ -62,11 +65,21 @@ class MenuTableViewController: UITableViewController {
                 if let unwrappedProfilePicture = self.profilePicture {
                     self.profilePicture = unwrappedProfilePicture
                 } else {
-                    self.profilePicture = "some base64"
+                    self.profilePicture = ""
                 }
-                
                 self.fullNameLabel.text = self.fullName!
                 self.emailLabel.text = self.email!
+                DispatchQueue.global(qos: .userInteractive).async {
+                    self.imageService.getImage(withURL: self.profilePicture!) { (image) in
+                        DispatchQueue.main.async {
+                            if let image = image {
+                                self.imageView.image = image
+                            } else {
+                                self.imageView.image = UIImage(named: "deadliner")
+                            }
+                        }
+                    }
+                }
                 self.tableView.reloadData()
             }
             

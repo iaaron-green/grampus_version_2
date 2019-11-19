@@ -25,4 +25,21 @@ class RootViewController: UIViewController {
         sender.endRefreshing()
     }
     
+    // Hide keyboard on tap.
+    func dismissKeyboardOnTap() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    
+    // Hide Keyboard.
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    // Hide the keyboard when the return key pressed.
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
 }

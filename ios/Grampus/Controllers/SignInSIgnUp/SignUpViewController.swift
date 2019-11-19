@@ -21,7 +21,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     
     let network = NetworkService()
     let predicate = EmailValidationPredicate()
-    let alert = AlertView()
+    //let alert = AlertView()
     
     // MARK: - Functions
     override func viewDidLoad() {
@@ -123,28 +123,12 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
                 self.network.signIn(username: self.emailTextField.text!, password: self.passwordTextField.text!) { (true) in
                     self.performSegue(withIdentifier: "goToProfile", sender: self)
                 }
-//                self.showAlert("Great!", "You are successfully Signed Up!", handler: { (action: UIAlertAction) in
-//                    self.network.signIn(username: self.emailTextField.text!, password: self.passwordTextField.text!) { (true) in
-//                        self.performSegue(withIdentifier: "goToProfile", sender: self)
-//                    }
-//                })
             } else {
                 SVProgressHUD.showError(withStatus: "Error, registration error")
             }
         }
     }
     
-    func showAlert(_ title: String, _ message: String, handler: ((UIAlertAction) -> Void)?) {
-        
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: "OK", style: .default, handler: handler)
-        
-        alert.addAction(action)
-        
-        present(alert, animated: true, completion: nil)
-        
-    }
     
     // Notifications for moving view when keyboard appears.
     func setUpNotifications() {
