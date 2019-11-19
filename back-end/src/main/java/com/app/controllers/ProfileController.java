@@ -1,6 +1,7 @@
 package com.app.controllers;
 
 import com.app.entities.Profile;
+import com.app.entities.Rating;
 import com.app.services.ProfileService;
 import com.app.services.impl.ProfileIdentifierException;
 import com.app.services.impl.ProfileServiceImpl;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,6 +50,12 @@ public class ProfileController {
         Profile updatedProfile = profileService.updateProfile(profileEntity, principal.getName());
 
         return new ResponseEntity<>(updatedProfile, HttpStatus.OK);
+    }
+
+    @GetMapping("/achievement")
+    public ResponseEntity<?> getAchieveById() throws ProfileIdentifierException {
+        List<Rating> profile = profileService.getAchives();
+        return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
 }

@@ -1,32 +1,37 @@
 package com.app.services.impl;
 
 import com.app.entities.Profile;
+import com.app.entities.Rating;
 import com.app.entities.User;
 import com.app.repository.ProfileRepository;
+import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-
-    private ProfileRepository profileRepository;
-    private UserRepository userRepository;
-
     @Autowired
-    public ProfileServiceImpl(ProfileRepository profileRepository, UserRepository userRepository) {
-        this.profileRepository = profileRepository;
-        this.userRepository = userRepository;
-    }
+    private ProfileRepository profileRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @Override
     public <S extends Profile> S saveProfile(S entity) {
         return profileRepository.save(entity);
     }
+
+    @Override
+    public Long count(String type) {
+        return null;
+    }
+
 
     public Optional<Profile> getProfileById(Long id) {
         Optional<Profile> profile = profileRepository.findById(id);
@@ -77,4 +82,25 @@ public class ProfileServiceImpl implements ProfileService {
         }
         return profileRepository.findById(profileId).get();
     }
+
+//    @Override
+//    public Long count(String type) {
+//        EnumMap<Mark, Integer> achieve1 = new EnumMap<>(Mark.class);
+//        achieve1.put(UNTIDY, 1);
+//        achieve1.put(DEADLINER, 2);
+//        achieve1.put(INTROVERT, 2);
+//        achieve1.put(BEST_LOOKER, 2);
+//        achieve1.put(EXTROVERT, 2);
+//        achieve1.put(SUPER_WORKER, 2);
+//
+//        List<Profile> p = new ArrayList<>();
+//        long count = p.stream().filter(type::equals).count();
+//        return count;
+//
+//    }
+//
+ public List<Rating> getAchives(){
+     List<Rating> ratings = ratingRepository.findAllRatingById();
+     return ratings;
+ }
 }
