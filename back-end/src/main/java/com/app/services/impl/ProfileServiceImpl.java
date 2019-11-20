@@ -7,21 +7,19 @@ import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.util.CustomException;
 import com.app.util.Errors;
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-    @Value("${upload.path}")
-    private String uploadPath;
+//    @Value("${upload.path}")
+//    private String uploadPath;
 
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
@@ -42,8 +40,7 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = profileRepository.findProfileById(id);
         if (profile != null) {
             return profile;
-        }
-        else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+        } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -54,6 +51,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         if (principalName.equals(updatedProfile.getUser().getUsername())) {
 
+            updatedProfile.setId(currentUser.getId());
             Profile profileFromDB = profileRepository.findProfileById(updatedProfile.getId());
 
             if (updatedProfile.getInformation() != null) {
@@ -62,14 +60,12 @@ public class ProfileServiceImpl implements ProfileService {
             if (updatedProfile.getSkills() != null) {
                 profileFromDB.setSkills(updatedProfile.getSkills());
             }
+            if (updatedProfile.getProfilePicture() != null) {
+                profileFromDB.setSkills(updatedProfile.getSkills());
+            }
             if (updatedProfile.getUser().getJobTitle() != null) {
                 profileFromDB.setSkills(updatedProfile.getSkills());
             }
-            if (updatedProfile.getUser().getFullName() != null) {
-                profileFromDB.setSkills(updatedProfile.getSkills());
-            }
-
-
             return profileRepository.save(profileFromDB);
         }
         return new Profile();
@@ -82,24 +78,30 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException {
+    public void saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException {
+        String ftpServer = "10.11.1.155";
+        String urlLink = "ftp://10.11.155/";
 
         Profile profile = profileRepository.findOneById(id);
         if (profile != null) {
             if (file != null) {
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdir();
                 String contentType = file.getContentType();
-                String pictureType = contentType.substring(contentType.indexOf("/")+1);
-                String resultFileName = "picture" + profile.getId() + "." + pictureType;
-                file.transferTo(new File(uploadPath + "/" + resultFileName));
-                profile.setProfilePicture(resultFileName);
+                String profilePictureType = contentType.substring(contentType.indexOf("/") + 1);
+                String pictureFullName = profile.getId() + "." + profilePictureType;
+                FTPClient client = new FTPClient();
+                try {
+                    client.connect(ftpServer);
+                    client.login("grampus", "password");
+                    client.storeFile(pictureFullName, file.getInputStream());
+                    client.logout();
+                } catch (IOException e) {
+                    throw new CustomException("" + Errors.FTP_CONNECTION_ERROR);
+                } finally {
+                    client.disconnect();//
+                }
+                profile.setProfilePicture(urlLink + pictureFullName);
                 saveProfile(profile);
-            }
-            else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_BAD);
-        }
-        else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
-
-        return profile;
+            } else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_BAD);
+        } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
     }
 }

@@ -5,18 +5,14 @@ import com.app.services.ProfileService;
 import com.app.util.CustomException;
 import com.app.validators.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
 import javax.validation.Valid;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
 
 @RestController
@@ -24,8 +20,8 @@ import java.security.Principal;
 @CrossOrigin
 public class ProfileController {
 
-    @Value("${upload.path}")
-    private String uploadPath;
+//    @Value("${upload.path}")
+//    private String uploadPath;
 
    private ProfileService profileService;
    private ValidationErrorService validationErrorService;
@@ -47,15 +43,15 @@ public class ProfileController {
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
-    @GetMapping("/getPhoto")
-    public @ResponseBody BufferedImage getImage(Profile profile) {
-        try {
-            InputStream inputStream = this.getClass().getResourceAsStream(uploadPath+profile.getProfilePicture());
-            return ImageIO.read(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @GetMapping("/getPhoto")
+//    public @ResponseBody BufferedImage getImage(Profile profile) {
+//        try {
+//            InputStream inputStream = this.getClass().getResourceAsStream(uploadPath+profile.getProfilePicture());
+//            return ImageIO.read(inputStream);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     @PostMapping("")
     public ResponseEntity<?> updateProfileById(@Valid @RequestBody Profile profileEntity, BindingResult result,
@@ -70,13 +66,11 @@ public class ProfileController {
     }
 
    @PostMapping("/photo")
-   public String uploadPhoto (@RequestParam("file") MultipartFile file, @RequestParam Long id) throws IOException {
-          String pictureURL = null;
-      try {
-        pictureURL = profileService.saveProfilePhoto(file, id).getProfilePicture();
+   public void uploadPhoto (@RequestParam("file") MultipartFile file, @RequestParam Long id) throws IOException {
+       try {
+           profileService.saveProfilePhoto(file, id);
       } catch (CustomException e) {
          e.getMessage();
       }
-      return pictureURL;
    }
 }

@@ -15,7 +15,7 @@ public interface ProfileService {
 
    Profile updateProfile(Profile updatedProfile, String principalName);
 
-   Profile saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException;
+   void saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException;
 
 
 }
