@@ -3,6 +3,7 @@ package com.app.services.impl;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.entities.User;
+import com.app.enums.Mark;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -102,5 +105,20 @@ public class ProfileServiceImpl implements ProfileService {
  public List<Rating> getAchives(){
      List<Rating> ratings = ratingRepository.findAllRatingById();
      return ratings;
+//     List<Rating> ratingUser = ratings.stream().filter((r) -> {
+//         ratings.contains(Mark.BEST_LOOKER);
+//     }).collect(Collectors.toList())}
  }
+//
+//    public static void main(String[] args) {
+//        List<String> collection = new ArrayList<>();
+//        collection.add("INTROVERT");
+//        collection.add("jdkhkdhkdh");
+//        long st = collection.stream().filter((s) -> s.contains("INTROVERT")).count();
+//      // st.forEach((s)->System.out.print(s));
+//        System.out.println(st);
+//    }
+
 }
+
+

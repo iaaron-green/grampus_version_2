@@ -22,7 +22,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
 //        }
 
     @Query(
-            value = "SELECT * FROM grampus_db.ratings",
+            value = "SELECT id, profile_id, profile_id as user_id, rating_type, COUNT(rating_type) as raiting_count FROM grampus_db.ratings GROUP BY profile_id, rating_type",
             nativeQuery = true)
     List<Rating> findAllRatingById();
 }
