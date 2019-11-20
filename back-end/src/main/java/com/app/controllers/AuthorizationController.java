@@ -5,6 +5,7 @@ import com.app.configmail.MyConstants;
 import com.app.configtoken.JwtTokenProvider;
 import com.app.entities.Profile;
 import com.app.entities.User;
+import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.UserService;
 import com.app.validators.JWTLoginSuccessResponse;
@@ -28,6 +29,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.app.configtoken.Constants.TOKEN_PREFIX;
@@ -43,9 +45,14 @@ public class AuthorizationController {
    private JwtTokenProvider tokenProvider;
    private AuthenticationManager authenticationManager;
    private ProfileService profileService;
+   private long id;
+   private long activCode;
 
    @Autowired
-   public JavaMailSender emailSender;
+   private JavaMailSender emailSender;
+
+   @Autowired
+   private UserRepository userRepository;
 
    @Autowired
    public AuthorizationController(ValidationErrorService validationErrorService, UserService userService,
@@ -62,7 +69,16 @@ public class AuthorizationController {
    @PostMapping("/login")
    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result){
       ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
-      if(errorMap != null) return errorMap;
+      if(errorMap != null)
+         return errorMap;
+
+      String userName = loginRequest.getUsername();
+      boolean isActivated = userService.activationCode(userName);
+      if(!isActivated)
+         return new ResponseEntity<>(HttpStatus.LOCKED);
+
+      User newUser = userRepository.findByUsername(userName);
+      Profile newProfile = profileService.saveProfile(new Profile(newUser));
 
       Authentication authentication = authenticationManager.authenticate(
               new UsernamePasswordAuthenticationToken(
@@ -82,11 +98,15 @@ public class AuthorizationController {
       userValidator.validate(user,result);
 
       ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
-      if(errorMap != null)return errorMap;
+      if(errorMap != null) return errorMap;
+
+//      if(userRepository.findByUsername(user.getUsername()) != null)
+//      {
+//         return new ResponseEntity<>(HttpStatus.LOCKED);
+//      }
+      user.setActivationCode(UUID.randomUUID().toString());
 
       User newUser = userService.saveUser(user);
-      newUser.setActivationCode(UUID.randomUUID().toString());
-      Profile newProfile = profileService.saveProfile(new Profile(newUser));
       MimeMessage message = emailSender.createMimeMessage();
 
       boolean multipart = true;
@@ -101,18 +121,17 @@ public class AuthorizationController {
       String htmlMsg = "<h3>Grampus</h3>"
               +"<img src='https://i.ibb.co/yNsKQ53/image.png'>" +
               "<p>You're profile is register! Thank you.<p>" +
-               "To activate you're profile input activate code: "+ newUser.getActivationCode();
-      //com.app.img src='https://www.earticleblog.com/wp-content/uploads/2017/03/sucess-home-tester.png'
+               "To activate you're profile visit next link: http://localhost:8081/activate/"+ newUser.getActivationCode();
+
       message.setContent(htmlMsg, "text/html");
 
       helper.setTo(user.getUsername());
 
       helper.setSubject("Profile registration(GRAMPUS)");
-      helper.setText("You're profile is register! Thank you.");
 
       this.emailSender.send(message);
 
-      return  new ResponseEntity<>(newUser, HttpStatus.CREATED);
+      return new ResponseEntity<>(newUser, HttpStatus.CREATED);
    }
 
 
