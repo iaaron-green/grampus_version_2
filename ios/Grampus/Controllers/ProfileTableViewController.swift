@@ -87,7 +87,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         SVProgressHUD.setMinimumDismissTimeInterval(1)
         SVProgressHUD.setDefaultStyle(.dark)
         
@@ -170,6 +170,10 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
       }
         network.uploadImage(selectedImage: selectedImage)
         self.dismiss(animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.fetchUser(userId: self.userID!)
+            self.tableView.reloadData()
+        }
     }
     
     func mapAchievements() {
@@ -241,8 +245,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 if self.skills == "" || self.skills == nil {
                     self.skills = "no skills"
                 }
-                self.profilePicture = json["photo"] as? String ?? ""
-                
+                self.profilePicture = json["profilePicture"] as? String ?? ""
                 if let unwrappedbestLooker = self.bestLooker {
                     self.bestLooker = unwrappedbestLooker
                 } else {
@@ -370,6 +373,10 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         profileDislikeLabel.text = "Dislikes: \(String(describing: dislikes))"
         profileInformationLabel.text = information
         profileSkillsLabel.text = skills
+//        DispatchQueue.main.async {
+//            let image = self.imageService.ConvertBase64StringToImage(imageBase64String: self.profilePicture!)
+//            self.profileImageView.image = image
+//        }
         DispatchQueue.main.async {
             self.imageService.getImage(withURL: self.profilePicture!) { (image) in
                 if let image = image {

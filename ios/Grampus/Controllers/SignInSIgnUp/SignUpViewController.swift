@@ -7,11 +7,10 @@
 //
 
 import UIKit
-import ValidationComponents
 import Alamofire
 import SVProgressHUD
 
-class SignUpViewController: UIViewController, UITextFieldDelegate {
+class SignUpViewController: RootViewController {
     
     // MARK: - Outlets
     @IBOutlet weak var userNameTextField: UITextField!
@@ -20,8 +19,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var signUpButton: UIButton!
     
     let network = NetworkService()
-    let predicate = EmailValidationPredicate()
-    //let alert = AlertView()
     
     // MARK: - Functions
     override func viewDidLoad() {
@@ -82,53 +79,27 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func SignUpButton(_ sender: UIButton) {
         
-        dismissKeyboard()
-        
-        let email = emailTextField.text
-        let emailFormatBool = predicate.evaluate(with: email)
-        
-        // Check lenght of user name
-        if let userName = userNameTextField.text {
-            if userName.count < 2 {
-                SVProgressHUD.showError(withStatus: "Name too short, write your correct name")
-            }
-        }
-        
-        // Email isEmpty check.
-        if (email!.isEmpty) {
-            SVProgressHUD.showError(withStatus: "Incorrect input, enter email!")
-            return
-        } else {
-            // Email validation.
-            if (!emailFormatBool) {
-                SVProgressHUD.showError(withStatus: "Incorrect input, email format not correct!")
-                return
-            }
-        }
-        
-        // Check lenght of password
-        if let password = passwordTextField.text {
-            if password.count < 6 {
-                SVProgressHUD.showError(withStatus: "Password too short, password shoud be more than 5 characters!")
-            } else if password.count >= 24 {
-                SVProgressHUD.showError(withStatus: "Password too long, password shoud be less then 24 symbols")
-            }
-        }
-        
-        //Networking
-        
-        network.signUp(email: emailTextField.text!, password: passwordTextField.text!, fullName: userNameTextField.text!) { (success) in
-            if success {
-                SVProgressHUD.showSuccess(withStatus: "Great! You are successfully Signed Up!")
-                self.network.signIn(username: self.emailTextField.text!, password: self.passwordTextField.text!) { (true) in
-                    self.performSegue(withIdentifier: "goToProfile", sender: self)
+        if userNameValidation(userName: userNameTextField), emailValidation(email: emailTextField), passwordValidation(password: passwordTextField) {
+            //Networking
+            network.signUp(email: emailTextField.text!, password: passwordTextField.text!, fullName: userNameTextField.text!) { (success, error) in
+                if success {
+                    self.dismissKeyboard()
+                    SVProgressHUD.showSuccess(withStatus: "Registration success. Check your email to verify your account")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        self.dismiss(animated: true, completion: nil)
+                        //Directing to profile page
+                        //                    self.network.signIn(username: self.emailTextField.text!, password: self.passwordTextField.text!) { (true) in
+                        //                        self.performSegue(withIdentifier: "goToProfile", sender: self)
+                        //                    }
+                    }
+                } else if (error?.contains("400"))! {
+                    SVProgressHUD.showError(withStatus: "This email address already exists, please enter another email address")
+                } else {
+                    SVProgressHUD.showError(withStatus: "Error, registration error")
                 }
-            } else {
-                SVProgressHUD.showError(withStatus: "Error, registration error")
             }
         }
     }
-    
     
     // Notifications for moving view when keyboard appears.
     func setUpNotifications() {
@@ -159,22 +130,4 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
-    
-    // Hide keyboard on tap.
-    func dismissKeyboardOnTap() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tap)
-    }
-    
-    // Hide Keyboard.
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    // Hide the keyboard when the return key pressed.
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    
 }

@@ -8,10 +8,9 @@
 
 import UIKit
 import Alamofire
-import ValidationComponents
 import SVProgressHUD
 
-class SignInViewController: UIViewController, UITextFieldDelegate {
+class SignInViewController: RootViewController {
     
     // MARK: - Outlets
     @IBOutlet weak var userNameTextField: UITextField!
@@ -21,7 +20,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var signUpButton: UIButton!
     
     let network = NetworkService()
-    let predicate = EmailValidationPredicate()
     
     // MARK: - Functions
     override func viewDidLoad() {
@@ -51,41 +49,23 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Actions
     @IBAction func SignInButton(_ sender: UIButton) {
         
-        let email = userNameTextField.text
-        let emailFormatBool = predicate.evaluate(with: email)
-        
-        // Email isEmpty check.
-        if (email!.isEmpty) {
-            SVProgressHUD.showError(withStatus: "Incorrect input, enter email!")
-            return
-        } else {
-            // Email validation.
-            if (!emailFormatBool) {
-                SVProgressHUD.showError(withStatus: "Incorrect input, email format not correct!")
-                return
-            }
-        }
-        
-        // Check lenght of password
-        if let password = passwordTextField.text {
-            if password.count < 6 {
-                SVProgressHUD.showError(withStatus: "Password too short, password shoud be more than 5 characters!")
-            } else if password.count >= 24 {
-                SVProgressHUD.showError(withStatus: "Password too long, password shoud be less then 24 symbols")
-            }
+        if emailValidation(email: userNameTextField), passwordValidation(password: passwordTextField) {
             
-        }
-        SVProgressHUD.show()
-        network.signIn(username: userNameTextField.text!, password: passwordTextField.text!) { (error) in
-            if let error = error {
-                SVProgressHUD.dismiss()
-                SVProgressHUD.showError(withStatus: "Error. \(error)")
-            } else {
-                SVProgressHUD.dismiss()
-                self.performSegue(withIdentifier: SegueIdentifier.login_to_profile.rawValue, sender: self)
+            SVProgressHUD.show()
+            network.signIn(username: userNameTextField.text!, password: passwordTextField.text!) { (error) in
+                if let error = error {
+                    if error.contains("401") {
+                        SVProgressHUD.showError(withStatus: "User not found")
+                    } else {
+                        SVProgressHUD.dismiss()
+                        SVProgressHUD.showError(withStatus: "Error. \(error)")
+                    }
+                } else {
+                    SVProgressHUD.dismiss()
+                    self.performSegue(withIdentifier: SegueIdentifier.login_to_profile.rawValue, sender: self)
+                }
             }
         }
-        
     }
     
     func SetUpOutlets() {
@@ -115,23 +95,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    // Hide keyboard on tap.
-    func dismissKeyboardOnTap() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tap)
-    }
-    
-    // Hide Keyboard.
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    // Hide the keyboard when the return key pressed.
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    
     // Notifications for moving view when keyboard appears.
     func setUpNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
@@ -158,13 +121,5 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
                 self.view.frame.origin.y = -keyboardSize.height + 100
             }
         }
-    }
-    
-}
-
-extension String {
-    func deletingPrefix(_ prefix: String) -> String {
-        guard self.hasPrefix(prefix) else { return self }
-        return String(self.dropFirst(prefix.count))
     }
 }

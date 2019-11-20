@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 
-class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, UITextFieldDelegate {
+class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, SWRevealViewControllerDelegate {
     
     // MARK: - Outlets
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -43,16 +43,23 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         navBarAppearance()
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "load"), object: nil)
-        
+
         
         if revealViewController() != nil {
             menuBarButton.target = self.revealViewController()
             menuBarButton.action = #selector(SWRevealViewController().revealToggle(_:))
             self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
+            self.revealViewController()?.delegate = self
         }
         
     }
     
+    
+    func revealController(_ revealController: SWRevealViewController!, willMoveTo position: FrontViewPosition) {
+        dismissKeyboard()
+    }
+    
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.searchTextField.resignFirstResponder()
     }

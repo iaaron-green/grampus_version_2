@@ -15,8 +15,8 @@ enum SegueIdentifier: String {
 
 enum DynamicURL: String {
     //case dynamicURL = "https://grampus.herokuapp.com/api/"
-    case dynamicURL = "http://10.11.1.155:8081/api/"
-    //case dynamicURL = "http://10.11.1.200:8081/api/"
+    //case dynamicURL = "http://10.11.1.155:8081/api/"
+    case dynamicURL = "http://10.11.1.200:8081/api/"
 }
 
 enum UserDefKeys: String {
@@ -27,4 +27,11 @@ enum UserDefKeys: String {
     case selectedUserId = "selectedUserId"
     case profileState = "profileState"  // if true show logged user profile, if false show selected user profile
     case selectedUserIdProfile = "selectedUserIdProfile"
+}
+
+extension String {
+    func deletingPrefix(_ prefix: String) -> String {
+        guard self.hasPrefix(prefix) else { return self }
+        return String(self.dropFirst(prefix.count))
+    }
 }

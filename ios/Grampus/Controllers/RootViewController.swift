@@ -7,24 +7,31 @@
 //
 
 import UIKit
+import SVProgressHUD
+import ValidationComponents
 
-class RootViewController: UIViewController {
-
+class RootViewController: UIViewController, UITextFieldDelegate {
+    
+    //MARK: - Properties
+    let predicate = EmailValidationPredicate()
     let myRefreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(pullToRefresh(sender:)), for: .valueChanged)
         return refreshControl
     }()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
     }
     
+    //MARK: - Pull to refresh
     @objc func pullToRefresh(sender: UIRefreshControl) {
         sender.endRefreshing()
     }
     
+    //MARK: - Keyboard behavior
     // Hide keyboard on tap.
     func dismissKeyboardOnTap() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -42,4 +49,57 @@ class RootViewController: UIViewController {
         return true
     }
     
+    //MARK: - Textfields validation methods
+    func userNameValidation(userName: UITextField) -> Bool {
+        
+        if let userName = userName.text {
+            if userName.count < 2 {
+                SVProgressHUD.showError(withStatus: "This field should contain more than two characters")
+                return false
+            } else if userName.count > 50 {
+                SVProgressHUD.showError(withStatus: "Name too long, write your correct name")
+                return false
+            } else if userName.isEmpty {
+                SVProgressHUD.showError(withStatus: "Please enter your name")
+                return false
+            }
+        }
+        return true
+    }
+    
+    func emailValidation(email: UITextField) -> Bool {
+        
+        let email = email.text
+        let emailFormatBool = predicate.evaluate(with: email)
+        
+        // Email isEmpty check.
+        if (email!.isEmpty) {
+            SVProgressHUD.showError(withStatus: "Incorrect input, enter email!")
+            return false
+        } else {
+            // Email validation.
+            if (!emailFormatBool) {
+                SVProgressHUD.showError(withStatus: "Incorrect input, email format not correct!")
+                return false
+            }
+        }
+        return true
+    }
+    
+    func passwordValidation(password: UITextField) -> Bool {
+        
+        if let password = password.text {
+            if password.isEmpty {
+                SVProgressHUD.showError(withStatus: "Please enter your password")
+                return false
+            } else if password.count < 6 {
+                SVProgressHUD.showError(withStatus: "Password too short, password shoud be more than 6 characters!")
+                return false
+            } else if password.count >= 24 {
+                SVProgressHUD.showError(withStatus: "Password too long, password shoud be less then 24 symbols")
+                return false
+            }
+        }
+        return true
+    }
 }

@@ -51,7 +51,7 @@ class NetworkService {
     }
     
     
-    func signUp(email: String, password: String, fullName: String, completion: @escaping (Bool) -> ()) {
+    func signUp(email: String, password: String, fullName: String, completion: @escaping (Bool, String?) -> ()) {
         
         let registerURL: String = "\(DynamicURL.dynamicURL.rawValue)users/register"
         
@@ -68,11 +68,11 @@ class NetworkService {
         Alamofire.request(registerURL, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             switch responseJSON.result {
             case .success :
-                completion(true)
+                completion(true, nil)
                 
             case .failure(let error) :
                 self.handleError(error: error)
-                completion(false)
+                completion(false, error.localizedDescription)
             }
         }
     }

@@ -39,7 +39,7 @@ class MenuTableViewController: UITableViewController {
         tableView.reloadData()
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-
+    
     
     func fetchUserInformation(userId: String) {
         
@@ -48,7 +48,7 @@ class MenuTableViewController: UITableViewController {
                 let user = json["user"] as! NSDictionary
                 self.fullName = user["fullName"] as? String
                 self.email = user["username"] as? String
-                self.profilePicture = json["photo"] as? String
+                self.profilePicture = json["profilePicture"] as? String
                 
                 if let unwrappedFullName = self.fullNameLabel {
                     self.fullNameLabel = unwrappedFullName
