@@ -168,12 +168,24 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         } else if let originalImage = info[.originalImage] as? UIImage {
       selectedImage = originalImage
       }
-        network.uploadImage(selectedImage: selectedImage)
-        self.dismiss(animated: true, completion: nil)
-        DispatchQueue.main.async {
-            self.fetchUser(userId: self.userID!)
-            self.tableView.reloadData()
+        
+        network.uploadImage(selectedImage: selectedImage) { (success) in
+            if success {
+                self.profileImageView.image = selectedImage
+                
+                //Update image cache
+                self.imageService.cache.setObject(selectedImage!, forKey: self.profilePicture! as NSString)
+                
+                //Setup notification to change profile photo in MenuTableViewController
+                let imageDict = ["image": selectedImage]
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "imageChanged"), object: nil, userInfo: imageDict)
+                
+                SVProgressHUD.showSuccess(withStatus: "Profile photo changed!")
+            } else {
+                SVProgressHUD.showError(withStatus: "Error uploading photo")
+            }
         }
+        self.dismiss(animated: true, completion: nil)
     }
     
     func mapAchievements() {
@@ -377,16 +389,20 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
 //            let image = self.imageService.ConvertBase64StringToImage(imageBase64String: self.profilePicture!)
 //            self.profileImageView.image = image
 //        }
-        DispatchQueue.main.async {
+        DispatchQueue.global(qos: .userInteractive).async {
             self.imageService.getImage(withURL: self.profilePicture!) { (image) in
-                if let image = image {
-                    self.profileImageView.image = image
-                } else {
-                    self.profileImageView.image = UIImage(named: "deadliner")
+
+                DispatchQueue.main.async {
+                    if let image = image {
+                        self.profileImageView.image = image
+                        self.tableView.reloadData()
+
+                    } else {
+                        self.profileImageView.image = UIImage(named: "deadliner")
+                    }
                 }
             }
         }
-        self.tableView.reloadData()
     }
     
     func navBarAppearance() {

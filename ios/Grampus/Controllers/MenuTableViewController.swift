@@ -29,6 +29,9 @@ class MenuTableViewController: UITableViewController {
         
         fetchUserInformation(userId: storage.getUserId()!)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(updateImage), name: NSNotification.Name(rawValue: "imageChanged"), object: nil)
+
+        
         self.tableView.tableFooterView = UIView(frame: .zero)
         
         self.tableView.separatorStyle = .none
@@ -40,9 +43,13 @@ class MenuTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
+    @objc func updateImage(notification: NSNotification) {
+        if let image = notification.userInfo?["image"] as? UIImage {
+            imageView.image = image
+        }
+    }
     
     func fetchUserInformation(userId: String) {
-        
         network.fetchUserInformation(userId: userId) { (json) in
             if let json = json {
                 let user = json["user"] as! NSDictionary
@@ -77,10 +84,10 @@ class MenuTableViewController: UITableViewController {
                             } else {
                                 self.imageView.image = UIImage(named: "deadliner")
                             }
+                            self.tableView.reloadData()
                         }
                     }
                 }
-                self.tableView.reloadData()
             }
             
         }

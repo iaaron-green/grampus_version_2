@@ -169,16 +169,13 @@ class NetworkService {
         ]
         
         var apiUrl = ""
-        print(ratingType, likeState)
         if likeState {
             
             apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/like"
         } else {
             apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/dislike"
         }
-        print(apiUrl)
         Alamofire.request(apiUrl, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
-            print(responseJSON)
             switch responseJSON.result {
                 
             case .success :
@@ -222,7 +219,7 @@ class NetworkService {
         }
     }
     
-    func uploadImage(selectedImage: UIImage?){
+    func uploadImage(selectedImage: UIImage?, completion: @escaping (Bool) -> ()){
         
         let imageURL = "\(DynamicURL.dynamicURL.rawValue)profiles/photo"
         
@@ -252,9 +249,11 @@ class NetworkService {
             case .success(let upload, _, _):
                 upload.uploadProgress(closure: { (progress) in
                 })
+                completion(true)
                 break
             case .failure(let error):
                 self.handleError(error: error)
+                completion(false)
                     break
                 }
             })
