@@ -2,6 +2,7 @@ package com.app.controllers;
 
 import com.app.entities.Profile;
 import com.app.entities.Rating;
+import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.services.impl.ProfileIdentifierException;
 import com.app.services.impl.ProfileServiceImpl;
@@ -22,19 +23,19 @@ import java.util.Optional;
 @CrossOrigin
 public class ProfileController {
 
-    private ProfileServiceImpl profileService;
+    private ProfileService profileService;
     private ValidationErrorService validationErrorService;
     private RatingService ratingService;
 
     @Autowired
-    public ProfileController(ProfileServiceImpl profileService, ValidationErrorService validationErrorService, RatingService ratingService) {
+    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService, RatingService ratingService) {
         this.profileService = profileService;
         this.validationErrorService = validationErrorService;
         this.ratingService = ratingService;
     }
 
     @GetMapping("/{profileId}")
-    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws ProfileIdentifierException {
+    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
         Optional<Profile> profile = profileService.getProfileById(profileId);
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
