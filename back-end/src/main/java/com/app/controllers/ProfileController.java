@@ -40,16 +40,6 @@ public class ProfileController {
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
-//    @GetMapping("/getPhoto")
-//    public @ResponseBody BufferedImage getImage(Profile profile) {
-//        try {
-//            InputStream inputStream = this.getClass().getResourceAsStream(uploadPath+profile.getProfilePicture());
-//            return ImageIO.read(inputStream);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     @PostMapping("")
     public ResponseEntity<?> updateProfileById(@Valid @RequestBody Profile profileEntity, BindingResult result,
                                                Principal principal) {
