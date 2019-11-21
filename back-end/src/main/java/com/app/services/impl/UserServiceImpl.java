@@ -1,9 +1,10 @@
-package com.app.services;
+package com.app.services.impl;
 
 import com.app.entities.User;
 import com.app.exceptions.UserExistException;
 import com.app.repository.UserRepository;
 
+import com.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,4 +31,5 @@ public class UserServiceImpl implements UserService {
             throw new UserExistException("Username '" + newUser.getUsername() + "' already exists");
         }
     }
+
 }
