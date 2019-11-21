@@ -2,7 +2,7 @@ package com.app.controllers;
 
 import com.app.entities.Profile;
 import com.app.entities.Rating;
-import com.app.services.ProfileService;
+import com.app.services.RatingService;
 import com.app.services.impl.ProfileIdentifierException;
 import com.app.services.impl.ProfileServiceImpl;
 import com.app.validators.ValidationErrorService;
@@ -16,9 +16,6 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -27,11 +24,13 @@ public class ProfileController {
 
     private ProfileServiceImpl profileService;
     private ValidationErrorService validationErrorService;
+    private RatingService ratingService;
 
     @Autowired
-    public ProfileController(ProfileServiceImpl profileService, ValidationErrorService validationErrorService) {
+    public ProfileController(ProfileServiceImpl profileService, ValidationErrorService validationErrorService, RatingService ratingService) {
         this.profileService = profileService;
         this.validationErrorService = validationErrorService;
+        this.ratingService = ratingService;
     }
 
     @GetMapping("/{profileId}")
@@ -53,9 +52,13 @@ public class ProfileController {
     }
 
     @GetMapping("/achievement")
-    public ResponseEntity<?> getAchieveById() throws ProfileIdentifierException {
+    public ResponseEntity<?> getAchieveById()  {
         List<Rating> profile = profileService.getAchives();
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public String getTestById()  {
+        return ratingService.addAchievement(43L);
+    }
 }

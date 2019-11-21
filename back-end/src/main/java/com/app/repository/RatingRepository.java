@@ -25,4 +25,18 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             value = "SELECT id, profile_id, profile_id as user_id, rating_type, COUNT(rating_type) as raiting_count FROM grampus_db.ratings GROUP BY profile_id, rating_type",
             nativeQuery = true)
     List<Rating> findAllRatingById();
+
+    Long countRatingTypeById(Long id);
+
+    @Query(
+            value = "SELECT id, profile_id, profile_id as user_id, rating_type, COUNT(rating_type) as raiting_count FROM grampus_db.ratings GROUP BY rating_type",
+            nativeQuery = true)
+    List<Rating> groupAndCountRatingTypeById();
+
+    @Query(
+            value = "SELECT COUNT(rating_type) FROM grampus_db.ratings WHERE profile_id = ? AND rating_type = ?",
+            nativeQuery = true)
+    Long countRatingType(Long id, String ratingType);
+
+
 }
