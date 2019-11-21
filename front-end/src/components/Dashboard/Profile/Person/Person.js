@@ -15,10 +15,10 @@ const Person = ({profile, user}) => {
         width="180px"
         height="110px"
       />
-        <input  type="file" onChange={UploadImage()}/>
+      <input  type="file" onChange={UploadImage()}/>
       <div className={styles.container}>
-      <div className={styles.userName}>{user.fullName}</div>
-      <div className={styles.jobTitle}>{user.jobTitle}</div>
+        <div className={styles.userName}>{user.fullName}</div>
+        <div className={styles.jobTitle}>{user.jobTitle}</div>
       </div>
     </div>
   );
@@ -44,7 +44,3 @@ function imageIsLoaded() {
 
 
 export default Person;
-
-
-
-

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Popup from "reactjs-popup";
 
 
 import styles from './SignUp.module.css';
@@ -47,9 +48,13 @@ const SignUpView = ({
           required
         />
       </label>
-      <button className={styles.button} type="submit">
-        Sign Up
-      </button>
+      <Popup
+        trigger={<button className={styles.button}> Sign Up </button>}
+        modal
+        closeOnDocumentClick
+      >
+        <span> Activation code was sent on your phone, let's check it!</span>
+      </Popup>
     </form>
     <p className={styles.text}>
       Have you already created your account?

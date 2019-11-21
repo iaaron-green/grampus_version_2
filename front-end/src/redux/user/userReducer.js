@@ -54,6 +54,19 @@ const jobTitle = (state = null, { type, payload }) => {
   }
 };
 
+const username = (state = null, { type, payload }) => {
+  switch (type) {
+    case types.USER_FETCH_SUCCESS:
+      return payload.username;
+
+    case types.USER_FETCH_ERROR:
+      return null;
+
+    default:
+      return state;
+  }
+};
+
 
 
 
@@ -61,5 +74,6 @@ export default combineReducers({
   userId,
   userName,
   fullName,
-  jobTitle
+  jobTitle,
+  username,
 });
