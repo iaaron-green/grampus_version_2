@@ -18,8 +18,6 @@ import java.io.*;
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-//    @Value("${upload.path}")
-//    private String uploadPath;
 
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
@@ -47,7 +45,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile updateProfile(Profile updatedProfile, String principalName) {
         User currentUser = userRepository.findByUsername(principalName);
 
-        fixUpdatedProfileUser(updatedProfile, currentUser);
+         fixUpdatedProfileUser(updatedProfile, currentUser);
 
         if (principalName.equals(updatedProfile.getUser().getUsername())) {
 
@@ -58,12 +56,6 @@ public class ProfileServiceImpl implements ProfileService {
                 profileFromDB.setInformation(updatedProfile.getInformation());
             }
             if (updatedProfile.getSkills() != null) {
-                profileFromDB.setSkills(updatedProfile.getSkills());
-            }
-            if (updatedProfile.getProfilePicture() != null) {
-                profileFromDB.setSkills(updatedProfile.getSkills());
-            }
-            if (updatedProfile.getUser().getJobTitle() != null) {
                 profileFromDB.setSkills(updatedProfile.getSkills());
             }
             return profileRepository.save(profileFromDB);
