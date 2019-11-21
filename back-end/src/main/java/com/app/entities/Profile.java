@@ -31,6 +31,7 @@ public class Profile {
 
    private String skills;
 
+
    @OneToOne
    private User user;
 

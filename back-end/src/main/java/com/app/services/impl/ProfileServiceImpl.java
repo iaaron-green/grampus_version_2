@@ -2,8 +2,11 @@ package com.app.services.impl;
 
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
+import com.app.entities.Rating;
 import com.app.entities.User;
+import com.app.enums.Mark;
 import com.app.repository.ProfileRepository;
+import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.util.CustomException;
@@ -14,6 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -21,11 +28,13 @@ public class ProfileServiceImpl implements ProfileService {
 
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
+    private RatingRepository ratingRepository;
 
     @Autowired
-    public ProfileServiceImpl(ProfileRepository profileRepository, UserRepository userRepository) {
+    public ProfileServiceImpl(ProfileRepository profileRepository, UserRepository userRepository, RatingRepository ratingRepository) {
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
+        this.ratingRepository = ratingRepository;
     }
 
     @Override
@@ -45,7 +54,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile updateProfile(Profile updatedProfile, String principalName) {
         User currentUser = userRepository.findByUsername(principalName);
 
-         fixUpdatedProfileUser(updatedProfile, currentUser);
+        fixUpdatedProfileUser(updatedProfile, currentUser);
 
         if (principalName.equals(updatedProfile.getUser().getUsername())) {
 

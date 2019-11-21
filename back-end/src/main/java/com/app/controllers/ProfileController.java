@@ -2,6 +2,10 @@ package com.app.controllers;
 
 import com.app.entities.Profile;
 import com.app.services.ProfileService;
+import com.app.services.impl.ProfileIdentifierException;
+import com.app.services.impl.ProfileServiceImpl;
+import com.app.entities.Rating;
+import com.app.services.RatingService;
 import com.app.util.CustomException;
 import com.app.validators.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +18,26 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
 @CrossOrigin
 public class ProfileController {
 
-   private ProfileService profileService;
-   private ValidationErrorService validationErrorService;
+    private ProfileService profileService;
+    private ValidationErrorService validationErrorService;
+    private RatingService ratingService;
 
-   @Autowired
-   public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService) {
-      this.profileService = profileService;
-      this.validationErrorService = validationErrorService;
-   }
+    @Autowired
+    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService, RatingService ratingService) {
+        this.profileService = profileService;
+        this.validationErrorService = validationErrorService;
+        this.ratingService = ratingService;
+    }
 
     @GetMapping("/{profileId}")
     public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
@@ -60,4 +70,9 @@ public class ProfileController {
          e.getMessage();
       }
    }
+
+    @GetMapping("/test")
+    public String getTestById()  {
+        return ratingService.addAchievement(43L);
+    }
 }
