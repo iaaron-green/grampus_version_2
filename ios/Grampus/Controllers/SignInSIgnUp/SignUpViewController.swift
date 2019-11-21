@@ -79,11 +79,18 @@ class SignUpViewController: RootViewController {
     
     @IBAction func SignUpButton(_ sender: UIButton) {
         
+        self.dismissKeyboard()
+
         if userNameValidation(userName: userNameTextField), emailValidation(email: emailTextField), passwordValidation(password: passwordTextField) {
             //Networking
             network.signUp(email: emailTextField.text!, password: passwordTextField.text!, fullName: userNameTextField.text!) { (success, error) in
                 if success {
-                    self.dismissKeyboard()
+                    let userInformation = [
+                        "email" : self.emailTextField.text,
+                        "password": self.passwordTextField.text
+                    ]
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "userInformation"), object: nil, userInfo: userInformation)
+    
                     SVProgressHUD.showSuccess(withStatus: "Registration success. Check your email to verify your account")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                         self.dismiss(animated: true, completion: nil)
@@ -91,6 +98,7 @@ class SignUpViewController: RootViewController {
                         //                    self.network.signIn(username: self.emailTextField.text!, password: self.passwordTextField.text!) { (true) in
                         //                        self.performSegue(withIdentifier: "goToProfile", sender: self)
                         //                    }
+                        
                     }
                 } else if (error?.contains("400"))! {
                     SVProgressHUD.showError(withStatus: "This email address already exists, please enter another email address")

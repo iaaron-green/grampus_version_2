@@ -150,8 +150,51 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
     {
-        handleProfilePicker()
+        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Gallery", style: .default, handler: { _ in
+            self.openGallery()
+        }))
+
+        alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
+            self.openCamera()
+        }))
+
+        alert.addAction(UIAlertAction.init(title: "Cancel", style: .destructive, handler: nil))
+
+        self.present(alert, animated: true, completion: nil)
+        //handleProfilePicker()
         
+    }
+    
+    func openCamera()
+    {
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = UIImagePickerController.SourceType.camera
+            imagePicker.allowsEditing = true
+            self.present(imagePicker, animated: true, completion: nil)
+        }
+        else
+        {
+            SVProgressHUD.showError(withStatus: "You don't have permission to access camera")
+        }
+    }
+    
+     func openGallery()
+    {
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.allowsEditing = true
+            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+            self.present(imagePicker, animated: true, completion: nil)
+        }
+        else
+        {
+            SVProgressHUD.showError(withStatus: "You don't have permission to access gallery")
+
+        }
     }
     
     func handleProfilePicker() {
@@ -244,6 +287,8 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 let user = json["user"] as! NSDictionary
                 //ACHIEVEMENTS FIX!
                 self.achievements = json["achievements"] as? [String: Int]
+                print(json["achievements"]!)
+                print(self.achievements)
                 self.fullName = user["fullName"] as? String ?? "Full name"
                 self.profession = user["jobTitle"] as? String ?? "Job Title"
                 self.email = user["username"] as? String ?? "Email"
@@ -258,6 +303,15 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     self.skills = "no skills"
                 }
                 self.profilePicture = json["profilePicture"] as? String ?? ""
+                
+//                self.bestLooker = achievements?["BEST_LOOKER"] as? Int
+//                self.superWorker = achievements?["SUPER_WORKER"] as? Int
+//                self.extrovert = achievements?["EXTROVERT"] as? Int
+//                self.untidy = achievements?["UNTIDY"] as? Int
+//                self.deadLiner = achievements?["DEADLINER"] as? Int
+//                self.introvert = achievements?["INTROVERT"] as? Int
+                
+                
                 if let unwrappedbestLooker = self.bestLooker {
                     self.bestLooker = unwrappedbestLooker
                 } else {
@@ -303,14 +357,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 print("Error")
             }
         }
-        
-        //                    self.bestLooker = achievements["best_looker"] as? Int
-        //                    self.superWorker = achievements["super_worker"] as? Int
-        //                    self.extrovert = achievements["extrovert"] as? Int
-        //                    self.untidy = achievements["untidy"] as? Int
-        //                    self.deadLiner = achievements["deadliner"] as? Int
-        //                    self.introvert = achievements["introvert"] as? Int
-        
     }
     
     
@@ -435,7 +481,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     }
                     self.tableView.reloadData()
                 } else {
-                    //////ALERT!!
+                    SVProgressHUD.showError(withStatus: "Error updating information!")
                 }
             }
             self.tableView.reloadData()
@@ -471,7 +517,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     }
                     self.tableView.reloadData()
                 } else {
-                    //////ALERT!!
+                    SVProgressHUD.showError(withStatus: "Error updating skills!")
                 }
             }
             

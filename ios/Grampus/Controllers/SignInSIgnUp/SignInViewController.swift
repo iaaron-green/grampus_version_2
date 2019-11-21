@@ -31,6 +31,8 @@ class SignInViewController: RootViewController {
         userNameTextField.delegate = self
         passwordTextField.delegate = self
         
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTextfields), name: NSNotification.Name(rawValue: "userInformation"), object: nil)
+        
         SetUpOutlets()
         dismissKeyboardOnTap()
     }
@@ -45,10 +47,18 @@ class SignInViewController: RootViewController {
         removeNotifications()
     }
     
+    @objc func updateTextfields(notification: NSNotification) {
+        if let email = notification.userInfo?["email"] as? String, let password = notification.userInfo?["password"] as? String {
+            userNameTextField.text = email
+            passwordTextField.text = password
+        }
+    }
+    
     
     // MARK: - Actions
     @IBAction func SignInButton(_ sender: UIButton) {
         
+        dismissKeyboard()
         if emailValidation(email: userNameTextField), passwordValidation(password: passwordTextField) {
             
             SVProgressHUD.show()
