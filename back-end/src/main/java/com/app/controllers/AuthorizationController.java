@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import java.util.Optional;
@@ -45,8 +46,6 @@ public class AuthorizationController {
    private JwtTokenProvider tokenProvider;
    private AuthenticationManager authenticationManager;
    private ProfileService profileService;
-   private long id;
-   private long activCode;
 
    @Autowired
    private JavaMailSender emailSender;
@@ -100,10 +99,10 @@ public class AuthorizationController {
       ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
       if(errorMap != null) return errorMap;
 
-//      if(userRepository.findByUsername(user.getUsername()) != null)
-//      {
-//         return new ResponseEntity<>(HttpStatus.LOCKED);
-//      }
+      if(userRepository.findByUsername(user.getUsername()) != null)
+      {
+         return new ResponseEntity<>(HttpStatus.LOCKED);
+      }
       user.setActivationCode(UUID.randomUUID().toString());
 
       User newUser = userService.saveUser(user);
@@ -121,7 +120,7 @@ public class AuthorizationController {
       String htmlMsg = "<h3>Grampus</h3>"
               +"<img src='https://i.ibb.co/yNsKQ53/image.png'>" +
               "<p>You're profile is register! Thank you.<p>" +
-               "To activate you're profile visit next link: http://localhost:8081/activate/"+ newUser.getActivationCode();
+               "To activate you're profile visit next link: http://localhost:8081/api/users/activate/"+ newUser.getActivationCode();
 
       message.setContent(htmlMsg, "text/html");
 
@@ -134,5 +133,10 @@ public class AuthorizationController {
       return new ResponseEntity<>(newUser, HttpStatus.CREATED);
    }
 
+   @GetMapping("/activate/{code}")
+   public String activate(@PathVariable String code) {
 
+   userService.activateUser(code);
+      return "<img style='width:100%' 'height:100%' 'text-align: center' src='https://cdn1.savepice.ru/uploads/2019/11/21/bcadc0172fce5e6a398bb4edcdf8bf7a-full.jpg'>";
+   }
 }
