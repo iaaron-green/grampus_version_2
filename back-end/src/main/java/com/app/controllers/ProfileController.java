@@ -20,9 +20,6 @@ import java.security.Principal;
 @CrossOrigin
 public class ProfileController {
 
-//    @Value("${upload.path}")
-//    private String uploadPath;
-
    private ProfileService profileService;
    private ValidationErrorService validationErrorService;
 

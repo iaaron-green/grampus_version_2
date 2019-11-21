@@ -1,5 +1,6 @@
 package com.app.services.impl;
 
+import com.app.configtoken.Constants;
 import com.app.entities.Profile;
 import com.app.entities.User;
 import com.app.repository.ProfileRepository;
@@ -9,11 +10,10 @@ import com.app.util.CustomException;
 import com.app.util.Errors;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -78,28 +78,27 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException {
-        String ftpServer = "10.11.1.155";
-        String urlLink = "ftp://10.11.155/";
+    public void saveProfilePhoto(MultipartFile file, Long id) throws CustomException {
 
         Profile profile = profileRepository.findOneById(id);
         if (profile != null) {
             if (file != null) {
                 String contentType = file.getContentType();
                 String profilePictureType = contentType.substring(contentType.indexOf("/") + 1);
-                String pictureFullName = profile.getId() + "." + profilePictureType;
+                String pictureFullName = "img/" + profile.getId() + "." + profilePictureType;
                 FTPClient client = new FTPClient();
                 try {
-                    client.connect(ftpServer);
+                    client.connect(Constants.FTP_SERVER, Constants.FTP_PORT);
                     client.login("grampus", "password");
-                    client.storeFile(pictureFullName, file.getInputStream());
-                    client.logout();
+                    client.setFileType(FTPClient.BINARY_FILE_TYPE);
+                    if (client.storeFile(pictureFullName, file.getInputStream())) {
+                        client.logout();
+                        client.disconnect();
+                    }
                 } catch (IOException e) {
                     throw new CustomException("" + Errors.FTP_CONNECTION_ERROR);
-                } finally {
-                    client.disconnect();//
                 }
-                profile.setProfilePicture(urlLink + pictureFullName);
+                profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
                 saveProfile(profile);
             } else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_BAD);
         } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
