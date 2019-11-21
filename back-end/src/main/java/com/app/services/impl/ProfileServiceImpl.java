@@ -15,6 +15,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.app.enums.Mark.INTROVERT;
+
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
@@ -38,7 +40,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     public Optional<Profile> getProfileById(Long id) {
         Optional<Profile> profile = profileRepository.findById(id);
-        if (profile != null){
+        if (profile != null) {
 
         } else return null;
         return profile;
@@ -86,38 +88,18 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.findById(profileId).get();
     }
 
-//    @Override
-//    public Long count(String type) {
-//        EnumMap<Mark, Integer> achieve1 = new EnumMap<>(Mark.class);
-//        achieve1.put(UNTIDY, 1);
-//        achieve1.put(DEADLINER, 2);
-//        achieve1.put(INTROVERT, 2);
-//        achieve1.put(BEST_LOOKER, 2);
-//        achieve1.put(EXTROVERT, 2);
-//        achieve1.put(SUPER_WORKER, 2);
-//
-//        List<Profile> p = new ArrayList<>();
-//        long count = p.stream().filter(type::equals).count();
-//        return count;
-//
-//    }
-//
- public List<Rating> getAchives(){
-     List<Rating> ratings = ratingRepository.findAllRatingById();
-     return ratings;
-//     List<Rating> ratingUser = ratings.stream().filter((r) -> {
-//         ratings.contains(Mark.BEST_LOOKER);
-//     }).collect(Collectors.toList())}
- }
-//
-//    public static void main(String[] args) {
-//        List<String> collection = new ArrayList<>();
-//        collection.add("INTROVERT");
-//        collection.add("jdkhkdhkdh");
-//        long st = collection.stream().filter((s) -> s.contains("INTROVERT")).count();
-//      // st.forEach((s)->System.out.print(s));
-//        System.out.println(st);
-//    }
+    public List<Rating> getAchives() {
+        List<Rating> ratings = ratingRepository.findAllRatingById();
+        return ratings;
+    }
+
+
+    public List<Rating> getAllAchives() {
+        List<Rating> ratings = ratingRepository.groupAndCountRatingTypeById();
+        return ratings;
+    }
+
+
 
 }
 
