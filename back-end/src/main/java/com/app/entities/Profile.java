@@ -31,6 +31,7 @@ public class Profile {
 
    private String skills;
 
+
    @OneToOne
    private User user;
 
@@ -48,4 +49,5 @@ public class Profile {
       this.user = user;
       this.user.setJobTitle(JobTitle.getById((int) (Math.random() * (10 - 1))+1));
    }
+
 }
