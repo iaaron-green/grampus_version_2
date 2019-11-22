@@ -1,9 +1,7 @@
 package com.app.controllers;
 
 import com.app.DTO.DTOLikableProfile;
-import com.app.DTO.DTOProfile;
 import com.app.entities.Profile;
-import com.app.entities.Rating;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.util.CustomException;
@@ -18,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -40,7 +37,7 @@ public class ProfileController {
 
     @GetMapping("/{profileId}")
     public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
-        return new ResponseEntity<>(profileService.getProfileById(profileId), HttpStatus.OK);
+        return new ResponseEntity<>(profileService.getDTOProfileById(profileId), HttpStatus.OK);
     }
 
     @PostMapping("")

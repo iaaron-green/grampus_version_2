@@ -15,20 +15,18 @@ import java.util.Map;
 public class DTOProfile {
 
     private Long id;
-
     private String profilePicture;
-
     private Long likes;
-
     private Long dislikes;
-
     private String information;
-
     private String skills;
-
-    private User user;
-
-    private List<Rating> ratings;
-
+    private String email;
+    private String jobTitle;
+    private String fullName;
     private Map<String, Object> likesNumber;
+
+//    private User user;
+//    private List<Rating> ratings;
+
+
 }

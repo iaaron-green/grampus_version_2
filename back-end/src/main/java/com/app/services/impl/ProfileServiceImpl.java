@@ -61,8 +61,11 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setInformation(profileFromDB.getInformation());
             dtoProfile.setProfilePicture(profileFromDB.getProfilePicture());
             dtoProfile.setSkills(profileFromDB.getSkills());
-            dtoProfile.setUser(profileFromDB.getUser());
-            dtoProfile.setRatings(profileFromDB.getRatings());
+            dtoProfile.setEmail(profileFromDB.getUser().getUsername());
+            dtoProfile.setJobTitle(profileFromDB.getUser().getJobTitle());
+            dtoProfile.setFullName(profileFromDB.getUser().getFullName());
+//            dtoProfile.setUser(profileFromDB.getUser());
+//            dtoProfile.setRatings(profileFromDB.getRatings());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
             return dtoProfile;
         } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
