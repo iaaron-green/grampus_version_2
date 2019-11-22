@@ -1,30 +1,21 @@
 package com.app.repository;
 
 import com.app.entities.Profile;
-import com.app.entities.Rating;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Repository
-public interface ProfileRepository extends CrudRepository<Profile, Long> {
+public interface ProfileRepository extends JpaRepository<Profile, Long> {
     Optional<Profile> findById(Long profileId);
 
     Profile findOneById(Long profileId);
 
-   @Override
-   Iterable<Profile> findAll();
+    List<Profile> findAll();
 
-
-//   Profile updateById(Long profileId);
-
-//   Profile findProfileByUserName(String );
-
-   Profile findProfileById(Long id);
+    Profile findProfileById(Long id);
 
 
 }

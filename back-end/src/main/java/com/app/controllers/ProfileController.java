@@ -1,10 +1,8 @@
 package com.app.controllers;
 
 import com.app.entities.Profile;
-import com.app.services.ProfileService;
-import com.app.services.impl.ProfileIdentifierException;
-import com.app.services.impl.ProfileServiceImpl;
 import com.app.entities.Rating;
+import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.util.CustomException;
 import com.app.validators.ValidationErrorService;
@@ -18,10 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -50,6 +44,17 @@ public class ProfileController {
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
+    @PostMapping("/{profileId}/like")
+    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody Rating rating,
+                                                 BindingResult result, @PathVariable Long profileId, Principal principal) {
+        ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
+        if (errorMap != null) return errorMap;
+
+        Rating addRating = ratingService.addLike(profileId, rating, principal.getName());
+
+        return new ResponseEntity<>(addRating, HttpStatus.CREATED);
+    }
+
     @PostMapping("")
     public ResponseEntity<?> updateProfileById(@Valid @RequestBody Profile profileEntity, BindingResult result,
                                                Principal principal) {
@@ -70,6 +75,12 @@ public class ProfileController {
          e.getMessage();
       }
    }
+
+    @GetMapping("/all")
+    public Iterable<Profile> getAllProfiles() {
+
+        return  profileService.getAllProfiles();
+    }
 
     @GetMapping("/test")
     public String getTestById()  {

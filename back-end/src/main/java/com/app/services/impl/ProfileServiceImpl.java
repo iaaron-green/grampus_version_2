@@ -2,13 +2,11 @@ package com.app.services.impl;
 
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
-import com.app.entities.Rating;
 import com.app.entities.User;
-import com.app.enums.Mark;
 import com.app.repository.ProfileRepository;
-import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
+import com.app.services.RatingService;
 import com.app.util.CustomException;
 import com.app.util.Errors;
 import org.apache.commons.net.ftp.FTPClient;
@@ -16,10 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -28,13 +25,13 @@ public class ProfileServiceImpl implements ProfileService {
 
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
-    private RatingRepository ratingRepository;
+    private RatingService ratingService;
 
     @Autowired
-    public ProfileServiceImpl(ProfileRepository profileRepository, UserRepository userRepository, RatingRepository ratingRepository) {
+    public ProfileServiceImpl(ProfileRepository profileRepository, UserRepository userRepository, RatingService ratingService) {
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
-        this.ratingRepository = ratingRepository;
+        this.ratingService = ratingService;
     }
 
     @Override
@@ -103,5 +100,10 @@ public class ProfileServiceImpl implements ProfileService {
                 saveProfile(profile);
             } else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_BAD);
         } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+    }
+
+    public List<Profile> getAllProfiles() {
+
+        return profileRepository.findAll();
     }
 }

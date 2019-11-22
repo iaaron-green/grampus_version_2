@@ -1,6 +1,5 @@
 package com.app.controllers;
 
-
 import com.app.configtoken.JwtTokenProvider;
 import com.app.entities.Profile;
 import com.app.entities.User;

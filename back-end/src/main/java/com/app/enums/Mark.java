@@ -1,9 +1,5 @@
 package com.app.enums;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 public enum  Mark implements CharSequence {
     UNTIDY, DEADLINER, INTROVERT, BEST_LOOKER, SUPER_WORKER, EXTROVERT;
 
