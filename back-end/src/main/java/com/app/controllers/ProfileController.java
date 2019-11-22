@@ -46,6 +46,28 @@ public class ProfileController {
         return new ResponseEntity<>(profileService.getDTOProfileById(profileId), HttpStatus.OK);
     }
 
+    @PostMapping("/{profileId}/like")
+    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody Rating rating,
+                                              BindingResult result, @PathVariable Long profileId, Principal principal) {
+        ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
+        if (errorMap != null) return errorMap;
+
+        Rating addRating = ratingService.addLike(profileId, rating, principal.getName());
+
+        return new ResponseEntity<>(addRating, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{profileId}/dislike")
+    public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody Rating rating,
+                                                 BindingResult result, @PathVariable Long profileId, Principal principal) {
+        ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
+        if (errorMap != null) return errorMap;
+
+        Rating addRating = ratingService.addDislike(profileId, rating, principal.getName());
+
+        return new ResponseEntity<>(addRating, HttpStatus.CREATED);
+    }
+
     @PostMapping("")
     public ResponseEntity<?> updateProfileById(@Valid @RequestBody Profile profileEntity, BindingResult result,
                                                Principal principal) {
