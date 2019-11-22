@@ -29,23 +29,24 @@ public class RatingServiceImpl implements RatingService {
             Long profileLike = profile.getLikes();
             profile.setLikes(++profileLike);
             updatedRating.setRatingSourceUsername(userName);
-            profile.setAchievements(getAndCountLikesByProfileId(profileId));
             profileRepository.save(profile);
         }
         return ratingRepository.save(updatedRating);
     }
 
-//    private boolean checkForLikable(String ratingType, String userName, Long id) {
-//
-//        List<String> profileLikes = ratingRepository.getProfileRatingTypes(userName, id);
-//
-//        if (!profileLikes.isEmpty()) {
-//
-//            return !profileLikes.contains(ratingType);
-//        }
-//
-//        else return true;
-//    }
+    public Rating addDislike(Long profileId, Rating updatedRating, String userName){
+
+        Profile profile = profileRepository.findOneById(profileId);
+        updatedRating.setProfileRating(profile);
+
+        if (!userName.equals(profile.getUser().getUsername())) {
+            Long profileDislike = profile.getDislikes();
+            profile.setDislikes(++profileDislike);
+            updatedRating.setRatingSourceUsername(userName);
+            profileRepository.save(profile);
+        }
+        return ratingRepository.save(updatedRating);
+    }
 
     @Override
     public String getAndCountLikesByProfileId(Long id) {

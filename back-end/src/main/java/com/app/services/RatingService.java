@@ -6,6 +6,7 @@ public interface RatingService  {
 
     Rating addLike(Long profileId, Rating updatedRating, String userName);
 
-    String getAndCountLikesByProfileId(Long id);
+    Rating addDislike(Long profileId, Rating updatedRating, String userName);
 
+    String getAndCountLikesByProfileId(Long id);
 }

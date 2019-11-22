@@ -13,6 +13,7 @@ import com.app.util.Errors;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -118,13 +119,13 @@ public class ProfileServiceImpl implements ProfileService {
 
         profileRepository.findAll().iterator()
                 .forEachRemaining(profile -> {
-                    if (profile.getRatings().isEmpty() && !profile.equals(currentProfile)) {
+                    if (CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
                         getDTOLikableProfile(DTOLikableProfiles, profile, true);
                         return;
                     } else if (isProfileRatingIncludeLikeFromCurrentUser(currentProfile, profile)) {
                         getDTOLikableProfile(DTOLikableProfiles, profile, false);
                         return;
-                    } else if (!profile.getRatings().isEmpty() && !profile.equals(currentProfile)) {
+                    } else if (!CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
                         getDTOLikableProfile(DTOLikableProfiles, profile, true);
                     }
                 });
@@ -139,13 +140,10 @@ public class ProfileServiceImpl implements ProfileService {
                 .jobTitle(profile.getUser().getJobTitle())
                 .isAbleToLike(b)
                 .build());
-        for (DTOLikableProfile d: DTOLikableProfiles) {
-            System.out.println(d.getPicture());
-        }
     }
 
     private boolean isProfileRatingIncludeLikeFromCurrentUser(Profile currentProfile, Profile profile) {
-        return !profile.getRatings().isEmpty() && !profile.equals(currentProfile) &&
+        return !CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile) &&
                 profile.getRatings().stream()
                         .anyMatch(rating -> currentProfile.getUser().getUsername().equals(rating
                                 .getRatingSourceUsername()));
