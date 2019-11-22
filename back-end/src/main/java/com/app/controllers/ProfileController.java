@@ -37,43 +37,10 @@ public class ProfileController {
         this.ratingService = ratingService;
     }
 
-//    @GetMapping("/{profileId}")
-//    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
-//        Profile profile = null;
-//        try {
-//            profile = profileService.getProfileById(profileId);
-//        } catch (CustomException e) {
-//            e.getMessage();
-//        }
-//        return new ResponseEntity<>(profile, HttpStatus.OK);
-//    }
-
     @GetMapping("/{profileId}")
-    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
-
-        return new ResponseEntity<>(profileService.getDTOProfileById(profileId), HttpStatus.OK);
-    }
-
-    @PostMapping("/{profileId}/like")
-    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody Rating rating,
-                                              BindingResult result, @PathVariable Long profileId, Principal principal) {
-        ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
-        if (errorMap != null) return errorMap;
-
-        Rating addRating = ratingService.addLike(profileId, rating, principal.getName());
-
-        return new ResponseEntity<>(addRating, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/{profileId}/dislike")
-    public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody Rating rating,
-                                              BindingResult result, @PathVariable Long profileId, Principal principal) {
-        ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
-        if (errorMap != null) return errorMap;
-
-        Rating addRating = ratingService.addDislike(profileId, rating, principal.getName());
-
-        return new ResponseEntity<>(addRating, HttpStatus.CREATED);
+    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
+        Optional<Profile> profile = profileService.getProfileById(profileId);
+        return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -105,9 +72,4 @@ public class ProfileController {
                         Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
                 profileService.getAllProfilesForLike(principal.getName());
     }
-
-//    @GetMapping("/test")
-//    public String getTestById()  {
-//        return ratingService.addAchievement(43L);
-//    }
 }
