@@ -23,7 +23,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     List<Rating> groupAndCountRatingTypeById();
 
     @Query(
-            value = "SELECT COUNT(rating_type) FROM grampus_db.ratings WHERE profile_id = ? AND rating_type = ?",
+            value = "SELECT COUNT(rating_type) FROM test_db.ratings WHERE profile_id = ? AND rating_type = ?",
             nativeQuery = true)
     Long countRatingType(Long id, String ratingType);
 

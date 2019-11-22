@@ -1,5 +1,6 @@
 package com.app.services;
 
+import com.app.DTO.DTOLikableProfile;
 import com.app.entities.Profile;
 import com.app.util.CustomException;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,9 @@ public interface ProfileService {
 
     void saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException;
 
-    List<Profile> getAllProfiles() ;
+    List<Profile> getAllProfiles();
+
+    List<DTOLikableProfile> getAllProfilesForLike(String principalName);
 
 
 }

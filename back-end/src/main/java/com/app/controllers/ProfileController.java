@@ -1,5 +1,6 @@
 package com.app.controllers;
 
+import com.app.DTO.DTOLikableProfile;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.services.ProfileService;
@@ -16,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -77,13 +80,16 @@ public class ProfileController {
    }
 
     @GetMapping("/all")
-    public Iterable<Profile> getAllProfiles() {
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal) {
 
-        return  profileService.getAllProfiles();
+        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName()).stream()
+                .filter(DTOLikableProfile ->
+                        Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
+                profileService.getAllProfilesForLike(principal.getName());
     }
 
-    @GetMapping("/test")
-    public String getTestById()  {
-        return ratingService.addAchievement(43L);
-    }
+//    @GetMapping("/test")
+//    public String getTestById()  {
+//        return ratingService.addAchievement(43L);
+//    }
 }

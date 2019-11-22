@@ -1,5 +1,6 @@
 package com.app.services.impl;
 
+import com.app.DTO.DTOLikableProfile;
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
 import com.app.entities.User;
@@ -105,5 +106,48 @@ public class ProfileServiceImpl implements ProfileService {
     public List<Profile> getAllProfiles() {
 
         return profileRepository.findAll();
+    }
+
+    public List<DTOLikableProfile> getAllProfilesForLike(String principalName) {
+
+        User currentUser = userRepository.findByUsername(principalName);
+
+        Profile currentProfile = profileRepository.findOneById(currentUser.getId());
+
+        List<DTOLikableProfile> DTOLikableProfiles = new ArrayList<>();
+
+        profileRepository.findAll().iterator()
+                .forEachRemaining(profile -> {
+                    if (profile.getRatings().isEmpty() && !profile.equals(currentProfile)) {
+                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
+                        return;
+                    } else if (isProfileRatingIncludeLikeFromCurrentUser(currentProfile, profile)) {
+                        getDTOLikableProfile(DTOLikableProfiles, profile, false);
+                        return;
+                    } else if (!profile.getRatings().isEmpty() && !profile.equals(currentProfile)) {
+                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
+                    }
+                });
+        return DTOLikableProfiles;
+    }
+
+    private void getDTOLikableProfile(List<DTOLikableProfile> DTOLikableProfiles, Profile profile, boolean b) {
+        DTOLikableProfiles.add(DTOLikableProfile.builder()
+                .profileId(profile.getId())
+                .picture(profile.getProfilePicture())
+                .fullName(profile.getUser().getFullName())
+                .jobTitle(profile.getUser().getJobTitle())
+                .isAbleToLike(b)
+                .build());
+        for (DTOLikableProfile d: DTOLikableProfiles) {
+            System.out.println(d.getPicture());
+        }
+    }
+
+    private boolean isProfileRatingIncludeLikeFromCurrentUser(Profile currentProfile, Profile profile) {
+        return !profile.getRatings().isEmpty() && !profile.equals(currentProfile) &&
+                profile.getRatings().stream()
+                        .anyMatch(rating -> currentProfile.getUser().getUsername().equals(rating
+                                .getRatingSourceUsername()));
     }
 }

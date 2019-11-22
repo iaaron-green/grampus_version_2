@@ -25,36 +25,36 @@ public class RatingServiceImpl implements RatingService {
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
 
-        if (!userName.equals(profile.getUser().getUsername()) && checkForLikable(updatedRating.getRatingType(), userName, profile.getId())) {
-            Long profileDislike = profile.getLikes();
-            profile.setDislikes(++profileDislike);
+        if (!userName.equals(profile.getUser().getUsername())) {
+            Long profileLike = profile.getLikes();
+            profile.setLikes(++profileLike);
             updatedRating.setRatingSourceUsername(userName);
-
+            profile.setAchievements(getAndCountLikesByProfileId(profileId));
+            profileRepository.save(profile);
         }
-
         return ratingRepository.save(updatedRating);
     }
 
-    private boolean checkForLikable(String ratingType, String userName, Long id) {
-
-        List<String> profileLikes = ratingRepository.getProfileRatingTypes(userName, id);
-
-        if (!profileLikes.isEmpty()) {
-
-            return !profileLikes.contains(ratingType);
-        }
-
-        else return true;
-    }
+//    private boolean checkForLikable(String ratingType, String userName, Long id) {
+//
+//        List<String> profileLikes = ratingRepository.getProfileRatingTypes(userName, id);
+//
+//        if (!profileLikes.isEmpty()) {
+//
+//            return !profileLikes.contains(ratingType);
+//        }
+//
+//        else return true;
+//    }
 
     @Override
-    public String addAchievement(Long id) {
+    public String getAndCountLikesByProfileId(Long id) {
 
-        Map<String, Object> achievments = new HashMap<>();
-        List<Mark> positiveRating = Arrays.asList(Mark.values());
+        Map<String, Object> mapOfLikes = new HashMap<>();
+        List<Mark> listOfMarks = Arrays.asList(Mark.values());
 
-        positiveRating.forEach(mark -> achievments.put(mark.toString(), ratingRepository.countRatingType(id, mark.toString())));
+        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString(), ratingRepository.countRatingType(id, mark.toString())));
 
-        return new Gson().toJson(achievments);
+        return new Gson().toJson(mapOfLikes);
     }
 }
