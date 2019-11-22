@@ -1,13 +1,14 @@
 package com.app.controllers;
 
 import com.app.DTO.DTOLikableProfile;
-import com.app.DTO.DTOProfile;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
+import com.app.enums.Mark;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.util.CustomException;
 import com.app.validators.ValidationErrorService;
+import com.app.web.model.AchievementData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -72,4 +74,26 @@ public class ProfileController {
                         Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
                 profileService.getAllProfilesForLike(principal.getName());
     }
+
+    @GetMapping("/achieve")
+    public ResponseEntity<?> getAllAchieve() {
+        List<Rating> profile = ratingService.getAllAchieves();
+        return new ResponseEntity<>(profile, HttpStatus.OK);
+    }
+
+//    @GetMapping("/test")
+//    public String getTestById() {
+//        return ratingService.addAchievement(3L);
+//    }
+
+    @GetMapping("/catalogue")
+    public Map<Long, Map<String, Long>> getAllInfo() {
+        return ratingService.addInfoAchievement();
+    }
+
+    @GetMapping("/userRating/{markType}")
+    public List<AchievementData> getUserRating(@PathVariable Mark markType) {
+        return ratingService.getUserRatingByType(markType);
+    }
+
 }

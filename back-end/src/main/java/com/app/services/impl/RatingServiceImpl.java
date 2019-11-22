@@ -1,12 +1,13 @@
 package com.app.services.impl;
 
-import com.app.entities.Profile;
 import com.app.entities.Rating;
+import com.app.entities.Profile;
 import com.app.enums.Mark;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
+import com.app.repository.UserRepository;
 import com.app.services.RatingService;
-import com.google.gson.Gson;
+import com.app.web.model.AchievementData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +17,11 @@ import java.util.*;
 public class RatingServiceImpl implements RatingService {
 
     @Autowired
-    private RatingRepository ratingRepository;
+    RatingRepository ratingRepository;
     @Autowired
-    private ProfileRepository profileRepository;
+    ProfileRepository profileRepository;
+    @Autowired
+    UserRepository userRepository;
 
     public Rating addLike(Long profileId, Rating updatedRating, String userName){
 
@@ -57,5 +60,45 @@ public class RatingServiceImpl implements RatingService {
         listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString(), ratingRepository.countRatingType(id, mark.toString())));
 
         return mapOfLikes;
+
     }
+
+    public List<Rating> getAllAchieves() {
+        return ratingRepository.findAllRatingById();
+    }
+
+    @Override
+    public Map<Long, Map<String, Long>> addInfoAchievement() {
+
+        Map<Long, Map<String, Long>> userIdAndAchievments = new HashMap<>();
+        List<Mark> positiveRating = Arrays.asList(Mark.values());
+
+        Set<Long> userId = userRepository.getAllId();
+
+        userId.forEach(user -> {
+            Map<String, Long> achievements = new HashMap<>();
+            positiveRating.forEach(mark -> achievements.put(mark.toString(), ratingRepository.countRatingType(user, mark.toString())));
+            userIdAndAchievments.put(user, achievements);
+        });
+
+        String s = userIdAndAchievments.toString();
+        System.out.println(s);
+
+        return userIdAndAchievments;
+    }
+
+    @Override
+    public List<AchievementData> getUserRatingByType(Mark markType) {
+        List<AchievementData> achievementData = new ArrayList<>();
+        Set<Long> userIds = userRepository.getAllId();
+        userIds.forEach(userId -> {
+            AchievementData achievement = new AchievementData();
+            achievement.setUserId(userId);
+            achievement.setCountLike(ratingRepository.countRatingType(userId, markType.toString()));
+            achievementData.add(achievement);
+        });
+        return achievementData;
+    }
+
+
 }
