@@ -1,5 +1,6 @@
 package com.app.entities;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,12 +26,9 @@ public class Profile {
 
    private Long dislikes;
 
-   private String achievements;
-
    private String information;
 
    private String skills;
-
 
    @OneToOne
    private User user;

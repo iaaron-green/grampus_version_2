@@ -1,6 +1,7 @@
 package com.app.services.impl;
 
 import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOProfile;
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
 import com.app.entities.User;
@@ -46,6 +47,24 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = profileRepository.findProfileById(id);
         if (profile != null) {
             return profile;
+        } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+    }
+
+    @Override
+    public DTOProfile getDTOProfileById(Long id) throws CustomException {
+        Profile profileFromDB = profileRepository.findProfileById(id);
+        if (profileFromDB != null) {
+            DTOProfile dtoProfile = new DTOProfile();
+            dtoProfile.setId(profileFromDB.getId());
+            dtoProfile.setDislikes(profileFromDB.getDislikes());
+            dtoProfile.setLikes(profileFromDB.getLikes());
+            dtoProfile.setInformation(profileFromDB.getInformation());
+            dtoProfile.setProfilePicture(profileFromDB.getProfilePicture());
+            dtoProfile.setSkills(profileFromDB.getSkills());
+            dtoProfile.setUser(profileFromDB.getUser());
+            dtoProfile.setRatings(profileFromDB.getRatings());
+            dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
+            return dtoProfile;
         } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
     }
 

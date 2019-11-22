@@ -49,13 +49,13 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public String getAndCountLikesByProfileId(Long id) {
+    public Map<String, Object> getAndCountLikesByProfileId(Long id) {
 
         Map<String, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
 
         listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString(), ratingRepository.countRatingType(id, mark.toString())));
 
-        return new Gson().toJson(mapOfLikes);
+        return mapOfLikes;
     }
 }

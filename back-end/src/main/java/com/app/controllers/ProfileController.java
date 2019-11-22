@@ -1,6 +1,7 @@
 package com.app.controllers;
 
 import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOProfile;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.services.ProfileService;
@@ -36,15 +37,21 @@ public class ProfileController {
         this.ratingService = ratingService;
     }
 
+//    @GetMapping("/{profileId}")
+//    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
+//        Profile profile = null;
+//        try {
+//            profile = profileService.getProfileById(profileId);
+//        } catch (CustomException e) {
+//            e.getMessage();
+//        }
+//        return new ResponseEntity<>(profile, HttpStatus.OK);
+//    }
+
     @GetMapping("/{profileId}")
-    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
-        Profile profile = null;
-        try {
-            profile = profileService.getProfileById(profileId);
-        } catch (CustomException e) {
-            e.getMessage();
-        }
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
+
+        return new ResponseEntity<>(profileService.getDTOProfileById(profileId), HttpStatus.OK);
     }
 
     @PostMapping("/{profileId}/like")

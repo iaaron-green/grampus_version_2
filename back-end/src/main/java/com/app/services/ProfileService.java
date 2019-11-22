@@ -1,6 +1,7 @@
 package com.app.services;
 
 import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOProfile;
 import com.app.entities.Profile;
 import com.app.util.CustomException;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ public interface ProfileService {
     <S extends Profile> S saveProfile(S entity);
 
     Profile getProfileById(Long id) throws CustomException;
+
+    DTOProfile getDTOProfileById(Long id) throws CustomException;
 
     Profile updateProfile(Profile updatedProfile, String principalName);
 
