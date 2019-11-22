@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -38,9 +39,8 @@ public class ProfileController {
     }
 
     @GetMapping("/{profileId}")
-    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
-        Optional<Profile> profile = profileService.getProfileById(profileId);
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
+        return new ResponseEntity<>(profileService.getProfileById(profileId), HttpStatus.OK);
     }
 
     @PostMapping("")
