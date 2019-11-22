@@ -76,7 +76,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         if storage.getProfileState() {
             userID = storage.getUserId()!
             fetchUser(userId: storage.getUserId()!)
+            profileImageView.isUserInteractionEnabled = true
         } else {
+            profileImageView.isUserInteractionEnabled = false
             infoAddButton.isEnabled = false
             skillsAddButton.isEnabled = false
             userID = storage.getSelectedUserIdProfile()!
@@ -92,7 +94,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         SVProgressHUD.setDefaultStyle(.dark)
         
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
-        profileImageView.isUserInteractionEnabled = true
         profileImageView.addGestureRecognizer(tapGestureRecognizer)
         
         screenSize = UIScreen.main.bounds
@@ -232,44 +233,44 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     }
     
     func mapAchievements() {
-        
-        if bestLooker! >= 1 {
-            let count = (bestLooker! / 25)
+        achievementsArray.removeAll()
+        if bestLooker! >= 5 {
+            let count = (bestLooker! / 5)
             let image = UIImage(named: "best_looker")
             let achive = Achievements(type: "best looker", count: count, image: image)
             achievementsArray.append(achive)
         }
         
-        if superWorker! >= 1 {
-            let count = (superWorker! / 25)
+        if superWorker! >= 5 {
+            let count = (superWorker! / 5)
             let image = UIImage(named: "super_worker")
             let achive = Achievements(type: "super_worker", count: count, image: image)
             achievementsArray.append(achive)
         }
         
-        if extrovert! >= 1 {
-            let count = (extrovert! / 25)
+        if extrovert! >= 5 {
+            let count = (extrovert! / 5)
             let image = UIImage(named: "extrovert")
             let achive = Achievements(type: "extrovert", count: count, image: image)
             achievementsArray.append(achive)
         }
         
-        if deadLiner! >= 1 {
-            let count = (deadLiner! / 25)
+        if deadLiner! >= 5 {
+            let count = (deadLiner! / 5)
             let image = UIImage(named: "deadliner")
             let achive = Achievements(type: "deadliner", count: count, image: image)
             achievementsArray.append(achive)
         }
         
-        if untidy! >= 1 {
-            let count = (untidy! / 25)
+        if untidy! >= 5 {
+            let count = (untidy! / 5)
             let image = UIImage(named: "untidy")
             let achive = Achievements(type: "untidy", count: count, image: image)
             achievementsArray.append(achive)
         }
         
-        if introvert! >= 1 {
-            let count = (introvert! / 25)
+        if introvert! >= 5 {
+            let count = (introvert! / 5)
             let image = UIImage(named: "introvert")
             let achive = Achievements(type: "introvert", count: count, image: image)
             achievementsArray.append(achive)
@@ -284,14 +285,11 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
             
             if let json = json {
-                let user = json["user"] as! NSDictionary
-                //ACHIEVEMENTS FIX!
-                self.achievements = json["achievements"] as? [String: Int]
-                print(json["achievements"]!)
-                print(self.achievements)
-                self.fullName = user["fullName"] as? String ?? "Full name"
-                self.profession = user["jobTitle"] as? String ?? "Job Title"
-                self.email = user["username"] as? String ?? "Email"
+                print(json)
+                //let user = json["user"] as! NSDictionary
+                self.fullName = json["fullName"] as? String ?? "Full name"
+                self.profession = json["jobTitle"] as? String ?? "Job Title"
+                self.email = json["email"] as? String ?? "Email"
                 self.likes = json["likes"] as? Int ?? 0
                 self.dislikes = json["dislikes"] as? Int ?? 0
                 self.information = json["information"] as? String
@@ -304,49 +302,19 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 }
                 self.profilePicture = json["profilePicture"] as? String ?? ""
                 
-//                self.bestLooker = achievements?["BEST_LOOKER"] as? Int
-//                self.superWorker = achievements?["SUPER_WORKER"] as? Int
-//                self.extrovert = achievements?["EXTROVERT"] as? Int
-//                self.untidy = achievements?["UNTIDY"] as? Int
-//                self.deadLiner = achievements?["DEADLINER"] as? Int
-//                self.introvert = achievements?["INTROVERT"] as? Int
                 
-                
-                if let unwrappedbestLooker = self.bestLooker {
-                    self.bestLooker = unwrappedbestLooker
-                } else {
-                    self.bestLooker = 0
-                }
-                
-                if let unwrappedsuperWorker = self.superWorker {
-                    self.superWorker = unwrappedsuperWorker
-                } else {
-                    self.superWorker = 0
-                }
-                
-                if let unwrappedextrovert = self.extrovert {
-                    self.extrovert = unwrappedextrovert
-                } else {
-                    self.extrovert = 0
-                }
-                
-                if let unwrappeduntidy = self.untidy {
-                    self.untidy = unwrappeduntidy
-                } else {
-                    self.untidy = 0
-                }
-                
-                if let unwrappeddeadLiner = self.deadLiner {
-                    self.deadLiner = unwrappeddeadLiner
-                } else {
-                    self.deadLiner = 0
-                }
-                
-                if let unwrappedintrovert = self.introvert {
-                    self.introvert = unwrappedintrovert
-                } else {
-                    self.introvert = 0
-                }
+                //ACHIEVEMENTS FIX!
+                let achieves = json["likesNumber"] as? [String: Int]
+                self.achievements = achieves
+                //self.achievements = achieves?.convertToDictionary() as? [String : Int]
+                self.bestLooker = self.achievements?["BEST_LOOKER"]
+                self.superWorker = self.achievements?["SUPER_WORKER"]
+                self.extrovert = self.achievements?["EXTROVERT"]
+                self.untidy = self.achievements?["UNTIDY"]
+                self.deadLiner = self.achievements?["DEADLINER"]
+                self.introvert = self.achievements?["INTROVERT"]
+
+            
                 
                 self.setUpProfile(fullName: self.fullName!, profession: self.profession!, likes: self.likes!, dislikes: self.dislikes!, information: self.information!, skills: self.skills!, photo: self.profilePicture!)
                 self.setUpCharts()
@@ -359,68 +327,97 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         }
     }
     
+//    var achiev = ["bestLooker", "superWorker", "extrovert", "untidy", "deadLiner", "introvert"]
+//    var ints = [Double(self.bestLooker!), Double(self.superWorker!), Double(self.extrovert!), Double(self.untidy!), Double(self.deadLiner!), Double(self.introvert!)]
+//
+//    func setChart(dataPoints: [String], values: [Double]) {
+//        chartView.noDataText = "You need to provide data for the chart."
+//
+//        var dataEntries: [BarChartDataEntry] = []
+//
+//
+//        for i in 0..<dataPoints.count {
+//          let dataEntry = BarChartDataEntry(x: Double(i), y: Double(values[i]))
+//          dataEntries.append(dataEntry)
+//        }
+//
+//        let dkjlfdfd = Bar
+//
+//        let chartDataSet = BarChartDataSet(entries: dataEntries, label: "LABEL")
+//        let chartData = BarChartData(dataSet: chartDataSet)
+//        chartView.data = chartData
+//
+//    }
+//
+//    func setUpCharts() {
+//
+//
+//
+//    }
+    
+    
     
     
     func setUpCharts() {
-        
+
         chartView.chartDescription?.enabled = false
-        chartView.drawHoleEnabled = false
+        chartView.drawHoleEnabled = true
         chartView.rotationAngle = 0
-        chartView.rotationEnabled = false
-        chartView.isUserInteractionEnabled = false
+        chartView.rotationEnabled = true
+        chartView.isUserInteractionEnabled = true
         chartView.drawEntryLabelsEnabled = false
-        
+
+
         var bestLookerColor = UIColor.clear
         var superWorkerColor = UIColor.clear
         var extrovertColor = UIColor.clear
         var untidyColor = UIColor.clear
         var deadLinerColor = UIColor.clear
         var introvertColor = UIColor.clear
-        
+
         var entries: [PieChartDataEntry] = []
         var colorArray: [UIColor] = []
-        
+
         if self.bestLooker! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.bestLooker!), label: "Best looker"))
             bestLookerColor = UIColor.red
             colorArray.append(bestLookerColor)
         }
-        
+
         if self.superWorker! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.superWorker!), label: "Super worker"))
             superWorkerColor = UIColor.orange
             colorArray.append(superWorkerColor)
         }
-        
+
         if self.extrovert! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.extrovert!), label: "Extrovert"))
             extrovertColor = UIColor.purple
             colorArray.append(extrovertColor)
         }
-        
+
         if self.untidy! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.untidy!), label: "Untidy"))
             untidyColor = UIColor( red: CGFloat(0/255.0), green: CGFloat(110/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(0.5) )
             colorArray.append(untidyColor)
         }
-        
+
         if self.deadLiner! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.deadLiner!), label: "Deadliner"))
-            deadLinerColor = UIColor.green
+            deadLinerColor = UIColor.systemGreen
             colorArray.append(deadLinerColor)
         }
-        
+
         if self.introvert! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.introvert!), label: "Introvert"))
             introvertColor = UIColor.blue
             colorArray.append(introvertColor)
         }
-        
+
         let dataSet = PieChartDataSet(entries: entries, label: "")
         dataSet.colors = colorArray
         dataSet.drawValuesEnabled = true
         chartView.data = PieChartData(dataSet: dataSet)
-        
     }
     
     func setUpProfile( fullName: String, profession: String, likes: Int, dislikes: Int, information: String, skills: String, photo: String) {
@@ -431,10 +428,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         profileDislikeLabel.text = "Dislikes: \(String(describing: dislikes))"
         profileInformationLabel.text = information
         profileSkillsLabel.text = skills
-//        DispatchQueue.main.async {
-//            let image = self.imageService.ConvertBase64StringToImage(imageBase64String: self.profilePicture!)
-//            self.profileImageView.image = image
-//        }
+
         DispatchQueue.global(qos: .userInteractive).async {
             self.imageService.getImage(withURL: self.profilePicture!) { (image) in
 
@@ -471,9 +465,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            self.network.editProfileText(key: "information", text: textField!.text!) { (success) in
+            self.network.editProfileText(key: "information", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
                 if success {
-                    if textField?.text != "" {
+                    if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
                         self.profileInformationLabel.text = textField?.text
                         SVProgressHUD.showSuccess(withStatus: "Done!")
                     } else {
@@ -507,9 +501,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            self.network.editProfileText(key: "skills", text: textField!.text!) { (success) in
+            self.network.editProfileText(key: "skills", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
                 if success {
-                    if textField?.text != "" {
+                    if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
                         self.profileSkillsLabel.text = textField?.text
                         SVProgressHUD.showSuccess(withStatus: "Done!")
                     } else {

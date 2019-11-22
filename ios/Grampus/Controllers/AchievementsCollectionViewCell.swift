@@ -16,7 +16,7 @@ class AchievementsCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        achievementsLabel.text = "1234"
+        achievementsLabel.text = ""
     }
     
 }

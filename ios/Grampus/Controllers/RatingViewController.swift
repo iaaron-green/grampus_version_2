@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 
-class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, SWRevealViewControllerDelegate {
+class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, SWRevealViewControllerDelegate, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Outlets
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -23,6 +23,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     // MARK: - Properties
     let network = NetworkService()
     let storage = StorageService()
+    let imageService = ImageService()
     var json = JSON()
     var filteredJson = [JSON]()
     
@@ -185,10 +186,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         }
     }
     
-}
-
-extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
         
@@ -205,47 +202,25 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
         var userNameToDisplay = ""
         var jobTitleToDisplay = ""
         var likeDislikeButtonState: Bool?
+        var profilePictureString = ""
         
         DispatchQueue.global(qos: .userInteractive).async {
-            
-            if let id = self.filteredJson[indexPath.row]["profileId"].int {
-                //                print(id)
-                
-            } else {
-                //                print("HERE WE GO AGAIN 1")
-            }
-            
-            if let userName = self.filteredJson[indexPath.row]["fullName"].string {
-                //                print(userName)
-                userNameToDisplay = userName
-            } else {
-                //                print("HERE WE GO AGAIN 2")
-            }
-            
-            if let jobTitle = self.filteredJson[indexPath.row]["jobTitle"].string {
-                jobTitleToDisplay = jobTitle
-            } else {
-                //                print("HERE WE GO AGAIN 3")
-            }
-            
-            if let profilePicture = self.filteredJson[indexPath.row]["picture"].string {
-                //                print(profilePicture)
-            } else {
-                //                print("HERE WE GO AGAIN 4")
-            }
-            
-            if let isAbleToLike = self.filteredJson[indexPath.row]["isAbleToLike"].bool {
-                //                print("IS ABLE TO LIKE -------------------------------")
-                //                print(isAbleToLike)
-                likeDislikeButtonState = isAbleToLike
-            } else {
-                //                print("HERE WE GO AGAIN 5")
-            }
+
+            userNameToDisplay = self.filteredJson[indexPath.row]["fullName"].string ?? ""
+            jobTitleToDisplay = self.filteredJson[indexPath.row]["jobTitle"].string ?? ""
+            profilePictureString = self.filteredJson[indexPath.row]["picture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
+            likeDislikeButtonState = self.filteredJson[indexPath.row]["isAbleToLike"].bool ?? false
             
             DispatchQueue.main.async {
                 cell.nameLabelCell.text = userNameToDisplay
                 cell.professionLabelCell.text = jobTitleToDisplay
-                                
+                self.imageService.getImage(withURL: profilePictureString) { (image) in
+                    if let image = image {
+                        cell.imageViewCell.image = image
+                    } else {
+                        cell.imageViewCell.image = UIImage(named: "deadliner")
+                    }
+                }
                 if likeDislikeButtonState! {
                     cell.likeButton.isEnabled = true
                     cell.dislikeButton.isEnabled = true
@@ -255,12 +230,12 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
                     cell.dislikeButton.isEnabled = false
                     cell.dislikeButton.tintColor = UIColor.gray
                 }
-                
+
                 cell.likeButton.tag = indexPath.row
                 cell.dislikeButton.tag = indexPath.row
                 cell.likeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
                 cell.dislikeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
-            }            
+            }
         }
         
         return cell
@@ -274,8 +249,6 @@ extension RatingViewController: UITableViewDelegate, UITableViewDataSource {
             storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)
         } else {
-            //            print("HERE WE GO AGAIN 1")
         }
     }
-    
 }

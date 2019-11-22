@@ -775,7 +775,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="90"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="OkW-hg-9PT">
+                                                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="OkW-hg-9PT">
                                                     <rect key="frame" x="10" y="5" width="394" height="80"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="1" minimumInteritemSpacing="1" id="RbU-hP-8TZ">
@@ -924,9 +924,9 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="m6T-zu-l5e" customClass="PieChartView" customModule="Charts">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="240"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="240" id="ooa-q0-aoj"/>
+                                                        <constraint firstAttribute="height" constant="300" id="ooa-q0-aoj"/>
                                                     </constraints>
                                                 </containerView>
                                             </subviews>
@@ -1285,7 +1285,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="0TQ-jf-PD9"/>
-        <segue reference="srK-fs-U8i"/>
+        <segue reference="na6-d2-zak"/>
         <segue reference="xAE-M7-WWY"/>
     </inferredMetricsTieBreakers>
 </document>

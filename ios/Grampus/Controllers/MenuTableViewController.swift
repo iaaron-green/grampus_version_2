@@ -52,9 +52,9 @@ class MenuTableViewController: UITableViewController {
     func fetchUserInformation(userId: String) {
         network.fetchUserInformation(userId: userId) { (json) in
             if let json = json {
-                let user = json["user"] as! NSDictionary
-                self.fullName = user["fullName"] as? String
-                self.email = user["username"] as? String
+                //let user = json["user"] as! NSDictionary
+                self.fullName = json["fullName"] as? String
+                self.email = json["email"] as? String
                 self.profilePicture = json["profilePicture"] as? String
                 
                 if let unwrappedFullName = self.fullNameLabel {
