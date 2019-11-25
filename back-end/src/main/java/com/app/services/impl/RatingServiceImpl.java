@@ -2,6 +2,7 @@ package com.app.services.impl;
 
 import com.app.entities.Rating;
 import com.app.entities.Profile;
+import com.app.entities.User;
 import com.app.enums.Mark;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
@@ -90,11 +91,13 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public List<AchievementData> getUserRatingByType(Mark markType) {
         List<AchievementData> achievementData = new ArrayList<>();
-        Set<Long> userIds = userRepository.getAllId();
-        userIds.forEach(userId -> {
+        Set<AchievementData> userData = userRepository.getUserData();
+        userData.stream().sorted().forEach(user -> {
             AchievementData achievement = new AchievementData();
-            achievement.setUserId(userId);
-            achievement.setCountLike(ratingRepository.countRatingType(userId, markType.toString()));
+            achievement.setProfilePhoto(user.getProfilePhoto());
+            achievement.setUserId(user.getUserId());
+            achievement.setUserName(user.getUserName());
+            achievement.setCountLike(ratingRepository.countRatingType(user.getUserId(), markType.toString()));
             achievementData.add(achievement);
         });
         return achievementData;
