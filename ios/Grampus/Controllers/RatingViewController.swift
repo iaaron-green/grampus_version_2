@@ -135,12 +135,14 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @IBAction func dislikeButtonAction(_ sender: Any) {
         storage.chooseLikeOrDislike(bool: false)
-        self.performSegue(withIdentifier: "ShowModalView", sender: self)
-        
-        self.definesPresentationContext = true
-        self.providesPresentationContextTransitionStyle = true
-        
-        self.overlayBlurredBackgroundView()
+        network.addLikeOrDislike(ratingType: "dislike", likeState: false)
+        fetchAllUsers()
+//        self.performSegue(withIdentifier: "ShowModalView", sender: self)
+//
+//        self.definesPresentationContext = true
+//        self.providesPresentationContextTransitionStyle = true
+//
+//        self.overlayBlurredBackgroundView()
     }
     
     func overlayBlurredBackgroundView() {
@@ -148,7 +150,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         let blurredBackgroundView = UIVisualEffectView()
         
         blurredBackgroundView.frame = view.frame
-        blurredBackgroundView.effect = UIBlurEffect(style: .regular)
+        blurredBackgroundView.effect = UIBlurEffect(style: .dark)
         
         view.addSubview(blurredBackgroundView)
         
@@ -180,9 +182,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         
         if let id = self.json[buttonRow]["profileId"].int {
             storage.saveSelectedUserId(selectedUserId: id)
-            
-        } else {
-                        print("HERE WE GO AGAIN 1")
         }
     }
     
@@ -218,7 +217,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
                     if let image = image {
                         cell.imageViewCell.image = image
                     } else {
-                        cell.imageViewCell.image = UIImage(named: "deadliner")
+                        cell.imageViewCell.image = UIImage(named: "red cross")
                     }
                 }
                 if likeDislikeButtonState! {

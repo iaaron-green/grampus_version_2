@@ -58,10 +58,11 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     var profilePicture: String?
     var bestLooker: Int?
     var superWorker: Int?
-    var untidy: Int?
+    var smartMind: Int?
     var deadLiner: Int?
-    var extrovert: Int?
-    var introvert: Int?
+    var motivator: Int?
+    var top1: Int?
+    var mentor: Int?
     var userID: String?
     
     var achievementsArray = [Achievements]()
@@ -248,9 +249,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             achievementsArray.append(achive)
         }
         
-        if extrovert! >= 5 {
-            let count = (extrovert! / 5)
-            let image = UIImage(named: "extrovert")
+        if smartMind! >= 5 {
+            let count = (smartMind! / 5)
+            let image = UIImage(named: "smart_mind")
             let achive = Achievements(type: "extrovert", count: count, image: image)
             achievementsArray.append(achive)
         }
@@ -262,17 +263,24 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             achievementsArray.append(achive)
         }
         
-        if untidy! >= 5 {
-            let count = (untidy! / 5)
-            let image = UIImage(named: "untidy")
-            let achive = Achievements(type: "untidy", count: count, image: image)
+        if motivator! >= 5 {
+            let count = (motivator! / 5)
+            let image = UIImage(named: "motivator")
+            let achive = Achievements(type: "motivator", count: count, image: image)
             achievementsArray.append(achive)
         }
         
-        if introvert! >= 5 {
-            let count = (introvert! / 5)
-            let image = UIImage(named: "introvert")
-            let achive = Achievements(type: "introvert", count: count, image: image)
+        if top1! >= 5 {
+            let count = (top1! / 5)
+            let image = UIImage(named: "top1")
+            let achive = Achievements(type: "top1", count: count, image: image)
+            achievementsArray.append(achive)
+        }
+        
+        if mentor! >= 5 {
+            let count = (top1! / 5)
+            let image = UIImage(named: "mentor")
+            let achive = Achievements(type: "mentor", count: count, image: image)
             achievementsArray.append(achive)
         }
         
@@ -307,12 +315,13 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 let achieves = json["likesNumber"] as? [String: Int]
                 self.achievements = achieves
                 //self.achievements = achieves?.convertToDictionary() as? [String : Int]
-                self.bestLooker = self.achievements?["BEST_LOOKER"]
-                self.superWorker = self.achievements?["SUPER_WORKER"]
-                self.extrovert = self.achievements?["EXTROVERT"]
-                self.untidy = self.achievements?["UNTIDY"]
-                self.deadLiner = self.achievements?["DEADLINER"]
-                self.introvert = self.achievements?["INTROVERT"]
+                self.bestLooker = self.achievements?["best_looker"]
+                self.superWorker = self.achievements?["super_worker"]
+                self.smartMind = self.achievements?["smart_mind"]
+                self.motivator = self.achievements?["motivator"]
+                self.deadLiner = self.achievements?["deadliner"]
+                self.top1 = self.achievements?["top1"]
+                self.mentor = self.achievements?["mentor"]
 
             
                 
@@ -390,14 +399,14 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             colorArray.append(superWorkerColor)
         }
 
-        if self.extrovert! != 0 {
-            entries.append(PieChartDataEntry(value: Double(self.extrovert!), label: "Extrovert"))
+        if self.smartMind! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.smartMind!), label: "Smart mind"))
             extrovertColor = UIColor.purple
             colorArray.append(extrovertColor)
         }
 
-        if self.untidy! != 0 {
-            entries.append(PieChartDataEntry(value: Double(self.untidy!), label: "Untidy"))
+        if self.motivator! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.motivator!), label: "Motivator"))
             untidyColor = UIColor( red: CGFloat(0/255.0), green: CGFloat(110/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(0.5) )
             colorArray.append(untidyColor)
         }
@@ -408,9 +417,15 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             colorArray.append(deadLinerColor)
         }
 
-        if self.introvert! != 0 {
-            entries.append(PieChartDataEntry(value: Double(self.introvert!), label: "Introvert"))
+        if self.top1! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.top1!), label: "TOP1"))
             introvertColor = UIColor.blue
+            colorArray.append(introvertColor)
+        }
+        
+        if self.mentor! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.mentor!), label: "mentor"))
+            introvertColor = UIColor.gray
             colorArray.append(introvertColor)
         }
 
@@ -438,7 +453,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                         self.tableView.reloadData()
 
                     } else {
-                        self.profileImageView.image = UIImage(named: "deadliner")
+                        self.profileImageView.image = UIImage(named: "red cross")
                     }
                 }
             }

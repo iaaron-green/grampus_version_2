@@ -36,17 +36,18 @@ class InitialViewController: UIViewController {
                         self.performSegue(withIdentifier: "goToSignIn", sender: self)
                     }
                 }
+                SVProgressHUD.dismiss()
             }
         } else {
             self.window = UIWindow(frame: UIScreen.main.bounds)
             let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let exampleViewController: SignInViewController = mainStoryboard.instantiateViewController(withIdentifier: "SignInViewController") as! SignInViewController
-            
+            SVProgressHUD.dismiss()
             self.window?.rootViewController = exampleViewController
             
             self.window?.makeKeyAndVisible()
+            
         }
-        SVProgressHUD.dismiss()
     }
 
 }

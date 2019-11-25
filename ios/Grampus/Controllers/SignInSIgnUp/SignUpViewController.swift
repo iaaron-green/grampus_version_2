@@ -83,7 +83,7 @@ class SignUpViewController: RootViewController {
 
         if userNameValidation(userName: userNameTextField), emailValidation(email: emailTextField), passwordValidation(password: passwordTextField) {
             //Networking
-            network.signUp(email: emailTextField.text!, password: passwordTextField.text!, fullName: userNameTextField.text!) { (success, error) in
+            network.signUp(email: emailTextField.text!.trimmingCharacters(in: .whitespaces), password: passwordTextField.text!, fullName: userNameTextField.text!.trimmingCharacters(in: .whitespaces)) { (success, error) in
                 if success {
                     let userInformation = [
                         "email" : self.emailTextField.text,
@@ -91,7 +91,7 @@ class SignUpViewController: RootViewController {
                     ]
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: "userInformation"), object: nil, userInfo: userInformation)
     
-                    SVProgressHUD.showSuccess(withStatus: "Registration success. Check your email to verify your account")
+                    SVProgressHUD.showSuccess(withStatus: "Registration success. Thank you. We have sent you an email to \(self.emailTextField.text!)")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                         self.dismiss(animated: true, completion: nil)
                         //Directing to profile page

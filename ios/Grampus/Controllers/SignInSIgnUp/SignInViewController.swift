@@ -60,8 +60,8 @@ class SignInViewController: RootViewController {
         
         dismissKeyboard()
         if emailValidation(email: userNameTextField), passwordValidation(password: passwordTextField) {
-            
             SVProgressHUD.show()
+
             network.signIn(username: userNameTextField.text!, password: passwordTextField.text!) { (error) in
                 if let error = error {
                     if error.contains("401") {
@@ -95,13 +95,13 @@ class SignInViewController: RootViewController {
         signInButton.layer.shadowRadius = 5
         signInButton.layer.shadowOpacity = 0.5
         
-        signUpButton.layer.shadowColor = UIColor.darkGray.cgColor
-        signUpButton.layer.shadowOffset = CGSize(width: 3, height: 3)
-        signUpButton.layer.shadowRadius = 5
-        signUpButton.layer.shadowOpacity = 0.5
+//        signUpButton.layer.shadowColor = UIColor.darkGray.cgColor
+//        signUpButton.layer.shadowOffset = CGSize(width: 3, height: 3)
+//        signUpButton.layer.shadowRadius = 5
+//        signUpButton.layer.shadowOpacity = 0.5
         
         signInButton.layer.cornerRadius = 5
-        signUpButton.layer.cornerRadius = 5
+//        signUpButton.layer.cornerRadius = 5
         
     }
     

@@ -82,7 +82,7 @@ class MenuTableViewController: UITableViewController {
                             if let image = image {
                                 self.imageView.image = image
                             } else {
-                                self.imageView.image = UIImage(named: "deadliner")
+                                self.imageView.image = UIImage(named: "red cross")
                             }
                             self.tableView.reloadData()
                         }

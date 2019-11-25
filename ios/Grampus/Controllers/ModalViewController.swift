@@ -7,13 +7,12 @@
 //
 
 import UIKit
-import Alamofire
 
 protocol ModalViewControllerDelegate: class {
     func removeBlurredBackgroundView()
 }
 
-class ModalViewController: UIViewController {
+class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
     
     @IBOutlet weak var firstButton: UIButton!
     @IBOutlet weak var secondButton: UIButton!
@@ -22,21 +21,27 @@ class ModalViewController: UIViewController {
     @IBOutlet weak var okButton: UIButton!
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var countLabel: UILabel!
+    @IBOutlet weak var picker: UIPickerView!
+    @IBOutlet weak var backView: UIView!
     
-    var ratingType: String?
+    var ratingType: String = "Best looker"
     var likeState: Bool? // if true like, if false dislike
     var selectedUserId: Int?
     let network = NetworkService()
     let storage = StorageService()
+    let achieves = ["Best looker", "Deadliner", "Smart mind", "Super worker", "Motivator", "TOP1", "Mentor"]
     
     weak var delegate: ModalViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         likeState = storage.getLikeState()
         configureButtons()
         textField.delegate = self
-        
+        picker.delegate = self
+        picker.dataSource = self
+
         textField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
         countLabel.text = "0/24"
     }
@@ -57,22 +62,23 @@ class ModalViewController: UIViewController {
     
     func configureButtons() {
         
-        if likeState! {
-            firstButton.setTitle("Best Looker", for: .normal)
-            firstButton.layer.cornerRadius = 5
-            secondButton.setTitle("Super Worker", for: .normal)
-            secondButton.layer.cornerRadius = 5
-            thirdButton.setTitle("Extrovert", for: .normal)
-            thirdButton.layer.cornerRadius = 5
-        } else {
-            firstButton.setTitle("Untidy", for: .normal)
-            firstButton.layer.cornerRadius = 5
-            secondButton.setTitle("Deadliner", for: .normal)
-            secondButton.layer.cornerRadius = 5
-            thirdButton.setTitle("Introvert", for: .normal)
-            thirdButton.layer.cornerRadius = 5
-        }
+//        if likeState! {
+//            firstButton.setTitle("Best Looker", for: .normal)
+//            firstButton.layer.cornerRadius = 5
+//            secondButton.setTitle("Super Worker", for: .normal)
+//            secondButton.layer.cornerRadius = 5
+//            thirdButton.setTitle("Extrovert", for: .normal)
+//            thirdButton.layer.cornerRadius = 5
+//        } else {
+//            firstButton.setTitle("Untidy", for: .normal)
+//            firstButton.layer.cornerRadius = 5
+//            secondButton.setTitle("Deadliner", for: .normal)
+//            secondButton.layer.cornerRadius = 5
+//            thirdButton.setTitle("Introvert", for: .normal)
+//            thirdButton.layer.cornerRadius = 5
+//        }
         
+        backView.layer.cornerRadius = 7
         cancelButton.layer.cornerRadius = 5
         okButton.layer.cornerRadius = 5
     }
@@ -80,9 +86,9 @@ class ModalViewController: UIViewController {
     @IBAction func firstAction(_ sender: Any) {
         
         if likeState! {
-            ratingType = "like_best_looker"
+            ratingType = "best_looker"
         } else {
-            ratingType = "dislike_untidy"
+            ratingType = "untidy"
         }
         firstButton.backgroundColor = UIColor.blue
         secondButton.backgroundColor = UIColor.darkGray
@@ -92,9 +98,9 @@ class ModalViewController: UIViewController {
     @IBAction func secondAction(_ sender: Any) {
         
         if likeState! {
-            ratingType = "like_super_worker"
+            ratingType = "super_worker"
         } else {
-            ratingType = "dislike_deadliner"
+            ratingType = "deadliner"
         }
         firstButton.backgroundColor = UIColor.darkGray
         secondButton.backgroundColor = UIColor.blue
@@ -104,9 +110,9 @@ class ModalViewController: UIViewController {
     @IBAction func thirdAction(_ sender: Any) {
         
         if likeState! {
-            ratingType = "like_extrovert"
+            ratingType = "extrovert"
         } else {
-            ratingType = "dislike_introvert"
+            ratingType = "introvert"
         }
         firstButton.backgroundColor = UIColor.darkGray
         secondButton.backgroundColor = UIColor.darkGray
@@ -115,16 +121,10 @@ class ModalViewController: UIViewController {
     
     @IBAction func okButtonAction(_ sender: Any) {
         
-        if let unwrappedRatingType = ratingType {
-            ratingType = unwrappedRatingType
-            
-            network.addLikeOrDislike(ratingType: unwrappedRatingType, likeState: likeState!)
+            network.addLikeOrDislike(ratingType: ratingType, likeState: likeState!)
             dismiss(animated: true, completion: nil)
             delegate?.removeBlurredBackgroundView()
-            
-        } else {
-            return
-        }
+
         
     }
     
@@ -158,6 +158,41 @@ class ModalViewController: UIViewController {
             }
         }
     }
+    //Picker methods
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return achieves.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return achieves[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        switch row {
+        case 0:
+            ratingType = "best_looker"
+        case 1:
+            ratingType = "deadliner"
+        case 2:
+            ratingType = "smart_mind"
+        case 3:
+            ratingType = "super_worker"
+        case 4:
+            ratingType = "motivator"
+        case 5:
+            ratingType = "top1"
+        case 6:
+            ratingType = "mentor"
+        default:
+            ratingType = "best_looker"
+        }
+    }
+    
+    
 }
 
 extension ModalViewController: UITextFieldDelegate {

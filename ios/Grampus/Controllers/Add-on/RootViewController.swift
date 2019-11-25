@@ -53,14 +53,15 @@ class RootViewController: UIViewController, UITextFieldDelegate {
     func userNameValidation(userName: UITextField) -> Bool {
         
         if let userName = userName.text {
-            if userName.count < 2 {
+            
+            if userName.isEmpty {
+                SVProgressHUD.showError(withStatus: "Please enter your name")
+                return false
+            } else if userName.count < 2 {
                 SVProgressHUD.showError(withStatus: "This field should contain more than two characters")
                 return false
             } else if userName.count > 50 {
                 SVProgressHUD.showError(withStatus: "Name too long, write your correct name")
-                return false
-            } else if userName.isEmpty {
-                SVProgressHUD.showError(withStatus: "Please enter your name")
                 return false
             }
         }
@@ -73,12 +74,12 @@ class RootViewController: UIViewController, UITextFieldDelegate {
         let emailFormatBool = predicate.evaluate(with: email)
         
         // Email isEmpty check.
-        if (email!.isEmpty) {
-            SVProgressHUD.showError(withStatus: "Incorrect input, enter email!")
+        if email!.isEmpty {
+            SVProgressHUD.showError(withStatus: "Please enter email address")
             return false
         } else {
             // Email validation.
-            if (!emailFormatBool) {
+            if !emailFormatBool {
                 SVProgressHUD.showError(withStatus: "Incorrect input, email format not correct!")
                 return false
             }

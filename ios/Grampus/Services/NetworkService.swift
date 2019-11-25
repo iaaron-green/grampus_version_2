@@ -12,6 +12,15 @@ import SwiftyJSON
 
 class NetworkService {
     
+    let manager : SessionManager = {
+           let configuration = URLSessionConfiguration.default
+               configuration.timeoutIntervalForRequest = 10
+               configuration.timeoutIntervalForResource = 10
+           let manager = Alamofire.SessionManager(configuration: configuration)
+
+           return manager
+       }()
+    
     let storage = StorageService()
     
     func signIn(username: String, password: String, completion: @escaping (String?) -> ()) {
@@ -27,7 +36,7 @@ class NetworkService {
             "password": password,
         ]
         
-        Alamofire.request(loginURL, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        manager.request(loginURL, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             switch responseJSON.result {
             case .success :
                 
@@ -65,7 +74,7 @@ class NetworkService {
             "fullName": fullName
         ]
         
-        Alamofire.request(registerURL, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        manager.request(registerURL, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             switch responseJSON.result {
             case .success :
                 completion(true, nil)
@@ -87,7 +96,7 @@ class NetworkService {
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-        Alamofire.request(userURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        manager.request(userURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             
             switch responseJSON.result {
             case .success :
@@ -118,7 +127,7 @@ class NetworkService {
             key: text
         ]
         
-        Alamofire.request(profilesURL, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        manager.request(profilesURL, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             
             switch responseJSON.result {
             case .success :
@@ -140,7 +149,7 @@ class NetworkService {
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-        Alamofire.request(allProfilesURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        manager.request(allProfilesURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             
             switch responseJSON.result {
             case .success :
@@ -175,9 +184,10 @@ class NetworkService {
         } else {
             apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/dislike"
         }
-        Alamofire.request(apiUrl, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+
+        manager.request(apiUrl, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+
             switch responseJSON.result {
-                
             case .success :
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)
                 
@@ -198,7 +208,7 @@ class NetworkService {
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-        Alamofire.request(userIdURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        manager.request(userIdURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             
             switch responseJSON.result {
             case .success :
@@ -233,7 +243,7 @@ class NetworkService {
         "id" : userID!
         ]
         
-        Alamofire.upload(multipartFormData: { (multipart: MultipartFormData) in
+        manager.upload(multipartFormData: { (multipart: MultipartFormData) in
             let imageData = selectedImage!.jpegData(compressionQuality: 0.8)
             multipart.append(imageData!, withName: "file", fileName: "file.png", mimeType: "image/png")
             for (key,value) in parameters {
