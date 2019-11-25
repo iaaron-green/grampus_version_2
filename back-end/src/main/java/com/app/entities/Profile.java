@@ -25,8 +25,6 @@ public class Profile {
 
    private Long dislikes;
 
-   private String achievements;
-
    private String information;
 
    private String skills;
@@ -48,4 +46,5 @@ public class Profile {
       this.user = user;
       this.user.setJobTitle(JobTitle.getById((int) (Math.random() * (10 - 1))+1));
    }
+
 }

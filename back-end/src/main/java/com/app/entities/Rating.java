@@ -22,6 +22,9 @@ public class Rating {
 
     private String ratingSourceUsername;
 
+//    @Column(name = "user_id")
+//    private int profile_id;
+
     private String ratingType;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,7 +32,4 @@ public class Rating {
     @JsonIgnore
     private Profile profileRating;
 
-    public Rating(Profile profileRating) {
-        this.profileRating = profileRating;
-    }
 }
