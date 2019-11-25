@@ -1,7 +1,6 @@
 package com.app.controllers;
 
 import com.app.DTO.DTOLikableProfile;
-import com.app.DTO.DTOProfile;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
@@ -30,16 +29,12 @@ import java.util.stream.Collectors;
 @CrossOrigin
 public class ProfileController {
 
-    private ProfileService profileService;
-    private ValidationErrorService validationErrorService;
-    private RatingService ratingService;
-
     @Autowired
-    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService, RatingService ratingService) {
-        this.profileService = profileService;
-        this.validationErrorService = validationErrorService;
-        this.ratingService = ratingService;
-    }
+    private ProfileService profileService;
+    @Autowired
+    private ValidationErrorService validationErrorService;
+    @Autowired
+    private RatingService ratingService;
 
     @GetMapping("/{profileId}")
     public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
@@ -90,7 +85,7 @@ public class ProfileController {
    }
 
     @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal) {
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal) throws CustomException {
 
         return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName()).stream()
                 .filter(DTOLikableProfile ->

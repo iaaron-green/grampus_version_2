@@ -13,6 +13,8 @@ import com.app.util.CustomException;
 import com.app.util.Errors;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,17 +27,14 @@ import java.util.List;
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-
-    private ProfileRepository profileRepository;
-    private UserRepository userRepository;
-    private RatingService ratingService;
-
     @Autowired
-    public ProfileServiceImpl(ProfileRepository profileRepository, UserRepository userRepository, RatingService ratingService) {
-        this.profileRepository = profileRepository;
-        this.userRepository = userRepository;
-        this.ratingService = ratingService;
-    }
+    private MessageSource messageSource;
+    @Autowired
+    private ProfileRepository profileRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RatingService ratingService;
 
     @Override
     public <S extends Profile> S saveProfile(S entity) {
@@ -47,7 +46,7 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = profileRepository.findProfileById(id);
         if (profile != null) {
             return profile;
-        } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -64,11 +63,9 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setEmail(profileFromDB.getUser().getUsername());
             dtoProfile.setJobTitle(profileFromDB.getUser().getJobTitle());
             dtoProfile.setFullName(profileFromDB.getUser().getFullName());
-//            dtoProfile.setUser(profileFromDB.getUser());
-//            dtoProfile.setRatings(profileFromDB.getRatings());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
             return dtoProfile;
-        } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -118,20 +115,20 @@ public class ProfileServiceImpl implements ProfileService {
                         client.disconnect();
                     }
                 } catch (IOException e) {
-                    throw new CustomException("" + Errors.FTP_CONNECTION_ERROR);
+                    throw new CustomException(messageSource.getMessage("ftp.connection.error", null, LocaleContextHolder.getLocale()), Errors.FTP_CONNECTION_ERROR);
                 }
                 profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
                 saveProfile(profile);
-            } else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_BAD);
-        } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+            } else throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
+        } else throw new CustomException("", Errors.PROFILE_NOT_EXIST);
     }
 
-    public List<Profile> getAllProfiles() {
+    public List<Profile> getAllProfiles()  {
 
         return profileRepository.findAll();
     }
 
-    public List<DTOLikableProfile> getAllProfilesForLike(String principalName) {
+    public List<DTOLikableProfile> getAllProfilesForLike(String principalName) throws CustomException {
 
         User currentUser = userRepository.findByUsername(principalName);
 

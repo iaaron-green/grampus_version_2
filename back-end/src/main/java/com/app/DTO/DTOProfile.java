@@ -25,8 +25,4 @@ public class DTOProfile {
     private String fullName;
     private Map<String, Object> likesNumber;
 
-//    private User user;
-//    private List<Rating> ratings;
-
-
 }

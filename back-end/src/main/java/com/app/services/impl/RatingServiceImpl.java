@@ -57,7 +57,7 @@ public class RatingServiceImpl implements RatingService {
         Map<String, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
 
-        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString(), ratingRepository.countRatingType(id, mark.toString())));
+        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString().toLowerCase(), ratingRepository.countRatingType(id, mark.toString().toLowerCase())));
 
         return mapOfLikes;
 

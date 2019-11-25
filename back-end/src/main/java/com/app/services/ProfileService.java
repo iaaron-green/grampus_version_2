@@ -22,9 +22,9 @@ public interface ProfileService {
 
     void saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException;
 
-    List<Profile> getAllProfiles();
+    List<Profile> getAllProfiles() throws CustomException;
 
-    List<DTOLikableProfile> getAllProfilesForLike(String principalName);
+    List<DTOLikableProfile> getAllProfilesForLike(String principalName) throws CustomException;
 
 
 }
