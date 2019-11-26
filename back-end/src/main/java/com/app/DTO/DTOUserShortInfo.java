@@ -1,5 +1,6 @@
 package com.app.DTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,12 +10,16 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 @Builder
-public class DTOLikableProfile {
+public class DTOUserShortInfo {
 
-    private Long profileId;
-    private String picture;
-    private String fullName;
-    private String jobTitle;
-    private Boolean isAbleToLike;
+    Long profileId;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    String picture;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    String fullName;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    String jobTitle;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    Boolean isAbleToLike;
 
 }

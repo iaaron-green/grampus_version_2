@@ -7,7 +7,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @Getter
 @Setter
-public class AchievementData {
+public class DTOAchievement {
     Long userId;
     Long countLike;
     String userName;
