@@ -13,13 +13,9 @@ import lombok.Setter;
 public class DTOUserShortInfo {
 
     Long profileId;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     String picture;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     String fullName;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     String jobTitle;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     Boolean isAbleToLike;
 
 }
