@@ -855,72 +855,123 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="139" id="eTL-4e-gc8">
-                                        <rect key="frame" x="0.0" y="282" width="414" height="139"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="158" id="eTL-4e-gc8">
+                                        <rect key="frame" x="0.0" y="282" width="414" height="158"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eTL-4e-gc8" id="0Hd-gM-RXz">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="139"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="158"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Information:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PmH-UU-fP7">
-                                                    <rect key="frame" x="10" y="10" width="362" height="88.5"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Information:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PmH-UU-fP7">
+                                                    <rect key="frame" x="10" y="10" width="394" height="24"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="SampleText" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G1w-9i-VRT">
-                                                    <rect key="frame" x="10" y="108.5" width="394" height="20.5"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Email:" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uuk-x5-9cq" userLabel="Email">
+                                                    <rect key="frame" x="10" y="42" width="45.5" height="20.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="752" text="Telephone:" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="86J-Nz-md8" userLabel="Telephone">
+                                                    <rect key="frame" x="10" y="99" width="84.5" height="20.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="753" text="Telegram:" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G1w-9i-VRT" userLabel="Telegram">
+                                                    <rect key="frame" x="10" y="127.5" width="75.5" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6rg-ic-hg4">
-                                                    <rect key="frame" x="382" y="10" width="22" height="22"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="751" text="Skype:" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0fe-Sk-CQz" userLabel="Skype">
+                                                    <rect key="frame" x="10" y="70.5" width="52.5" height="20.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uRt-vu-ipn">
+                                                    <rect key="frame" x="384" y="71" width="20" height="20"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="22" id="C18-ww-fko"/>
-                                                        <constraint firstAttribute="height" constant="22" id="Q4c-3J-uMy"/>
+                                                        <constraint firstAttribute="width" constant="20" id="8t6-ZD-FGr"/>
+                                                        <constraint firstAttribute="height" constant="20" id="QT8-JH-ZQ7"/>
                                                     </constraints>
+                                                    <state key="normal" title="AddSkype" image="pencil"/>
                                                     <connections>
-                                                        <action selector="informationAddAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="aij-M1-ucf"/>
+                                                        <action selector="skypeAddAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="Qo7-US-mWR"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u5Y-YA-oWl">
+                                                    <rect key="frame" x="384" y="99.5" width="20" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="C4u-yx-xEa"/>
+                                                        <constraint firstAttribute="width" constant="20" id="txz-cd-WCK"/>
+                                                    </constraints>
+                                                    <state key="normal" title="AddTelephone" image="pencil"/>
+                                                    <connections>
+                                                        <action selector="telephoneAddAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="g3u-cf-G83"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h7l-Ld-ypO">
+                                                    <rect key="frame" x="384" y="128" width="20" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="20" id="JfI-ZM-3qK"/>
+                                                        <constraint firstAttribute="height" constant="20" id="dA2-Wq-Oo6"/>
+                                                    </constraints>
+                                                    <state key="normal" title="AddTelegram" image="pencil"/>
+                                                    <connections>
+                                                        <action selector="telegramAddAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="W6l-32-Zz7"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="G1w-9i-VRT" firstAttribute="leading" secondItem="0Hd-gM-RXz" secondAttribute="leading" constant="10" id="33M-lU-tyQ"/>
-                                                <constraint firstItem="G1w-9i-VRT" firstAttribute="top" secondItem="PmH-UU-fP7" secondAttribute="bottom" constant="10" id="3jX-6T-nzc"/>
+                                                <constraint firstAttribute="bottom" secondItem="G1w-9i-VRT" secondAttribute="bottom" constant="10" id="31Y-Lf-HQs"/>
+                                                <constraint firstItem="G1w-9i-VRT" firstAttribute="top" secondItem="86J-Nz-md8" secondAttribute="bottom" constant="8" id="76M-3y-LKS"/>
                                                 <constraint firstItem="PmH-UU-fP7" firstAttribute="leading" secondItem="0Hd-gM-RXz" secondAttribute="leading" constant="10" id="872-oB-KAo"/>
-                                                <constraint firstAttribute="bottom" secondItem="G1w-9i-VRT" secondAttribute="bottom" constant="10" id="9uA-zb-dNk"/>
-                                                <constraint firstItem="6rg-ic-hg4" firstAttribute="leading" secondItem="PmH-UU-fP7" secondAttribute="trailing" constant="10" id="BMb-2u-fWx"/>
-                                                <constraint firstItem="6rg-ic-hg4" firstAttribute="top" secondItem="0Hd-gM-RXz" secondAttribute="top" constant="10" id="FEO-l6-mb3"/>
-                                                <constraint firstAttribute="trailing" secondItem="6rg-ic-hg4" secondAttribute="trailing" constant="10" id="ZuN-2c-cOn"/>
+                                                <constraint firstItem="86J-Nz-md8" firstAttribute="top" secondItem="0fe-Sk-CQz" secondAttribute="bottom" constant="8" id="A7Q-Mf-J9r"/>
+                                                <constraint firstItem="0fe-Sk-CQz" firstAttribute="top" secondItem="Uuk-x5-9cq" secondAttribute="bottom" constant="8" id="Arp-Rs-WsK"/>
+                                                <constraint firstItem="u5Y-YA-oWl" firstAttribute="centerY" secondItem="86J-Nz-md8" secondAttribute="centerY" id="D3K-Sg-KXt"/>
+                                                <constraint firstAttribute="trailing" secondItem="PmH-UU-fP7" secondAttribute="trailing" constant="10" id="Dle-2G-mCu"/>
+                                                <constraint firstItem="G1w-9i-VRT" firstAttribute="leading" secondItem="0Hd-gM-RXz" secondAttribute="leading" constant="10" id="Jcf-DK-rF1"/>
+                                                <constraint firstItem="h7l-Ld-ypO" firstAttribute="centerY" secondItem="G1w-9i-VRT" secondAttribute="centerY" id="Tc4-JC-eUn"/>
+                                                <constraint firstItem="Uuk-x5-9cq" firstAttribute="top" secondItem="PmH-UU-fP7" secondAttribute="bottom" constant="8" id="VVZ-GV-0DF"/>
+                                                <constraint firstItem="uRt-vu-ipn" firstAttribute="centerY" secondItem="0fe-Sk-CQz" secondAttribute="centerY" id="Xcm-Q8-soQ"/>
+                                                <constraint firstAttribute="trailing" secondItem="u5Y-YA-oWl" secondAttribute="trailing" constant="10" id="aL9-qT-vrI"/>
                                                 <constraint firstItem="PmH-UU-fP7" firstAttribute="top" secondItem="0Hd-gM-RXz" secondAttribute="top" constant="10" id="aiH-HL-lyL"/>
-                                                <constraint firstAttribute="trailing" secondItem="G1w-9i-VRT" secondAttribute="trailing" constant="10" id="qsh-2h-Cpc"/>
+                                                <constraint firstItem="Uuk-x5-9cq" firstAttribute="leading" secondItem="0Hd-gM-RXz" secondAttribute="leading" constant="10" id="auX-XS-YvT"/>
+                                                <constraint firstAttribute="trailing" secondItem="h7l-Ld-ypO" secondAttribute="trailing" constant="10" id="dVk-Jw-uMv"/>
+                                                <constraint firstAttribute="trailing" secondItem="uRt-vu-ipn" secondAttribute="trailing" constant="10" id="s3p-bP-p0G"/>
+                                                <constraint firstItem="86J-Nz-md8" firstAttribute="leading" secondItem="0Hd-gM-RXz" secondAttribute="leading" constant="10" id="ucp-ST-zkc"/>
+                                                <constraint firstItem="0fe-Sk-CQz" firstAttribute="leading" secondItem="0Hd-gM-RXz" secondAttribute="leading" constant="10" id="vqy-F2-bTZ"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="120" id="EaJ-8y-c5a">
-                                        <rect key="frame" x="0.0" y="421" width="414" height="120"/>
+                                        <rect key="frame" x="0.0" y="440" width="414" height="120"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="EaJ-8y-c5a" id="m3g-bm-STF">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="120"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xeX-uB-XML">
-                                                    <rect key="frame" x="382" y="10" width="22" height="22"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="22" id="2zi-mw-Fnw"/>
-                                                        <constraint firstAttribute="height" constant="22" id="ZXc-0A-VSo"/>
-                                                    </constraints>
-                                                    <connections>
-                                                        <action selector="skillsAddAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="v03-XF-flh"/>
-                                                    </connections>
-                                                </button>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Skills:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cfI-vg-fiM">
-                                                    <rect key="frame" x="10" y="10" width="362" height="69.5"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Skills:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cfI-vg-fiM">
+                                                    <rect key="frame" x="10" y="10" width="394" height="69.5"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                     <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xeX-uB-XML">
+                                                    <rect key="frame" x="384" y="10" width="20" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="20" id="58r-nC-UhJ"/>
+                                                        <constraint firstAttribute="height" constant="20" id="m1C-aa-T3d"/>
+                                                    </constraints>
+                                                    <state key="normal" image="add"/>
+                                                    <connections>
+                                                        <action selector="skillsAddAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="v03-XF-flh"/>
+                                                    </connections>
+                                                </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="SampleSkills" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zvp-EW-imY">
                                                     <rect key="frame" x="10" y="89.5" width="394" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -931,18 +982,20 @@
                                             <constraints>
                                                 <constraint firstItem="cfI-vg-fiM" firstAttribute="top" secondItem="m3g-bm-STF" secondAttribute="top" constant="10" id="Ahx-v0-ZGi"/>
                                                 <constraint firstAttribute="bottom" secondItem="Zvp-EW-imY" secondAttribute="bottom" constant="10" id="FjR-d8-NX5"/>
+                                                <constraint firstAttribute="trailing" secondItem="cfI-vg-fiM" secondAttribute="trailing" constant="10" id="GGW-RV-6j6"/>
+                                                <constraint firstItem="xeX-uB-XML" firstAttribute="top" secondItem="m3g-bm-STF" secondAttribute="top" constant="10" id="GiJ-9b-M6n"/>
                                                 <constraint firstItem="Zvp-EW-imY" firstAttribute="leading" secondItem="m3g-bm-STF" secondAttribute="leading" constant="10" id="OXO-tA-9Ee"/>
                                                 <constraint firstAttribute="trailing" secondItem="Zvp-EW-imY" secondAttribute="trailing" constant="10" id="Uai-FI-mLa"/>
+                                                <constraint firstItem="xeX-uB-XML" firstAttribute="top" secondItem="m3g-bm-STF" secondAttribute="top" constant="10" id="asr-MJ-WTs"/>
                                                 <constraint firstItem="Zvp-EW-imY" firstAttribute="top" secondItem="cfI-vg-fiM" secondAttribute="bottom" constant="10" id="fwT-NH-72X"/>
-                                                <constraint firstItem="xeX-uB-XML" firstAttribute="top" secondItem="m3g-bm-STF" secondAttribute="top" constant="10" id="ghd-PI-vr4"/>
                                                 <constraint firstItem="cfI-vg-fiM" firstAttribute="leading" secondItem="m3g-bm-STF" secondAttribute="leading" constant="10" id="hel-Jx-HFK"/>
-                                                <constraint firstAttribute="trailing" secondItem="xeX-uB-XML" secondAttribute="trailing" constant="10" id="wD5-gk-Owm"/>
-                                                <constraint firstItem="xeX-uB-XML" firstAttribute="leading" secondItem="cfI-vg-fiM" secondAttribute="trailing" constant="10" id="ywR-Zm-6Q1"/>
+                                                <constraint firstAttribute="trailing" secondItem="xeX-uB-XML" secondAttribute="trailing" constant="10" id="xoK-0s-9d4"/>
+                                                <constraint firstAttribute="trailing" secondItem="xeX-uB-XML" secondAttribute="trailing" constant="10" id="yYb-p7-opB"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="300" id="qAO-Qf-D7k" customClass="TableViewCellForPieChart" customModule="Grampus" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="541" width="414" height="300"/>
+                                        <rect key="frame" x="0.0" y="560" width="414" height="300"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="qAO-Qf-D7k" id="qgv-Sp-Bi6">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
@@ -993,18 +1046,20 @@
                     <connections>
                         <outlet property="chartView" destination="m6T-zu-l5e" id="NSz-HU-gdp"/>
                         <outlet property="collectionView" destination="OkW-hg-9PT" id="A3g-0Y-Hk3"/>
-                        <outlet property="infoAddButton" destination="6rg-ic-hg4" id="6XT-w5-nz5"/>
+                        <outlet property="emailLabel" destination="Uuk-x5-9cq" id="pkg-hb-gyr"/>
                         <outlet property="menuBarButton" destination="aHJ-LZ-UJG" id="caJ-Ci-qL6"/>
                         <outlet property="navigationBar" destination="nBN-Kp-e9E" id="qIU-Rh-7Wl"/>
                         <outlet property="profileDislikeLabel" destination="hXi-Gx-18f" id="24u-mx-MQb"/>
                         <outlet property="profileFullNameLabel" destination="FwV-OR-wYQ" id="ZyZ-SU-Fly"/>
                         <outlet property="profileImageView" destination="Zus-zE-zIk" id="gcs-Im-8Ka"/>
-                        <outlet property="profileInformationLabel" destination="G1w-9i-VRT" id="1vR-Ui-tVy"/>
                         <outlet property="profileLikeLabel" destination="cKb-Pg-uHl" id="JaP-3M-Zhz"/>
                         <outlet property="profileProfessionLabel" destination="ceC-XE-QGh" id="p5k-w2-Myy"/>
                         <outlet property="profileSkillsLabel" destination="Zvp-EW-imY" id="KKE-4w-1uD"/>
                         <outlet property="saveButton" destination="Zjo-oJ-vUw" id="KbA-aE-XlS"/>
                         <outlet property="skillsAddButton" destination="xeX-uB-XML" id="zMe-fM-zHL"/>
+                        <outlet property="skypeLabel" destination="0fe-Sk-CQz" id="56U-d7-cKK"/>
+                        <outlet property="telegramLabel" destination="G1w-9i-VRT" id="1vR-Ui-tVy"/>
+                        <outlet property="telephoneLabel" destination="86J-Nz-md8" id="hcf-Qs-cXe"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xG3-r1-1i7" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1127,11 +1182,13 @@
         </scene>
     </scenes>
     <resources>
+        <image name="add" width="42.666667938232422" height="42.666667938232422"/>
         <image name="background" width="1402" height="2491"/>
         <image name="calendar" width="58" height="58"/>
         <image name="download" width="170.66667175292969" height="170.66667175292969"/>
         <image name="logout" width="512" height="512"/>
         <image name="menu" width="24" height="24"/>
+        <image name="pencil" width="42.666667938232422" height="42.666667938232422"/>
         <image name="profile" width="512" height="512"/>
         <image name="rating" width="512" height="512"/>
         <image name="super_worker" width="128" height="128"/>
