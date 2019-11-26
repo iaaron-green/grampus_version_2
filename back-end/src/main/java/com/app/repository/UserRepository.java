@@ -1,11 +1,12 @@
 package com.app.repository;
 
+import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.User;
-import com.app.web.model.AchievementData;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -24,5 +25,10 @@ public interface UserRepository extends CrudRepository<User, Long> {
    @Query(
            value = "SELECT id, full_name, profile_picture  FROM users JOIN  SELECT id,  profile_picture FROM profile",
            nativeQuery = true)
-   Set<AchievementData> getUserData();
+   Set<DTOUserShortInfo> getUserData();
+
+   @Query(
+           value = "SELECT *  FROM users WHERE job_title = ?",
+           nativeQuery = true)
+   Set<User> findAllUsersByJobTitle(String jobTitle);
 }

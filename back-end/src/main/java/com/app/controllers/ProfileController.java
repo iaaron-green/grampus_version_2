@@ -97,8 +97,8 @@ public class ProfileController {
 //        return ratingService.getUserRatingByType(markType);
 //    }
 
-    @GetMapping("/userJobTitle/{jobTitle}")
-    public List<DTOUserShortInfo> getUserByJob(@PathVariable String jobTitle) {
-        return userService.findAllByJobTitle(jobTitle);
-    }
+//    @GetMapping("/userJobTitle/{jobTitle}")
+//    public List<DTOUserShortInfo> getUserByJob(@PathVariable String jobTitle) {
+//        return userService.findAllByJobTitle(jobTitle);
+//    }
 }
