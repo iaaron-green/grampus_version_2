@@ -1,14 +1,15 @@
 package com.app.controllers;
 
-import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOAchievement;
+import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
+import com.app.services.UserService;
 import com.app.util.CustomException;
 import com.app.validators.ValidationErrorService;
-import com.app.web.model.AchievementData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +22,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -32,17 +31,19 @@ public class ProfileController {
     private ProfileService profileService;
     private ValidationErrorService validationErrorService;
     private RatingService ratingService;
+    private UserService userService;
 
     @Autowired
-    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService, RatingService ratingService) {
+    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService, RatingService ratingService, UserService userService) {
         this.profileService = profileService;
         this.validationErrorService = validationErrorService;
         this.ratingService = ratingService;
+        this.userService = userService;
     }
 
     @GetMapping("/{profileId}")
     public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
-        return new ResponseEntity<>(profileService.getProfileById(profileId), HttpStatus.OK);
+        return new ResponseEntity<>(profileService.getDTOProfileById(profileId), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -66,20 +67,20 @@ public class ProfileController {
       }
    }
 
-    @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal) {
+//    @GetMapping("/all")
+//    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal) {
+//
+//        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName()).stream()
+//                .filter(DTOLikableProfile ->
+//                        Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
+//                profileService.getAllProfilesForLike(principal.getName());
+//    }
 
-        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName()).stream()
-                .filter(DTOLikableProfile ->
-                        Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
-                profileService.getAllProfilesForLike(principal.getName());
-    }
-
-    @GetMapping("/achieve")
-    public ResponseEntity<?> getAllAchieve() {
-        List<Rating> profile = ratingService.getAllAchieves();
-        return new ResponseEntity<>(profile, HttpStatus.OK);
-    }
+//    @GetMapping("/achieve")
+//    public ResponseEntity<?> getAllAchieve() {
+//        List<Rating> profile = ratingService.getAllAchieves();
+//        return new ResponseEntity<>(profile, HttpStatus.OK);
+//    }
 
 //    @GetMapping("/test")
 //    public String getTestById() {
@@ -91,9 +92,13 @@ public class ProfileController {
         return ratingService.addInfoAchievement();
     }
 
-    @GetMapping("/userRating/{markType}")
-    public List<AchievementData> getUserRating(@PathVariable Mark markType) {
-        return ratingService.getUserRatingByType(markType);
-    }
+//    @GetMapping("/userRating/{markType}")
+//    public List<DTOUserShortInfo> getUserRating(@PathVariable Mark markType) {
+//        return ratingService.getUserRatingByType(markType);
+//    }
 
+    @GetMapping("/userJobTitle/{jobTitle}")
+    public List<DTOUserShortInfo> getUserByJob(@PathVariable String jobTitle) {
+        return userService.findAllByJobTitle(jobTitle);
+    }
 }
