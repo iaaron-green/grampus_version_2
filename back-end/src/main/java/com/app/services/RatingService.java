@@ -1,7 +1,9 @@
 package com.app.services;
 
 import com.app.DTO.DTOAchievement;
+import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Rating;
+import com.app.entities.User;
 import com.app.enums.Mark;
 
 import java.util.List;
@@ -11,11 +13,11 @@ public interface RatingService {
 
     Rating addLike(Long profileId, Rating updatedRating, String userName);
 
-    List<Rating> getAllAchieves();
+//    List<Rating> getAllAchieves();
 
     Map<Long, Map<String, Long>> addInfoAchievement();
 
-    List<DTOAchievement> getUserRatingByType(Mark markType);
+//    List<DTOUserShortInfo> getUserRatingByType(Mark markType);
 
     Rating addDislike(Long profileId, Rating updatedRating, String userName);
 
