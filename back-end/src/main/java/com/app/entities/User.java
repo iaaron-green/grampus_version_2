@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 
@@ -21,14 +22,19 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Email
     @NotBlank(message = "Email is required")
+    @Column(unique = true)
     private String username;
+
     @NotBlank(message = "Password is required")
     private String password;
+
     @NotBlank(message = "FullName is required")
     private String fullName;
 
-    private String activationCode;
+    private boolean activate;
 
     private String jobTitle;
 

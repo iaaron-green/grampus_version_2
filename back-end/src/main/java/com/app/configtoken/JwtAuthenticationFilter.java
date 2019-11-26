@@ -1,7 +1,7 @@
 package com.app.configtoken;
 
 import com.app.entities.User;
-import com.app.services.CustomUserDetailsService;
+import com.app.services.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

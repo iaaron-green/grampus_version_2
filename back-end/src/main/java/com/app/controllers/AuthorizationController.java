@@ -1,11 +1,11 @@
 package com.app.controllers;
 
 
-import com.app.configmail.MyConstants;
 import com.app.configtoken.JwtTokenProvider;
 import com.app.entities.Profile;
 import com.app.entities.User;
 import com.app.repository.UserRepository;
+import com.app.services.ActivationService;
 import com.app.services.ProfileService;
 import com.app.services.UserService;
 import com.app.validators.JWTLoginSuccessResponse;
@@ -21,17 +21,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static com.app.configtoken.Constants.TOKEN_PREFIX;
 
@@ -45,7 +40,8 @@ public class AuthorizationController {
    private UserValidator userValidator;
    private JwtTokenProvider tokenProvider;
    private AuthenticationManager authenticationManager;
-   private ProfileService profileService;
+   @Autowired
+   private ActivationService activationService;
 
    @Autowired
    private JavaMailSender emailSender;
@@ -53,16 +49,16 @@ public class AuthorizationController {
    @Autowired
    private UserRepository userRepository;
 
+
    @Autowired
    public AuthorizationController(ValidationErrorService validationErrorService, UserService userService,
                          UserValidator userValidator,
-                         JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, ProfileService profileService) {
+                         JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager) {
       this.validationErrorService = validationErrorService;
       this.userService = userService;
       this.userValidator = userValidator;
       this.tokenProvider = tokenProvider;
       this.authenticationManager = authenticationManager;
-      this.profileService = profileService;
    }
 
    @PostMapping("/login")
@@ -72,12 +68,8 @@ public class AuthorizationController {
          return errorMap;
 
       String userName = loginRequest.getUsername();
-      boolean isActivated = userService.activationCode(userName);
-      if(!isActivated)
+      if(!activationService.isUserActivate(userName))
          return new ResponseEntity<>(HttpStatus.LOCKED);
-
-      User newUser = userRepository.findByUsername(userName);
-      Profile newProfile = profileService.saveProfile(new Profile(newUser));
 
       Authentication authentication = authenticationManager.authenticate(
               new UsernamePasswordAuthenticationToken(
@@ -103,9 +95,11 @@ public class AuthorizationController {
       {
          return new ResponseEntity<>(HttpStatus.LOCKED);
       }
-      user.setActivationCode(UUID.randomUUID().toString());
+
 
       User newUser = userService.saveUser(user);
+
+      ///
       MimeMessage message = emailSender.createMimeMessage();
 
       boolean multipart = true;
@@ -117,12 +111,9 @@ public class AuthorizationController {
          e.printStackTrace();
       }
 
-      String htmlMsg = "<h3>Grampus</h3>"
-              +"<img src='https://i.ibb.co/yNsKQ53/image.png'>" +
-              "<p>You're profile is register! Thank you.<p>" +
-               "To activate you're profile visit next link: http://localhost:8081/api/users/activate/"+ newUser.getActivationCode();
 
-      message.setContent(htmlMsg, "text/html");
+
+      message.setContent(activationService.generateCode(newUser.getId()), "text/html");
 
       helper.setTo(user.getUsername());
 
@@ -133,10 +124,10 @@ public class AuthorizationController {
       return new ResponseEntity<>(newUser, HttpStatus.CREATED);
    }
 
-   @GetMapping("/activate/{code}")
-   public String activate(@PathVariable String code) {
+   @GetMapping("/activate/{id}")
+   public String activate(@PathVariable Long id) {
 
-   userService.activateUser(code);
+      activationService.activateUser(id);
       return "<img style='width:100%' 'height:100%' 'text-align: center' src='https://cdn1.savepice.ru/uploads/2019/11/21/bcadc0172fce5e6a398bb4edcdf8bf7a-full.jpg'>";
    }
 }
