@@ -1,6 +1,5 @@
 package com.app.services.impl;
 
-import com.app.DTO.DTONewUser;
 import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.User;
 import com.app.exceptions.UserExistException;
@@ -37,20 +36,21 @@ public class UserServiceImpl implements UserService {
             throw new UserExistException("Username '" + newUser.getUsername() + "' already exists");
         }
     }
-    public List<DTOUserShortInfo> findAllByJobTitle(String jobTitle) {
-        List<DTOUserShortInfo> dtoUser = new ArrayList<>();
-        Set<User> userData = userRepository.findAllUsersByJobTitle(jobTitle);
-        userData.forEach(user -> {
-            DTOUserShortInfo s = DTOUserShortInfo.builder()
-                    .profileId(user.getId())
-                    .jobTitle(user.getJobTitle())
-                    .fullName(user.getUsername())
-                    .picture(user.getProfile().getProfilePicture())
-                    .build();
-           dtoUser.add(s);
-        });
-        return dtoUser;
-    }
+
+//    public List<DTOUserShortInfo> findAllByJobTitle(String jobTitle) {
+//        List<DTOUserShortInfo> dtoUser = new ArrayList<>();
+//        Set<User> userData = userRepository.findAllUsersByJobTitle(jobTitle);
+//        userData.forEach(user -> {
+//            DTOUserShortInfo s = DTOUserShortInfo.builder()
+//                    .profileId(user.getId())
+//                    .jobTitle(user.getJobTitle())
+//                    .fullName(user.getUsername())
+//                    .picture(user.getProfile().getProfilePicture())
+//                    .build();
+//           dtoUser.add(s);
+//        });
+//        return dtoUser;
+//    }
 
 }
 

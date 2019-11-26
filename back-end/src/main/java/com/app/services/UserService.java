@@ -1,7 +1,6 @@
 package com.app.services;
 
 
-import com.app.DTO.DTONewUser;
 import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.User;
 
@@ -11,6 +10,6 @@ public interface UserService {
 
     User saveUser(User newUSer);
 
-    List<DTOUserShortInfo> findAllByJobTitle(String jobTitle);
+//    List<DTOUserShortInfo> findAllByJobTitle(String jobTitle);
 
 }
