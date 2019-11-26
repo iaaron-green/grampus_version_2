@@ -36,4 +36,9 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             value = "SELECT rating_type FROM grampus_db.ratings WHERE rating_source_username = ? AND profile_id = ?",
             nativeQuery = true)
     List<String> getProfileRatingTypes (String username, Long profileId);
+
+//    @Query(
+//            value = "SELECT COUNT(rating_type) FROM grampus_db.ratings",
+//            nativeQuery = true)
+//    List<Rating> getAllRatingById ();
 }
