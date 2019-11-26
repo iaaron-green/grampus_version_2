@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
@@ -20,10 +21,8 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     Profile findProfileById(Long id);
 
 
-
     @Query(
-            value = "SELECT COUNT(rating_type) FROM test_db.ratings WHERE profile_id = ? AND rating_type = ?",
+            value = "SELECT profile_id FROM ratings WHERE rating_source_username = ?",
             nativeQuery = true)
-    List<DTOLikableProfile> getLikeableProfiles();
-
+    Set<Long> getProfilesIdWithCurrentUserLike(String userEmail);
 }

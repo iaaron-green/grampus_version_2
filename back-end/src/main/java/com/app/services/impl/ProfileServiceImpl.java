@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -128,16 +129,12 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.findAll();
     }
 
-    public List<DTOLikableProfile> getAllProfilesForLike(String principalName) throws CustomException {
+    public Set<DTOLikableProfile> getAllProfilesForLike(String principalName) throws CustomException {
 
-        User currentUser = userRepository.findByUsername(principalName);
+        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(principalName);
+        Set<DTOLikableProfile> DTOLikableProfiles = userRepository.getLikeableProfiles();
 
-        Profile currentProfile = profileRepository.findOneById(currentUser.getId());
-
-
-        List<DTOLikableProfile> DTOLikableProfiles = profileRepository.getLikeableProfiles();
-
-
+        fillDTOLikableProfile(profilesIdWithLike, DTOLikableProfiles);
 
 //        profileRepository.findAll().iterator()
 //                .forEachRemaining(profile -> {
@@ -155,14 +152,24 @@ public class ProfileServiceImpl implements ProfileService {
         return DTOLikableProfiles;
     }
 
-    private void getDTOLikableProfile(List<DTOLikableProfile> DTOLikableProfiles, Profile profile, boolean b) {
-        DTOLikableProfiles.add(DTOLikableProfile.builder()
-                .profileId(profile.getId())
-                .picture(profile.getProfilePicture())
-                .fullName(profile.getUser().getFullName())
-                .jobTitle(profile.getUser().getJobTitle())
-                .isAbleToLike(b)
-                .build());
+
+
+    private void fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<DTOLikableProfile> DTOLikableProfiles) {
+
+        DTOLikableProfiles.forEach(profile -> {
+            if (profilesIdWithLike.contains(profile.getProfileId())) {
+                profile.setIsAbleToLike(false);
+            }
+            else profile.setIsAbleToLike(true);
+        });
+
+//        DTOLikableProfiles.add(DTOLikableProfile.builder()
+//                .profileId(profile.getId())
+//                .picture(profile.getProfilePicture())
+//                .fullName(profile.getUser().getFullName())
+//                .jobTitle(profile.getUser().getJobTitle())
+//                .isAbleToLike(b)
+//                .build());
     }
 
     private boolean isProfileRatingIncludeLikeFromCurrentUser(Profile currentProfile, Profile profile) {

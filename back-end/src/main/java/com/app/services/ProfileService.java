@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface ProfileService {
@@ -24,9 +25,7 @@ public interface ProfileService {
 
     List<Profile> getAllProfiles() throws CustomException;
 
-    List<DTOLikableProfile> getLikeableProfiles();
-
-    List<DTOLikableProfile> getAllProfilesForLike(String principalName) throws CustomException;
+    Set<DTOLikableProfile> getAllProfilesForLike(String principalName) throws CustomException;
 
 
 }
