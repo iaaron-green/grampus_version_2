@@ -11,10 +11,11 @@ import Alamofire
 import Charts
 import SVProgressHUD
 
-class ProfileTableViewController: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ProfileTableViewController: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ChartViewDelegate {
     
     @IBOutlet weak var menuBarButton: UIBarButtonItem!
     @IBOutlet weak var navigationBar: UINavigationBar!
+    @IBOutlet weak var saveButton: UIButton!
     
     //Overview cell
     @IBOutlet weak var profileImageView: UIImageView!
@@ -63,7 +64,11 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     var motivator: Int?
     var top1: Int?
     var mentor: Int?
+    var staff = true
+    
     var userID: String?
+    
+    var entries: [PieChartDataEntry] = []
     
     var achievementsArray = [Achievements]()
     let myRefreshControl: UIRefreshControl = {
@@ -90,6 +95,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        chartView.delegate = self
+
                 
         SVProgressHUD.setMinimumDismissTimeInterval(1)
         SVProgressHUD.setDefaultStyle(.dark)
@@ -235,6 +243,13 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     func mapAchievements() {
         achievementsArray.removeAll()
+        if staff {
+            let count = 0
+            let image = UIImage(named: "staff")
+            let achive = Achievements(type: "staff", count: count, image: image)
+            achievementsArray.append(achive)
+        }
+        
         if bestLooker! >= 5 {
             let count = (bestLooker! / 5)
             let image = UIImage(named: "best_looker")
@@ -252,7 +267,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         if smartMind! >= 5 {
             let count = (smartMind! / 5)
             let image = UIImage(named: "smart_mind")
-            let achive = Achievements(type: "extrovert", count: count, image: image)
+            let achive = Achievements(type: "smart_mind", count: count, image: image)
             achievementsArray.append(achive)
         }
         
@@ -310,8 +325,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 }
                 self.profilePicture = json["profilePicture"] as? String ?? ""
                 
-                
-                //ACHIEVEMENTS FIX!
                 let achieves = json["likesNumber"] as? [String: Int]
                 self.achievements = achieves
                 //self.achievements = achieves?.convertToDictionary() as? [String : Int]
@@ -375,64 +388,102 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         chartView.rotationEnabled = true
         chartView.isUserInteractionEnabled = true
         chartView.drawEntryLabelsEnabled = false
+        
+        let legend = chartView.legend
+        legend.horizontalAlignment = .left
+        legend.verticalAlignment = .bottom
+        legend.orientation = .vertical
+        legend.xEntrySpace = 0
+        legend.yEntrySpace = 0
+        legend.font = UIFont(name: "Helvetica Neue", size: 14)!
+        
+        chartView.animate(yAxisDuration: 2, easingOption: .easeInOutSine)
+        chartView.highlightPerTapEnabled = true
+                
+        
+        
 
-
+        
+        
         var bestLookerColor = UIColor.clear
         var superWorkerColor = UIColor.clear
-        var extrovertColor = UIColor.clear
-        var untidyColor = UIColor.clear
+        var smartMind = UIColor.clear
+        var motivator = UIColor.clear
         var deadLinerColor = UIColor.clear
-        var introvertColor = UIColor.clear
+        var top1 = UIColor.clear
+        var mentor = UIColor.clear
 
-        var entries: [PieChartDataEntry] = []
+        
         var colorArray: [UIColor] = []
+        entries = [PieChartDataEntry]()
 
-        if self.bestLooker! != 0 {
-            entries.append(PieChartDataEntry(value: Double(self.bestLooker!), label: "Best looker"))
-            bestLookerColor = UIColor.red
-            colorArray.append(bestLookerColor)
+        if self.top1! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.top1!), label: "TOP1"))
+            top1 = #colorLiteral(red: 0, green: 0.2470588235, blue: 0.3607843137, alpha: 1)
+            colorArray.append(top1)
+        }
+        
+        if self.mentor! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.mentor!), label: "Mentor"))
+            mentor = #colorLiteral(red: 0.2156862745, green: 0.2980392157, blue: 0.5019607843, alpha: 1)
+            colorArray.append(mentor)
+        }
+        
+        if self.motivator! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.motivator!), label: "Motivator"))
+            motivator = #colorLiteral(red: 0.4784313725, green: 0.3176470588, blue: 0.5843137255, alpha: 1)
+            colorArray.append(motivator)
+        }
+        
+        if self.deadLiner! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.deadLiner!), label: "Deadliner"))
+            deadLinerColor = #colorLiteral(red: 0.737254902, green: 0.3137254902, blue: 0.5647058824, alpha: 1)
+            colorArray.append(deadLinerColor)
         }
 
         if self.superWorker! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.superWorker!), label: "Super worker"))
-            superWorkerColor = UIColor.orange
+            superWorkerColor = #colorLiteral(red: 0.937254902, green: 0.337254902, blue: 0.4588235294, alpha: 1)
             colorArray.append(superWorkerColor)
         }
 
         if self.smartMind! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.smartMind!), label: "Smart mind"))
-            extrovertColor = UIColor.purple
-            colorArray.append(extrovertColor)
+            smartMind = #colorLiteral(red: 1, green: 0.462745098, blue: 0.2901960784, alpha: 1)
+            colorArray.append(smartMind)
         }
 
-        if self.motivator! != 0 {
-            entries.append(PieChartDataEntry(value: Double(self.motivator!), label: "Motivator"))
-            untidyColor = UIColor( red: CGFloat(0/255.0), green: CGFloat(110/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(0.5) )
-            colorArray.append(untidyColor)
+        if self.bestLooker! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.bestLooker!), label: "Best looker"))
+            bestLookerColor = #colorLiteral(red: 1, green: 0.6509803922, blue: 0, alpha: 1)
+            colorArray.append(bestLookerColor)
         }
 
-        if self.deadLiner! != 0 {
-            entries.append(PieChartDataEntry(value: Double(self.deadLiner!), label: "Deadliner"))
-            deadLinerColor = UIColor.systemGreen
-            colorArray.append(deadLinerColor)
-        }
-
-        if self.top1! != 0 {
-            entries.append(PieChartDataEntry(value: Double(self.top1!), label: "TOP1"))
-            introvertColor = UIColor.blue
-            colorArray.append(introvertColor)
-        }
-        
-        if self.mentor! != 0 {
-            entries.append(PieChartDataEntry(value: Double(self.mentor!), label: "mentor"))
-            introvertColor = UIColor.gray
-            colorArray.append(introvertColor)
-        }
-
-        let dataSet = PieChartDataSet(entries: entries, label: "")
+        let dataSet = PieChartDataSet(entries: entries, label: nil)
         dataSet.colors = colorArray
         dataSet.drawValuesEnabled = true
+        
+        //Value formatter to show Ints
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        dataSet.valueFormatter = DefaultValueFormatter(formatter: formatter)
+        
         chartView.data = PieChartData(dataSet: dataSet)
+        
+    }
+    
+    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+
+        let label = entries[Int(highlight.x)].label!
+        let value = Int(entries[Int(highlight.x)].value)
+        
+        SVProgressHUD.show(UIImage(named: "heart")!, status: "\(label) - \(value)")
+    }
+    
+    @IBAction func saveAction(_ sender: UIButton) {
+        let image = chartView.getChartImage(transparent: false)
+        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
+        SVProgressHUD.showSuccess(withStatus: "Saved to Camera roll!")
     }
     
     func setUpProfile( fullName: String, profession: String, likes: Int, dislikes: Int, information: String, skills: String, photo: String) {
@@ -484,7 +535,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 if success {
                     if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
                         self.profileInformationLabel.text = textField?.text
-                        SVProgressHUD.showSuccess(withStatus: "Done!")
+                        SVProgressHUD.showSuccess(withStatus: "Success!")
                     } else {
                         self.profileInformationLabel.text = "no info"
                     }
@@ -520,7 +571,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 if success {
                     if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
                         self.profileSkillsLabel.text = textField?.text
-                        SVProgressHUD.showSuccess(withStatus: "Done!")
+                        SVProgressHUD.showSuccess(withStatus: "Success!")
                     } else {
                         self.profileSkillsLabel.text = "no skills"
                     }
@@ -580,7 +631,11 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "achievementCell", for: indexPath) as! AchievementsCollectionViewCell
         
-        cell.achievementsLabel.text = String(describing: achievementsArray[indexPath.row].count!)
+        if achievementsArray[indexPath.row].count != 0 {
+            cell.achievementsLabel.text = String(describing: achievementsArray[indexPath.row].count!)
+        } else {
+            cell.achievementsLabel.text = "Staff"
+        }
         cell.achievementsImageView.image = achievementsArray[indexPath.row].image
         return cell
     }

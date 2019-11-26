@@ -9,6 +9,7 @@
 import UIKit
 import Alamofire
 import SwiftyJSON
+import SVProgressHUD
 
 class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, SWRevealViewControllerDelegate, UITableViewDelegate, UITableViewDataSource {
     
@@ -35,6 +36,9 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        SVProgressHUD.setMinimumDismissTimeInterval(2)
+        SVProgressHUD.setDefaultStyle(.dark)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -134,9 +138,22 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     }
     
     @IBAction func dislikeButtonAction(_ sender: Any) {
-        storage.chooseLikeOrDislike(bool: false)
-        network.addLikeOrDislike(ratingType: "dislike", likeState: false)
-        fetchAllUsers()
+        
+        overlayBlurredBackgroundView()
+        
+        let alert = UIAlertController(title: "A you shure?", message: "This action cannot be undone", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Cancel", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: "Dislike", style: .default, handler: { _ in
+            self.storage.chooseLikeOrDislike(bool: false)
+            self.network.addLikeOrDislike(ratingType: "dislike", likeState: false)
+            SVProgressHUD.showSuccess(withStatus: "Sucess!")
+            self.fetchAllUsers()
+            
+        }))
+
+        self.present(alert, animated: true, completion: nil)
+        
+
 //        self.performSegue(withIdentifier: "ShowModalView", sender: self)
 //
 //        self.definesPresentationContext = true

@@ -17,6 +17,7 @@ class SignUpViewController: RootViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var signUpButton: UIButton!
+    @IBOutlet weak var backView: UIView!
     
     let network = NetworkService()
     
@@ -68,6 +69,7 @@ class SignUpViewController: RootViewController {
         signUpButton.layer.shadowOpacity = 0.5
         
         signUpButton.layer.cornerRadius = 5
+        backView.layer.cornerRadius = 7
         
     }
     

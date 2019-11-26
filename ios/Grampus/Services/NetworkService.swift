@@ -80,6 +80,7 @@ class NetworkService {
                 completion(true, nil)
                 
             case .failure(let error) :
+                
                 self.handleError(error: error)
                 completion(false, error.localizedDescription)
             }
@@ -97,7 +98,6 @@ class NetworkService {
         ]
         
         manager.request(userURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
-            
             switch responseJSON.result {
             case .success :
                 

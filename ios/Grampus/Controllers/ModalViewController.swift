@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SVProgressHUD
 
 protocol ModalViewControllerDelegate: class {
     func removeBlurredBackgroundView()
@@ -35,6 +36,9 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        SVProgressHUD.setMinimumDismissTimeInterval(2)
+        SVProgressHUD.setDefaultStyle(.dark)
         
         likeState = storage.getLikeState()
         configureButtons()
@@ -124,6 +128,7 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
             network.addLikeOrDislike(ratingType: ratingType, likeState: likeState!)
             dismiss(animated: true, completion: nil)
             delegate?.removeBlurredBackgroundView()
+            SVProgressHUD.showSuccess(withStatus: "Sucess!")
 
         
     }

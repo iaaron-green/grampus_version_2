@@ -15,6 +15,7 @@ class SignInViewController: RootViewController {
     // MARK: - Outlets
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var backView: UIView!
     
     @IBOutlet weak var signInButton: UIButton!
     @IBOutlet weak var signUpButton: UIButton!
@@ -101,6 +102,7 @@ class SignInViewController: RootViewController {
 //        signUpButton.layer.shadowOpacity = 0.5
         
         signInButton.layer.cornerRadius = 5
+        backView.layer.cornerRadius = 7
 //        signUpButton.layer.cornerRadius = 5
         
     }
