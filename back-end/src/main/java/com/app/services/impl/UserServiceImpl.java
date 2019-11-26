@@ -1,5 +1,6 @@
 package com.app.services.impl;
 
+import com.app.DTO.DTONewUser;
 import com.app.entities.Profile;
 import com.app.entities.User;
 import com.app.repository.UserRepository;
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
     private MessageSource messageSource;
 
     @Override
-    public User saveUser(User newUser) throws CustomException {
+    public DTONewUser saveUser(User newUser) throws CustomException {
 
         LOGGER.info("Check if user already exist");
         if (userRepository.findByUsername(newUser.getUsername()) != null) {
@@ -39,9 +40,12 @@ public class UserServiceImpl implements UserService {
             newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
             newUser.setUsername(newUser.getUsername());
             newUser = userRepository.save(newUser);
+            DTONewUser dtoNewUser = new DTONewUser();
+            dtoNewUser.setUserId(newUser.getId());
+            dtoNewUser.setEmail(newUser.getUsername());
             profileService.saveProfile(new Profile(newUser));
             LOGGER.info("New user registration successful");
-            return newUser;
+            return dtoNewUser;
         }
     }
 }

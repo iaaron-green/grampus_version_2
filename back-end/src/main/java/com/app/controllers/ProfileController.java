@@ -8,7 +8,7 @@ import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.util.CustomException;
 import com.app.validators.ValidationErrorService;
-import com.app.web.model.AchievementData;
+import com.app.DTO.DTOAchievement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -105,7 +105,7 @@ public class ProfileController {
     }
 
     @GetMapping("/userRating/{markType}")
-    public List<AchievementData> getUserRating(@PathVariable Mark markType) {
+    public List<DTOAchievement> getUserRating(@PathVariable Mark markType) {
         return ratingService.getUserRatingByType(markType);
     }
 

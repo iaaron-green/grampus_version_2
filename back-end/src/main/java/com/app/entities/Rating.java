@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ratings")
 public class Rating {
+
     public Rating() {
     }
 
@@ -21,9 +22,6 @@ public class Rating {
     private Long id;
 
     private String ratingSourceUsername;
-
-//    @Column(name = "user_id")
-//    private int profile_id;
 
     private String ratingType;
 

@@ -24,6 +24,8 @@ public interface ProfileService {
 
     List<Profile> getAllProfiles() throws CustomException;
 
+    List<DTOLikableProfile> getLikeableProfiles();
+
     List<DTOLikableProfile> getAllProfilesForLike(String principalName) throws CustomException;
 
 

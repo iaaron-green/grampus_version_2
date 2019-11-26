@@ -7,7 +7,7 @@ import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.RatingService;
-import com.app.web.model.AchievementData;
+import com.app.DTO.DTOAchievement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,11 +88,11 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public List<AchievementData> getUserRatingByType(Mark markType) {
-        List<AchievementData> achievementData = new ArrayList<>();
+    public List<DTOAchievement> getUserRatingByType(Mark markType) {
+        List<DTOAchievement> achievementData = new ArrayList<>();
         Set<Long> userIds = userRepository.getAllId();
         userIds.forEach(userId -> {
-            AchievementData achievement = new AchievementData();
+            DTOAchievement achievement = new DTOAchievement();
             achievement.setUserId(userId);
             achievement.setCountLike(ratingRepository.countRatingType(userId, markType.toString()));
             achievementData.add(achievement);

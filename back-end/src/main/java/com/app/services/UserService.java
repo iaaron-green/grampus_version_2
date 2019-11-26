@@ -1,10 +1,11 @@
 package com.app.services;
 
 
+import com.app.DTO.DTONewUser;
 import com.app.entities.User;
 import com.app.util.CustomException;
 
 public interface UserService {
 
-    User saveUser(User newUSer) throws CustomException;
+    DTONewUser saveUser(User newUSer) throws CustomException;
 }

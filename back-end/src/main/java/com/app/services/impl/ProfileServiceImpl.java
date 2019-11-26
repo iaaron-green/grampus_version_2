@@ -134,20 +134,24 @@ public class ProfileServiceImpl implements ProfileService {
 
         Profile currentProfile = profileRepository.findOneById(currentUser.getId());
 
-        List<DTOLikableProfile> DTOLikableProfiles = new ArrayList<>();
 
-        profileRepository.findAll().iterator()
-                .forEachRemaining(profile -> {
-                    if (CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
-                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
-                        return;
-                    } else if (isProfileRatingIncludeLikeFromCurrentUser(currentProfile, profile)) {
-                        getDTOLikableProfile(DTOLikableProfiles, profile, false);
-                        return;
-                    } else if (!CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
-                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
-                    }
-                });
+        List<DTOLikableProfile> DTOLikableProfiles = profileRepository.getLikeableProfiles();
+
+
+
+//        profileRepository.findAll().iterator()
+//                .forEachRemaining(profile -> {
+//                    if (CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
+//                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
+//                        return;
+//                    } else if (isProfileRatingIncludeLikeFromCurrentUser(currentProfile, profile)) {
+//                        getDTOLikableProfile(DTOLikableProfiles, profile, false);
+//                        return;
+//                    } else if (!CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
+//                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
+//                    }
+//                });
+
         return DTOLikableProfiles;
     }
 
