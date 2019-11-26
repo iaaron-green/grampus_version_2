@@ -1,6 +1,6 @@
 package com.app.services.impl;
 
-import com.app.DTO.DTOAchievement;
+import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
@@ -63,9 +63,9 @@ public class RatingServiceImpl implements RatingService {
 
     }
 
-    public List<Rating> getAllAchieves() {
-        return ratingRepository.getAllRatingById();
-    }
+//    public List<Rating> getAllAchieves() {
+//        return ratingRepository.getAllRatingById();
+//    }
 
     @Override
     public Map<Long, Map<String, Long>> addInfoAchievement() {
@@ -87,18 +87,32 @@ public class RatingServiceImpl implements RatingService {
         return userIdAndAchievments;
     }
 
-    @Override
-    public List<DTOAchievement> getUserRatingByType(Mark markType) {
-        List<DTOAchievement> DTOAchievementData = new ArrayList<>();
-        Set<DTOAchievement> userData = userRepository.getUserData();
-        userData.stream().sorted().forEach(user -> {
-            DTOAchievement achievement = new DTOAchievement();
-            achievement.setProfilePhoto(user.getProfilePhoto());
-            achievement.setUserId(user.getUserId());
-            achievement.setUserName(user.getUserName());
-            achievement.setCountLike(ratingRepository.countRatingType(user.getUserId(), markType.toString()));
-            DTOAchievementData.add(achievement);
-        });
-        return DTOAchievementData;
-    }
+//    @Override
+//    public List<DTOAchievement> getUserRatingByType(Mark markType) {
+//        List<DTOAchievement> DTOAchievementData = new ArrayList<>();
+//        Set<DTOAchievement> userData = userRepository.getUserData(markType);
+//        userData.stream().sorted().forEach(user -> {
+//            DTOAchievement achievement = new DTOAchievement();
+//            achievement.setProfilePhoto(user.getProfilePhoto());
+//            achievement.setUserId(user.getUserId());
+//            achievement.setUserName(user.getUserName());
+//            achievement.setCountLike(ratingRepository.countRatingType(user.getUserId(), markType.toString()));
+//            DTOAchievementData.add(achievement);
+//        });
+//        return DTOAchievementData;
+//    }
+//    public List<DTOUserShortInfo> getUserRatingByType(Mark markType) {
+//        List<DTOUserShortInfo> dtoUser = new ArrayList<>();
+//        Set<Profile> userData = userRepository.getUserData(markType);
+//        userData.forEach(user -> {
+//            DTOUserShortInfo s = DTOUserShortInfo.builder()
+//                    .profileId(user.getId())
+//                    .jobTitle(user.getInformation())
+//                    .fullName(user.getProfilePicture())
+//                    .picture(user.getUser().getUsername())
+//                    .build();
+//            dtoUser.add(s);
+//        });
+//        return dtoUser;
+//    }
 }
