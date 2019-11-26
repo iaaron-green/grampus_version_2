@@ -1,14 +1,13 @@
 package com.app.services.impl;
 
-import com.app.entities.Rating;
+import com.app.DTO.DTOAchievement;
 import com.app.entities.Profile;
-import com.app.entities.User;
+import com.app.entities.Rating;
 import com.app.enums.Mark;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.RatingService;
-import com.app.web.model.AchievementData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class RatingServiceImpl implements RatingService {
     @Autowired
     UserRepository userRepository;
 
-    public Rating addLike(Long profileId, Rating updatedRating, String userName){
+    public Rating addLike(Long profileId, Rating updatedRating, String userName) {
 
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
@@ -38,7 +37,7 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.save(updatedRating);
     }
 
-    public Rating addDislike(Long profileId, Rating updatedRating, String userName){
+    public Rating addDislike(Long profileId, Rating updatedRating, String userName) {
 
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
@@ -65,7 +64,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     public List<Rating> getAllAchieves() {
-        return ratingRepository.findAllRatingById();
+        return ratingRepository.getAllRatingById();
     }
 
     @Override
@@ -89,19 +88,17 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public List<AchievementData> getUserRatingByType(Mark markType) {
-        List<AchievementData> achievementData = new ArrayList<>();
-        Set<AchievementData> userData = userRepository.getUserData();
+    public List<DTOAchievement> getUserRatingByType(Mark markType) {
+        List<DTOAchievement> DTOAchievementData = new ArrayList<>();
+        Set<DTOAchievement> userData = userRepository.getUserData();
         userData.stream().sorted().forEach(user -> {
-            AchievementData achievement = new AchievementData();
+            DTOAchievement achievement = new DTOAchievement();
             achievement.setProfilePhoto(user.getProfilePhoto());
             achievement.setUserId(user.getUserId());
             achievement.setUserName(user.getUserName());
             achievement.setCountLike(ratingRepository.countRatingType(user.getUserId(), markType.toString()));
-            achievementData.add(achievement);
+            DTOAchievementData.add(achievement);
         });
-        return achievementData;
+        return DTOAchievementData;
     }
-
-
 }

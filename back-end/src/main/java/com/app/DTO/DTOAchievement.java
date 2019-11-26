@@ -1,4 +1,4 @@
-package com.app.web.model;
+package com.app.DTO;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

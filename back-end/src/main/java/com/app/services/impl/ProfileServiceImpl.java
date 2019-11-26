@@ -1,6 +1,6 @@
 package com.app.services.impl;
 
-import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOUserShortInfo;
 import com.app.DTO.DTOProfile;
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
@@ -97,7 +97,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void saveProfilePhoto(MultipartFile file, Long id) throws CustomException {
+    public Boolean saveProfilePhoto(MultipartFile file, Long id) throws CustomException {
 
         Profile profile = profileRepository.findOneById(id);
         if (profile != null) {
@@ -119,6 +119,7 @@ public class ProfileServiceImpl implements ProfileService {
                 }
                 profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
                 saveProfile(profile);
+                return true;
             } else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_BAD);
         } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
     }
@@ -128,31 +129,31 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.findAll();
     }
 
-    public List<DTOLikableProfile> getAllProfilesForLike(String principalName) {
+    public List<DTOUserShortInfo> getAllProfilesForLike(String principalName) {
 
         User currentUser = userRepository.findByUsername(principalName);
 
         Profile currentProfile = profileRepository.findOneById(currentUser.getId());
 
-        List<DTOLikableProfile> DTOLikableProfiles = new ArrayList<>();
+        List<DTOUserShortInfo> DTOUserShortInfos = new ArrayList<>();
 
         profileRepository.findAll().iterator()
                 .forEachRemaining(profile -> {
                     if (CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
-                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
+                        getDTOLikableProfile(DTOUserShortInfos, profile, true);
                         return;
                     } else if (isProfileRatingIncludeLikeFromCurrentUser(currentProfile, profile)) {
-                        getDTOLikableProfile(DTOLikableProfiles, profile, false);
+                        getDTOLikableProfile(DTOUserShortInfos, profile, false);
                         return;
                     } else if (!CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
-                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
+                        getDTOLikableProfile(DTOUserShortInfos, profile, true);
                     }
                 });
-        return DTOLikableProfiles;
+        return DTOUserShortInfos;
     }
 
-    private void getDTOLikableProfile(List<DTOLikableProfile> DTOLikableProfiles, Profile profile, boolean b) {
-        DTOLikableProfiles.add(DTOLikableProfile.builder()
+    private void getDTOLikableProfile(List<DTOUserShortInfo> DTOUserShortInfos, Profile profile, boolean b) {
+        DTOUserShortInfos.add(DTOUserShortInfo.builder()
                 .profileId(profile.getId())
                 .picture(profile.getProfilePicture())
                 .fullName(profile.getUser().getFullName())
