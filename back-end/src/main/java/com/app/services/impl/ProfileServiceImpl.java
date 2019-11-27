@@ -1,6 +1,6 @@
 package com.app.services.impl;
 
-import com.app.DTO.DTOUserShortInfo;
+import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOProfile;
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
@@ -17,7 +17,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
