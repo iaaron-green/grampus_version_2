@@ -8,6 +8,7 @@ import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.RatingService;
+import com.app.DTO.DTOAchievement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class RatingServiceImpl implements RatingService {
     @Autowired
     UserRepository userRepository;
 
-    public Rating addLike(Long profileId, Rating updatedRating, String userName) {
+    public Rating addLike(Long profileId, Rating updatedRating, String userName){
 
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
@@ -37,7 +38,7 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.save(updatedRating);
     }
 
-    public Rating addDislike(Long profileId, Rating updatedRating, String userName) {
+    public Rating addDislike(Long profileId, Rating updatedRating, String userName){
 
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
@@ -57,15 +58,15 @@ public class RatingServiceImpl implements RatingService {
         Map<String, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
 
-        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString(), ratingRepository.countRatingType(id, mark.toString())));
+        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString().toLowerCase(), ratingRepository.countRatingType(id, mark.toString().toLowerCase())));
 
         return mapOfLikes;
 
     }
 
-//    public List<Rating> getAllAchieves() {
-//        return ratingRepository.getAllRatingById();
-//    }
+    public List<Rating> getAllAchieves() {
+        return ratingRepository.findAllRatingById();
+    }
 
     @Override
     public Map<Long, Map<String, Long>> addInfoAchievement() {
@@ -87,32 +88,18 @@ public class RatingServiceImpl implements RatingService {
         return userIdAndAchievments;
     }
 
-//    @Override
-//    public List<DTOAchievement> getUserRatingByType(Mark markType) {
-//        List<DTOAchievement> DTOAchievementData = new ArrayList<>();
-//        Set<DTOAchievement> userData = userRepository.getUserData(markType);
-//        userData.stream().sorted().forEach(user -> {
-//            DTOAchievement achievement = new DTOAchievement();
-//            achievement.setProfilePhoto(user.getProfilePhoto());
-//            achievement.setUserId(user.getUserId());
-//            achievement.setUserName(user.getUserName());
-//            achievement.setCountLike(ratingRepository.countRatingType(user.getUserId(), markType.toString()));
-//            DTOAchievementData.add(achievement);
-//        });
-//        return DTOAchievementData;
-//    }
-//    public List<DTOUserShortInfo> getUserRatingByType(Mark markType) {
-//        List<DTOUserShortInfo> dtoUser = new ArrayList<>();
-//        Set<Profile> userData = userRepository.getUserData(markType);
-//        userData.forEach(user -> {
-//            DTOUserShortInfo s = DTOUserShortInfo.builder()
-//                    .profileId(user.getId())
-//                    .jobTitle(user.getInformation())
-//                    .fullName(user.getProfilePicture())
-//                    .picture(user.getUser().getUsername())
-//                    .build();
-//            dtoUser.add(s);
-//        });
-//        return dtoUser;
-//    }
+    @Override
+    public List<DTOAchievement> getUserRatingByType(Mark markType) {
+        List<DTOAchievement> achievementData = new ArrayList<>();
+        Set<Long> userIds = userRepository.getAllId();
+        userIds.forEach(userId -> {
+            DTOAchievement achievement = new DTOAchievement();
+            achievement.setUserId(userId);
+            achievement.setCountLike(ratingRepository.countRatingType(userId, markType.toString()));
+            achievementData.add(achievement);
+        });
+        return achievementData;
+    }
+
+
 }

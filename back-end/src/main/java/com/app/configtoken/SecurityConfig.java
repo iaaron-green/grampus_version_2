@@ -2,6 +2,7 @@ package com.app.configtoken;
 
 import com.app.services.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +27,9 @@ import static com.app.configtoken.Constants.SIGN_UP_URLS;
         prePostEnabled = true
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+   @Autowired
+   private MessageSource messageSource;
 
    private JwtAuthenticationEntryPoint unauthorizedHandler;
    private CustomUserDetailsService customUserDetailsService;

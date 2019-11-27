@@ -18,12 +18,13 @@ import java.util.Collection;
 @EqualsAndHashCode
 @Table(name = "users")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Email
-    @NotBlank(message = "Email is required")
+    @NotBlank()
     @Column(unique = true)
     private String username;
 

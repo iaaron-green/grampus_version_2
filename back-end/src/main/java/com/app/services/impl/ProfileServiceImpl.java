@@ -13,20 +13,25 @@ import com.app.util.CustomException;
 import com.app.util.Errors;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-
+    @Autowired
+    private MessageSource messageSource;
+    @Autowired
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
     private RatingService ratingService;
@@ -48,7 +53,7 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = profileRepository.findProfileById(id);
         if (profile != null) {
             return profile;
-        } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -62,11 +67,12 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setInformation(profileFromDB.getInformation());
             dtoProfile.setProfilePicture(profileFromDB.getProfilePicture());
             dtoProfile.setSkills(profileFromDB.getSkills());
-            dtoProfile.setUser(profileFromDB.getUser());
-            dtoProfile.setRatings(profileFromDB.getRatings());
+            dtoProfile.setEmail(profileFromDB.getUser().getUsername());
+            dtoProfile.setJobTitle(profileFromDB.getUser().getJobTitle());
+            dtoProfile.setFullName(profileFromDB.getUser().getFullName());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
             return dtoProfile;
-        } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -96,7 +102,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 
     @Override
-    public Boolean saveProfilePhoto(MultipartFile file, Long id) throws CustomException {
+    public void saveProfilePhoto(MultipartFile file, Long id) throws CustomException {
 
         Profile profile = profileRepository.findOneById(id);
         if (profile != null) {
@@ -114,57 +120,42 @@ public class ProfileServiceImpl implements ProfileService {
                         client.disconnect();
                     }
                 } catch (IOException e) {
-                    throw new CustomException("" + Errors.FTP_CONNECTION_ERROR);
+                    throw new CustomException(messageSource.getMessage("ftp.connection.error", null, LocaleContextHolder.getLocale()), Errors.FTP_CONNECTION_ERROR);
                 }
                 profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
                 saveProfile(profile);
-                return true;
-            } else throw new CustomException("" + Errors.PROFILE_PICTURE_IS_BAD);
-        } else throw new CustomException("" + Errors.PROFILE_NOT_EXIST);
+            } else throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
-    public List<Profile> getAllProfiles() {
+    public List<Profile> getAllProfiles()  {
 
         return profileRepository.findAll();
     }
 
-    public List<DTOUserShortInfo> getAllProfilesForLike(String principalName) {
+    public Set<DTOLikableProfile> getAllProfilesForLike(String userName)  {
 
-        User currentUser = userRepository.findByUsername(principalName);
-
-        Profile currentProfile = profileRepository.findOneById(currentUser.getId());
-
-        List<DTOUserShortInfo> DTOUserShortInfos = new ArrayList<>();
-
-        profileRepository.findAll().iterator()
-                .forEachRemaining(profile -> {
-                    if (CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
-                        getDTOLikableProfile(DTOUserShortInfos, profile, true);
-                        return;
-                    } else if (isProfileRatingIncludeLikeFromCurrentUser(currentProfile, profile)) {
-                        getDTOLikableProfile(DTOUserShortInfos, profile, false);
-                        return;
-                    } else if (!CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
-                        getDTOLikableProfile(DTOUserShortInfos, profile, true);
-                    }
-                });
-        return DTOUserShortInfos;
+        User user = userRepository.findByUsername(userName);
+        Set<Long> profilesIdWithLike;
+        Set<DTOLikableProfile> dtoLikableProfiles = new HashSet<>();
+        if (user != null) {
+            profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
+            dtoLikableProfiles = userRepository.getLikeableProfiles(user.getId());
+            if (!CollectionUtils.isEmpty(profilesIdWithLike) && !CollectionUtils.isEmpty(dtoLikableProfiles)){
+                return fillDTOLikableProfile(profilesIdWithLike, dtoLikableProfiles);
+            }
+        }
+        return dtoLikableProfiles;
     }
 
-    private void getDTOLikableProfile(List<DTOUserShortInfo> DTOUserShortInfos, Profile profile, boolean b) {
-        DTOUserShortInfos.add(DTOUserShortInfo.builder()
-                .profileId(profile.getId())
-                .picture(profile.getProfilePicture())
-                .fullName(profile.getUser().getFullName())
-                .jobTitle(profile.getUser().getJobTitle())
-                .isAbleToLike(b)
-                .build());
-    }
+    private Set<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<DTOLikableProfile> dtoLikableProfiles) {
 
-    private boolean isProfileRatingIncludeLikeFromCurrentUser(Profile currentProfile, Profile profile) {
-        return !CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile) &&
-                profile.getRatings().stream()
-                        .anyMatch(rating -> currentProfile.getUser().getUsername().equals(rating
-                                .getRatingSourceUsername()));
+        dtoLikableProfiles.forEach(profile -> {
+            if (profilesIdWithLike.contains(profile.getId())) {
+                profile.setIsAbleToLike(false);
+            }
+            else profile.setIsAbleToLike(true);
+        });
+        return dtoLikableProfiles;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface ProfileService {
@@ -21,9 +22,9 @@ public interface ProfileService {
 
     Boolean saveProfilePhoto(MultipartFile file, Long id) throws CustomException;
 
-    List<Profile> getAllProfiles();
+    List<Profile> getAllProfiles() throws CustomException;
 
-    List<DTOUserShortInfo> getAllProfilesForLike(String principalName);
+    Set<DTOLikableProfile> getAllProfilesForLike(String userName);
 
 
 }
