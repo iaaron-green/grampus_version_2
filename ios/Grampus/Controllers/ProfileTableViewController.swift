@@ -28,11 +28,19 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @IBOutlet weak var collectionView: UICollectionView!
     
     //Information cell
-    @IBOutlet weak var telegramLabel: UILabel!
-    @IBOutlet weak var infoAddButton: UIButton!
+
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var skypeLabel: UILabel!
     @IBOutlet weak var telephoneLabel: UILabel!
+    @IBOutlet weak var telegramLabel: UILabel!
+    @IBOutlet weak var noChartImage: UIImageView!
+    @IBOutlet weak var noChartLabel: UILabel!
+    
+    @IBOutlet weak var skypeAddButton: UIButton!
+    @IBOutlet weak var telephoneAddButton: UIButton!
+    @IBOutlet weak var telegramAddButton: UIButton!
+    
+    
     
     //Skills cell
     @IBOutlet weak var profileSkillsLabel: UILabel!
@@ -72,11 +80,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     var mentor: Int?
     var staff = true
     
-    var skypePrefix = "Skype: "
-    var emailPrefix = "Email: "
-    var telephonePrefix = "Telephone: "
-    var telegramPrefix = "Telegram: "
-    
     var userID: String?
     
     var entries: [PieChartDataEntry] = []
@@ -96,8 +99,10 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             profileImageView.isUserInteractionEnabled = true
         } else {
             profileImageView.isUserInteractionEnabled = false
-            infoAddButton.isEnabled = false
-            skillsAddButton.isEnabled = false
+            skillsAddButton.isHidden = true
+            skypeAddButton.isHidden = true
+            telephoneAddButton.isHidden = true
+            telegramAddButton.isHidden = true
             userID = storage.getSelectedUserIdProfile()!
             fetchUser(userId: storage.getSelectedUserIdProfile()!)
         }
@@ -113,8 +118,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         SVProgressHUD.setMinimumDismissTimeInterval(1)
         SVProgressHUD.setDefaultStyle(.dark)
         
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
-        profileImageView.addGestureRecognizer(tapGestureRecognizer)
+        addLabelGestures()
         
         screenSize = UIScreen.main.bounds
         screenWidth = screenSize.width
@@ -135,9 +139,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         tableView.estimatedRowHeight = 120
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "loadChart"), object: nil)
-        
-        //self.tableView.tableFooterView = UIView(frame: .zero)
-        
+                
         navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         if revealViewController() != nil {
             menuBarButton.target = self.revealViewController()
@@ -156,6 +158,21 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         storage.saveProfileState(state: true)
     }
     
+    func addLabelGestures() {
+        
+        let imageTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
+        let emailTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(emailTapped(tapGestureRecognizer:)))
+        let skypeTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(skypeTapped(tapGestureRecognizer:)))
+        let telephoneTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(telephoneTapped(tapGestureRecognizer:)))
+        let telegramTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(telegramTapped(tapGestureRecognizer:)))
+        
+        profileImageView.addGestureRecognizer(imageTapGestureRecognizer)
+        emailLabel.addGestureRecognizer(emailTapGestureRecognizer)
+        skypeLabel.addGestureRecognizer(skypeTapGestureRecognizer)
+        telephoneLabel.addGestureRecognizer(telephoneTapGestureRecognizer)
+        telegramLabel.addGestureRecognizer(telegramTapGestureRecognizer)
+    }
+    
     
     @objc func loadList(notification: NSNotification){
         DispatchQueue.main.async {
@@ -165,8 +182,48 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     @objc func pullToRefresh(sender: UIRefreshControl) {
         fetchUser(userId: userID!)
-        tableView.reloadData()
         sender.endRefreshing()
+    }
+    
+    @objc func emailTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        if let url = URL(string: "mailto:\(email!)") {
+          if #available(iOS 10.0, *) {
+              UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+          }
+          else {
+              UIApplication.shared.openURL(url as URL)
+          }
+        }
+    }
+    
+    @objc func skypeTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        if let url = URL(string: "skype:\(skype!)?chat") {
+          if #available(iOS 10.0, *) {
+            UIApplication.shared.open(url)
+          } else {
+            UIApplication.shared.openURL(url)
+          }
+        }
+    }
+    
+    @objc func telephoneTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        if let url = URL(string: "tel://\(telephone!)") {
+          if #available(iOS 10.0, *) {
+            UIApplication.shared.open(url)
+          } else {
+            UIApplication.shared.openURL(url)
+          }
+        }
+    }
+    
+    @objc func telegramTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        if let url = URL(string: "tg://resolve?domain=\(telegram!)") {
+          if #available(iOS 10.0, *) {
+            UIApplication.shared.open(url)
+          } else {
+            UIApplication.shared.openURL(url)
+          }
+        }
     }
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
@@ -183,7 +240,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .destructive, handler: nil))
 
         self.present(alert, animated: true, completion: nil)
-        //handleProfilePicker()
         
     }
     
@@ -277,7 +333,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
         if smartMind! >= 5 {
             let count = (smartMind! / 5)
-            let image = UIImage(named: "smart_mind")
+            let image = UIImage(named: "smart mind")
             let achive = Achievements(type: "smart_mind", count: count, image: image)
             achievementsArray.append(achive)
         }
@@ -319,16 +375,14 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
             
             if let json = json {
-                //let user = json["user"] as! NSDictionary
                 self.fullName = json["fullName"] as? String ?? "Full name"
                 self.profession = json["jobTitle"] as? String ?? "Job Title"
-                self.email = json["email"] as? String ?? "Email"
+                self.email = json["email"] as? String ?? ""
+                self.skype = json["skype"] as? String ?? ""
+                self.telephone = json["telephone"] as? String ?? ""
+                self.telegram = json["telegram"] as? String ?? ""
                 self.likes = json["likes"] as? Int ?? 0
                 self.dislikes = json["dislikes"] as? Int ?? 0
-                self.information = json["information"] as? String
-                if self.information == "" || self.information == nil {
-                    self.information = "Telegram:"
-                }
                 self.skills = json["skills"] as? String
                 if self.skills == "" || self.skills == nil {
                     self.skills = "no skills"
@@ -337,7 +391,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 
                 let achieves = json["likesNumber"] as? [String: Int]
                 self.achievements = achieves
-                //self.achievements = achieves?.convertToDictionary() as? [String : Int]
                 self.bestLooker = self.achievements?["best_looker"]
                 self.superWorker = self.achievements?["super_worker"]
                 self.smartMind = self.achievements?["smart_mind"]
@@ -345,12 +398,19 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 self.deadLiner = self.achievements?["deadliner"]
                 self.top1 = self.achievements?["top1"]
                 self.mentor = self.achievements?["mentor"]
-
-            
                 
-                self.setUpProfile(fullName: self.fullName!, profession: self.profession!, likes: self.likes!, dislikes: self.dislikes!, information: self.information!, skills: self.skills!, photo: self.profilePicture!)
+                self.setUpProfile(fullName: self.fullName!, profession: self.profession!, likes: self.likes!, dislikes: self.dislikes!, email: self.email!, skype: self.skype!, telephone: self.telephone!, telegram: self.telegram!, skills: self.skills!, photo: self.profilePicture!)
                 self.setUpCharts()
                 self.mapAchievements()
+                if self.entries.isEmpty {
+                    self.saveButton.isHidden = true
+                    self.noChartImage.isHidden = false
+                    self.noChartLabel.isHidden = false
+                } else {
+                    self.saveButton.isHidden = false
+                    self.noChartImage.isHidden = true
+                    self.noChartLabel.isHidden = true
+                }
                 self.tableView.reloadData()
                 
             } else {
@@ -461,49 +521,28 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         SVProgressHUD.showSuccess(withStatus: "Saved to Camera roll!")
     }
     
-    func setUpProfile( fullName: String, profession: String, likes: Int, dislikes: Int, information: String, skills: String, photo: String) {
+    func setUpProfile( fullName: String, profession: String, likes: Int, dislikes: Int, email: String, skype: String, telephone: String, telegram: String, skills: String, photo: String) {
         
         profileFullNameLabel.text = fullName
         profileProfessionLabel.text = profession
         profileLikeLabel.text = "Likes: \(String(describing: likes))"
         profileDislikeLabel.text = "Dislikes: \(String(describing: dislikes))"
+        emailLabel.text = email
+        skypeLabel.text = skype
+        telephoneLabel.text = telephone
+        telegramLabel.text = telegram
         profileSkillsLabel.text = skills
         
-        emailLabel.attributedText = attributedString(from: emailPrefix + email!, boldRange: NSRange(0...emailPrefix.count - 1))
-        skypeLabel.attributedText = attributedString(from: skypePrefix, boldRange: NSRange(0...skypePrefix.count - 1))
-        telephoneLabel.attributedText = attributedString(from: telephonePrefix, boldRange: NSRange(0...telephonePrefix.count - 1))
-        telegramLabel.attributedText = attributedString(from: telegramPrefix, boldRange: NSRange(0...telegramPrefix.count - 1))
-
-        DispatchQueue.global(qos: .userInteractive).async {
+        DispatchQueue.main.async {
             self.imageService.getImage(withURL: self.profilePicture!) { (image) in
-
-                DispatchQueue.main.async {
                     if let image = image {
                         self.profileImageView.image = image
                         self.tableView.reloadData()
-
                     } else {
                         self.profileImageView.image = UIImage(named: "red cross")
                     }
-                }
             }
         }
-    }
-    
-    func attributedString(from string: String, boldRange: NSRange?) -> NSAttributedString {
-        let fontSize = UIFont.systemFontSize
-        let boldAttribute = [
-            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: fontSize),
-            NSAttributedString.Key.foregroundColor: UIColor.black
-        ]
-        let nonBoldAttribute = [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize),
-        ]
-        let attrStr = NSMutableAttributedString(string: string, attributes: nonBoldAttribute)
-        if let range = boldRange {
-            attrStr.setAttributes(boldAttribute, range: range)
-        }
-        return attrStr
     }
     
     func navBarAppearance() {
@@ -513,39 +552,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     }
     
     // MARK: - Actions
-    @IBAction func informationAddAction(_ sender: Any) {
-        let alert = UIAlertController(title: "Enter information about yourself:", message: nil, preferredStyle: .alert)
-        
-        alert.addTextField { (textField) in
-            if self.information == "" || self.information == "no info" {
-                textField.text = ""
-            } else {
-                textField.text = self.telegramLabel.text
-            }
-        }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
-        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            self.network.editProfileText(key: "information", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
-                if success {
-                    if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
-                        self.telegramLabel.text = textField?.text
-                        SVProgressHUD.showSuccess(withStatus: "Success!")
-                    } else {
-                        self.telegramLabel.text = "Telegram:"
-                    }
-                    self.tableView.reloadData()
-                } else {
-                    SVProgressHUD.showError(withStatus: "Error updating information!")
-                }
-            }
-            self.tableView.reloadData()
-            
-        }))
-        
-        self.present(alert, animated: true, completion: nil)
-        self.tableView.reloadData()
-    }
     
     @IBAction func skillsAddAction(_ sender: Any) {
         let alert = UIAlertController(title: "Enter your skills:", message: nil, preferredStyle: .alert)
@@ -580,6 +586,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         self.present(alert, animated: true, completion: nil)
         self.tableView.reloadData()
     }
+    
     @IBAction func skypeAddAction(_ sender: UIButton) {
         let alert = UIAlertController(title: "Enter your Skype:", message: nil, preferredStyle: .alert)
 
@@ -590,10 +597,10 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             self.network.editProfileText(key: "skype", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
                 if success {
                     if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
-                        self.skypeLabel.attributedText = self.attributedString(from: self.skypePrefix + textField!.text!, boldRange: NSRange(0...self.skypePrefix.count - 1))
+                        self.skypeLabel.text = textField?.text
                         SVProgressHUD.showSuccess(withStatus: "Success!")
                     } else {
-                        self.skypeLabel.attributedText = self.attributedString(from: self.skypePrefix, boldRange: NSRange(0...self.skypePrefix.count - 1))
+                        self.skypeLabel.text = ""
                     }
                     self.tableView.reloadData()
                 } else {
@@ -620,10 +627,10 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             self.network.editProfileText(key: "telephone", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
                 if success {
                     if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
-                        self.telephoneLabel.attributedText = self.attributedString(from: self.telephonePrefix + textField!.text!, boldRange: NSRange(0...self.telephonePrefix.count - 1))
+                        self.telephoneLabel.text = textField?.text
                         SVProgressHUD.showSuccess(withStatus: "Success!")
                     } else {
-                        self.telephoneLabel.attributedText = self.attributedString(from: self.telephonePrefix, boldRange: NSRange(0...self.telephonePrefix.count - 1))
+                        self.telephoneLabel.text = ""
                     }
                     self.tableView.reloadData()
                 } else {
@@ -639,7 +646,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     @IBAction func telegramAddAction(_ sender: UIButton) {
         
-        let alert = UIAlertController(title: "Enter your Telegram:", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Enter your Telegram:", message: "Your accoun must begin with '@'", preferredStyle: .alert)
 
         alert.addTextField()
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
@@ -648,10 +655,10 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             self.network.editProfileText(key: "telegram", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
                 if success {
                     if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
-                        self.telegramLabel.attributedText = self.attributedString(from: self.telegramPrefix + textField!.text!, boldRange: NSRange(0...self.telegramPrefix.count - 1))
+                        self.telegramLabel.text = textField?.text
                         SVProgressHUD.showSuccess(withStatus: "Success!")
                     } else {
-                        self.telegramLabel.attributedText = self.attributedString(from: self.telegramPrefix, boldRange: NSRange(0...self.telegramPrefix.count - 1))
+                        self.telegramLabel.text = ""
                     }
                     self.tableView.reloadData()
                 } else {

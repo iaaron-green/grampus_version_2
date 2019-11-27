@@ -19,6 +19,7 @@ class MenuTableViewController: UITableViewController {
     var profilePicture: String?
     var fullName: String?
     var email: String?
+    var UserID: Int?
     let network = NetworkService()
     let storage = StorageService()
     let imageService = ImageService()
@@ -56,6 +57,7 @@ class MenuTableViewController: UITableViewController {
                 self.fullName = json["fullName"] as? String
                 self.email = json["email"] as? String
                 self.profilePicture = json["profilePicture"] as? String
+                self.UserID = json["id"] as? Int
                 
                 if let unwrappedFullName = self.fullNameLabel {
                     self.fullNameLabel = unwrappedFullName

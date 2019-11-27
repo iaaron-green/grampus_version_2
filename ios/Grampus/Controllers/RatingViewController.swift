@@ -56,7 +56,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
             self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
             self.revealViewController()?.delegate = self
         }
-        
     }
     
     
@@ -93,6 +92,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     func fetchAllUsers() {
         network.fetchAllUsers { (json) in
             if let json = json {
+                //print(json)
                 self.json = json
                 self.filteredJson = [JSON]()
                 for i in 0..<json.count {
@@ -115,7 +115,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @objc override func pullToRefresh(sender: UIRefreshControl) {
         fetchAllUsers()
-        tableView.reloadData()
         sender.endRefreshing()
     }
     
@@ -139,8 +138,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @IBAction func dislikeButtonAction(_ sender: Any) {
         
-        overlayBlurredBackgroundView()
-        
         let alert = UIAlertController(title: "A you shure?", message: "This action cannot be undone", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Dislike", style: .default, handler: { _ in
@@ -152,14 +149,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         }))
 
         self.present(alert, animated: true, completion: nil)
-        
-
-//        self.performSegue(withIdentifier: "ShowModalView", sender: self)
-//
-//        self.definesPresentationContext = true
-//        self.providesPresentationContextTransitionStyle = true
-//
-//        self.overlayBlurredBackgroundView()
     }
     
     func overlayBlurredBackgroundView() {
@@ -197,7 +186,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     @objc func buttonClicked(sender:UIButton) {
         let buttonRow = sender.tag
         
-        if let id = self.json[buttonRow]["profileId"].int {
+        if let id = self.json[buttonRow]["id"].int {
             storage.saveSelectedUserId(selectedUserId: id)
         }
     }
@@ -224,7 +213,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
 
             userNameToDisplay = self.filteredJson[indexPath.row]["fullName"].string ?? ""
             jobTitleToDisplay = self.filteredJson[indexPath.row]["jobTitle"].string ?? ""
-            profilePictureString = self.filteredJson[indexPath.row]["picture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
+            profilePictureString = self.filteredJson[indexPath.row]["profilePicture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
             likeDislikeButtonState = self.filteredJson[indexPath.row]["isAbleToLike"].bool ?? false
             
             DispatchQueue.main.async {
@@ -260,7 +249,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if let id = self.filteredJson[indexPath.row]["profileId"].int {
+        if let id = self.filteredJson[indexPath.row]["id"].int {
             storage.saveSelectedUserIdProfile(id: id)
             storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)

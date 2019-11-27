@@ -151,6 +151,7 @@ class NetworkService {
         
         manager.request(allProfilesURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             
+
             switch responseJSON.result {
             case .success :
                 

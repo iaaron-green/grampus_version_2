@@ -25,7 +25,7 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
     @IBOutlet weak var picker: UIPickerView!
     @IBOutlet weak var backView: UIView!
     
-    var ratingType: String = "Best looker"
+    var ratingType: String = "best_looker"
     var likeState: Bool? // if true like, if false dislike
     var selectedUserId: Int?
     let network = NetworkService()
@@ -66,66 +66,17 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
     
     func configureButtons() {
         
-//        if likeState! {
-//            firstButton.setTitle("Best Looker", for: .normal)
-//            firstButton.layer.cornerRadius = 5
-//            secondButton.setTitle("Super Worker", for: .normal)
-//            secondButton.layer.cornerRadius = 5
-//            thirdButton.setTitle("Extrovert", for: .normal)
-//            thirdButton.layer.cornerRadius = 5
-//        } else {
-//            firstButton.setTitle("Untidy", for: .normal)
-//            firstButton.layer.cornerRadius = 5
-//            secondButton.setTitle("Deadliner", for: .normal)
-//            secondButton.layer.cornerRadius = 5
-//            thirdButton.setTitle("Introvert", for: .normal)
-//            thirdButton.layer.cornerRadius = 5
-//        }
-        
         backView.layer.cornerRadius = 7
         cancelButton.layer.cornerRadius = 5
         okButton.layer.cornerRadius = 5
     }
     
-    @IBAction func firstAction(_ sender: Any) {
-        
-        if likeState! {
-            ratingType = "best_looker"
-        } else {
-            ratingType = "untidy"
-        }
-        firstButton.backgroundColor = UIColor.blue
-        secondButton.backgroundColor = UIColor.darkGray
-        thirdButton.backgroundColor = UIColor.darkGray
-    }
-    
-    @IBAction func secondAction(_ sender: Any) {
-        
-        if likeState! {
-            ratingType = "super_worker"
-        } else {
-            ratingType = "deadliner"
-        }
-        firstButton.backgroundColor = UIColor.darkGray
-        secondButton.backgroundColor = UIColor.blue
-        thirdButton.backgroundColor = UIColor.darkGray
-    }
-    
-    @IBAction func thirdAction(_ sender: Any) {
-        
-        if likeState! {
-            ratingType = "extrovert"
-        } else {
-            ratingType = "introvert"
-        }
-        firstButton.backgroundColor = UIColor.darkGray
-        secondButton.backgroundColor = UIColor.darkGray
-        thirdButton.backgroundColor = UIColor.blue
-    }
+   
     
     @IBAction func okButtonAction(_ sender: Any) {
         
             network.addLikeOrDislike(ratingType: ratingType, likeState: likeState!)
+            print(ratingType)
             dismiss(animated: true, completion: nil)
             delegate?.removeBlurredBackgroundView()
             SVProgressHUD.showSuccess(withStatus: "Sucess!")

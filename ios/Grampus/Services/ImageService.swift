@@ -14,7 +14,7 @@ final class ImageService {
     let cache = NSCache<NSString, UIImage>()
     
     func downloadImage(withURL url: URL, completion: @escaping (_ image: UIImage?) -> ()) {
-
+        
         Alamofire.request(url).responseData { (responce) in
             switch responce.result {
             case .success :
@@ -53,16 +53,15 @@ final class ImageService {
     
     
     func getImage(withURL urlString: String, completion: @escaping (_ image: UIImage?) -> ()) {
-    
         guard let url = URL(string: urlString) else {completion(nil)
             return
         }
-        if let image = cache.object(forKey: url.absoluteString as NSString) {
+            if let image = cache.object(forKey: urlString as NSString) {
             completion(image)
         } else {
             downloadImage(withURL: url, completion: completion)
         }
-    
+
     }
     
     func ConvertBase64StringToImage (imageBase64String: String) -> UIImage {
@@ -72,9 +71,5 @@ final class ImageService {
             }
         }
         return UIImage(named: "deadliner")!
-    }
-    
-    func clearCache() {
-        self.cache.removeAllObjects()
     }
 }
