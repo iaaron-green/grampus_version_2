@@ -1,10 +1,9 @@
 package com.app.controllers;
 
 import com.app.DTO.DTOAchievement;
-import com.app.DTO.DTOUserShortInfo;
-import com.app.DTO.DTOAchievement;
 import com.app.DTO.DTOLikableProfile;
-import com.app.entities.Profile;
+import com.app.DTO.DTOProfile;
+import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
 import com.app.services.ProfileService;
@@ -24,6 +23,8 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -71,28 +72,26 @@ public class ProfileController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> updateProfileById(@Valid @RequestBody Profile profileEntity, BindingResult result,
+    public ResponseEntity<?> updateProfileById(@Valid @RequestBody DTOProfile profile, BindingResult result,
                                                Principal principal) {
 
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        Profile updatedProfile = profileService.updateProfile(profileEntity, principal.getName());
-
-        return new ResponseEntity<>(updatedProfile, HttpStatus.OK);
+        return new ResponseEntity<>(profileService.updateProfile(profile, principal.getName()), HttpStatus.OK);
     }
 
-   @PostMapping("/photo")
-   public void uploadPhoto (@RequestParam("file") MultipartFile file, @RequestParam Long id) throws IOException {
-       try {
-           profileService.saveProfilePhoto(file, id);
-      } catch (CustomException e) {
-         e.getMessage();
-      }
-   }
+    @PostMapping("/photo")
+    public void uploadPhoto(@RequestParam("file") MultipartFile file, @RequestParam Long id) throws IOException {
+        try {
+            profileService.saveProfilePhoto(file, id);
+        } catch (CustomException e) {
+            e.getMessage();
+        }
+    }
 
     @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal)  {
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal) {
 
         return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName()).stream()
                 .filter(DTOLikableProfile ->
@@ -121,8 +120,8 @@ public class ProfileController {
         return ratingService.getUserRatingByType(markType);
     }
 
-//    @GetMapping("/userJobTitle/{jobTitle}")
-//    public List<DTOUserShortInfo> getUserByJob(@PathVariable String jobTitle) {
-//        return userService.findAllByJobTitle(jobTitle);
-//    }
+    @GetMapping("/userJobTitle/{jobTitle}")
+    public List<DTOUserShortInfo> getUserByJob(@PathVariable String jobTitle) {
+        return userService.findAllByJobTitle(jobTitle);
+    }
 }
