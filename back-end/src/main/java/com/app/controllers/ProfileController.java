@@ -1,8 +1,10 @@
 package com.app.controllers;
 
+import com.app.DTO.DTOAchievement;
 import com.app.DTO.DTOLikableProfile;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
+import com.app.enums.Mark;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.util.CustomException;
@@ -18,6 +20,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -26,35 +29,37 @@ import java.util.stream.Collectors;
 @CrossOrigin
 public class ProfileController {
 
+    @Autowired
     private ProfileService profileService;
+    @Autowired
     private ValidationErrorService validationErrorService;
+    @Autowired
     private RatingService ratingService;
 
-    @Autowired
-    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService, RatingService ratingService) {
-        this.profileService = profileService;
-        this.validationErrorService = validationErrorService;
-        this.ratingService = ratingService;
-    }
 
     @GetMapping("/{profileId}")
-    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) {
-        Profile profile = null;
-        try {
-            profile = profileService.getProfileById(profileId);
-        } catch (CustomException e) {
-            e.getMessage();
-        }
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
+        return new ResponseEntity<>(profileService.getDTOProfileById(profileId), HttpStatus.OK);
     }
 
     @PostMapping("/{profileId}/like")
     public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody Rating rating,
-                                                 BindingResult result, @PathVariable Long profileId, Principal principal) {
+                                              BindingResult result, @PathVariable Long profileId, Principal principal) {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
         Rating addRating = ratingService.addLike(profileId, rating, principal.getName());
+
+        return new ResponseEntity<>(addRating, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{profileId}/dislike")
+    public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody Rating rating,
+                                                 BindingResult result, @PathVariable Long profileId, Principal principal) {
+        ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
+        if (errorMap != null) return errorMap;
+
+        Rating addRating = ratingService.addDislike(profileId, rating, principal.getName());
 
         return new ResponseEntity<>(addRating, HttpStatus.CREATED);
     }
@@ -71,23 +76,17 @@ public class ProfileController {
         return new ResponseEntity<>(updatedProfile, HttpStatus.OK);
     }
 
-    @GetMapping("/achievement")
-    public ResponseEntity<?> getAchieveById()  {
-        List<Rating> profile = profileService.getAchives();
-        return new ResponseEntity<>(profile, HttpStatus.OK);
-    }
-
-    @PostMapping("/photo")
-    public void uploadPhoto (@RequestParam("file") MultipartFile file, @RequestParam Long id) throws IOException {
-        try {
-            profileService.saveProfilePhoto(file, id);
-        } catch (CustomException e) {
-            e.getMessage();
-        }
-    }
+   @PostMapping("/photo")
+   public void uploadPhoto (@RequestParam("file") MultipartFile file, @RequestParam Long id) throws IOException {
+       try {
+           profileService.saveProfilePhoto(file, id);
+      } catch (CustomException e) {
+         e.getMessage();
+      }
+   }
 
     @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal) {
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal)  {
 
         return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName()).stream()
                 .filter(DTOLikableProfile ->
@@ -95,8 +94,20 @@ public class ProfileController {
                 profileService.getAllProfilesForLike(principal.getName());
     }
 
-    @GetMapping("/test")
-    public String getTestById()  {
-        return ratingService.addAchievement(43L);
+    @GetMapping("/achieve")
+    public ResponseEntity<?> getAllAchieve() {
+        List<Rating> profile = ratingService.getAllAchieves();
+        return new ResponseEntity<>(profile, HttpStatus.OK);
     }
+
+    @GetMapping("/catalogue")
+    public Map<Long, Map<String, Long>> getAllInfo() {
+        return ratingService.addInfoAchievement();
+    }
+
+    @GetMapping("/userRating/{markType}")
+    public List<DTOAchievement> getUserRating(@PathVariable Mark markType) {
+        return ratingService.getUserRatingByType(markType);
+    }
+
 }

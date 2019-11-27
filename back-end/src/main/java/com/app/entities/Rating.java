@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ratings")
 public class Rating {
+
     public Rating() {
     }
 
@@ -29,7 +30,4 @@ public class Rating {
     @JsonIgnore
     private Profile profileRating;
 
-    public Rating(Profile profileRating) {
-        this.profileRating = profileRating;
-    }
 }
