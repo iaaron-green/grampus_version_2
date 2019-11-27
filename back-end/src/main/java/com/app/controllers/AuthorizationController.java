@@ -1,11 +1,13 @@
 package com.app.controllers;
 
 
+import com.app.DTO.DTONewUser;
 import com.app.configtoken.JwtTokenProvider;
 import com.app.entities.User;
 import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
 import com.app.services.UserService;
+import com.app.util.CustomException;
 import com.app.validators.JWTLoginSuccessResponse;
 import com.app.validators.LoginRequest;
 import com.app.validators.UserValidator;
@@ -91,7 +93,7 @@ public class AuthorizationController {
    }
 
    @PostMapping("/register")
-   public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) throws MessagingException {
+   public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) throws MessagingException, CustomException {
       logger.info("|register| - is start");
       userValidator.validate(user,result);
 
@@ -103,7 +105,7 @@ public class AuthorizationController {
          logger.info("|register| - can't find user");
          return new ResponseEntity<>(HttpStatus.LOCKED);
       }
-      User newUser = userService.saveUser(user);
+      DTONewUser newUser = userService.saveUser(user);
       logger.info("|register| - is start");
       MimeMessage message = emailSender.createMimeMessage();
 
@@ -118,7 +120,7 @@ public class AuthorizationController {
 
 
 
-      message.setContent(activationService.generateCode(newUser.getId()), "text/html");
+      message.setContent(activationService.generateCode(newUser.getUserId()), "text/html");
 
       helper.setTo(user.getUsername());
 
