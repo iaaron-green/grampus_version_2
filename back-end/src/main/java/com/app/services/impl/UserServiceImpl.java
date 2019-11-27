@@ -4,6 +4,7 @@ import com.app.DTO.DTOUserShortInfo;
 import com.app.DTO.DTONewUser;
 import com.app.entities.Profile;
 import com.app.entities.User;
+import com.app.exceptions.UserExistException;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.UserService;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
