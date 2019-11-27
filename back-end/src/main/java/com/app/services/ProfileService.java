@@ -1,6 +1,6 @@
 package com.app.services;
 
-import com.app.DTO.DTOUserShortInfo;
+import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOProfile;
 import com.app.entities.Profile;
 import com.app.util.CustomException;
@@ -20,7 +20,7 @@ public interface ProfileService {
 
     Boolean updateProfile(DTOProfile profile, String principalName);
 
-    Boolean saveProfilePhoto(MultipartFile file, Long id) throws CustomException;
+    void saveProfilePhoto(MultipartFile file, Long id) throws CustomException;
 
     List<Profile> getAllProfiles() throws CustomException;
 
