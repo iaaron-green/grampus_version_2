@@ -1,13 +1,23 @@
 package com.app.services;
 
 import com.app.entities.Rating;
+import com.app.enums.Mark;
+import com.app.DTO.DTOAchievement;
 
-public interface RatingService  {
+import java.util.List;
+import java.util.Map;
+
+public interface RatingService {
 
     Rating addLike(Long profileId, Rating updatedRating, String userName);
 
-    String getAndCountLikesByProfileId(Long id);
+    List<Rating> getAllAchieves();
 
-    String addAchievement(Long id);
+    Map<Long, Map<String, Long>> addInfoAchievement();
 
+    List<DTOAchievement> getUserRatingByType(Mark markType);
+
+    Rating addDislike(Long profileId, Rating updatedRating, String userName);
+
+    Map<String, Object> getAndCountLikesByProfileId(Long id);
 }

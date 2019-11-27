@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,12 +18,13 @@ import java.util.Collection;
 @EqualsAndHashCode
 @Table(name = "users")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Email
-    @NotBlank(message = "Email is required")
+    @NotBlank()
     @Column(unique = true)
     private String username;
 
@@ -33,8 +33,6 @@ public class User implements UserDetails {
 
     @NotBlank(message = "FullName is required")
     private String fullName;
-
-    private String activationCode;
 
     private String jobTitle;
 

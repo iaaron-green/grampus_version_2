@@ -2,14 +2,16 @@ package com.app.util;
 
 public class CustomException extends Exception {
 
-    String message;
+    private String message;
+    private Integer errorCode;
 
-    public CustomException(String message) {
+    public CustomException(String message, Integer errorCode) {
         this.message = message;
+        this.errorCode = errorCode;
     }
 
     @Override
     public String getMessage() {
-        return message;
+        return message + " " + errorCode;
     }
 }

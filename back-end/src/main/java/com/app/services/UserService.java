@@ -1,15 +1,11 @@
 package com.app.services;
 
 
+import com.app.DTO.DTONewUser;
 import com.app.entities.User;
+import com.app.util.CustomException;
 
 public interface UserService {
 
-    User saveUser(User newUSer);
-
-    boolean activateUser(String code);
-
-    void deleteUser(String code);
-
-    boolean activationCode(String login);
+    DTONewUser saveUser(User newUSer) throws CustomException;
 }
