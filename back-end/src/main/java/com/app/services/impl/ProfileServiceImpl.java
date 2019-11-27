@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -128,17 +129,19 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.findAll();
     }
 
-    public Set<DTOLikableProfile> getAllProfilesForLike(Long id)  {
+    public Set<DTOLikableProfile> getAllProfilesForLike(String userName)  {
 
-
-        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userRepository.getById(id).getUsername());
-        Set<DTOLikableProfile> dtoLikableProfiles = userRepository.getLikeableProfiles();
-
-        for (DTOLikableProfile p: dtoLikableProfiles) {
-            if (p.getId().equals(id)) dtoLikableProfiles.remove(p);
+        User user = userRepository.findByUsername(userName);
+        Set<Long> profilesIdWithLike;
+        Set<DTOLikableProfile> dtoLikableProfiles = new HashSet<>();
+        if (user != null) {
+            profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
+            dtoLikableProfiles = userRepository.getLikeableProfiles(user.getId());
+            if (!CollectionUtils.isEmpty(profilesIdWithLike) && !CollectionUtils.isEmpty(dtoLikableProfiles)){
+                return fillDTOLikableProfile(profilesIdWithLike, dtoLikableProfiles);
+            }
         }
-
-        return fillDTOLikableProfile(profilesIdWithLike, dtoLikableProfiles);
+        return dtoLikableProfiles;
     }
 
     private Set<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<DTOLikableProfile> dtoLikableProfiles) {

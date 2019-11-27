@@ -13,7 +13,7 @@ public class DTOLikableProfile {
     private String fullName;
     private String jobTitle;
     private String profilePicture;
-    private Boolean isAbleToLike;
+    private Boolean isAbleToLike = true;
 
     public DTOLikableProfile(Long id, String fullName, String jobTitle, String profilePicture ) {
         this.id = id;

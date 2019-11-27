@@ -25,7 +25,7 @@ public interface ProfileService {
 
     List<Profile> getAllProfiles() throws CustomException;
 
-    Set<DTOLikableProfile> getAllProfilesForLike(Long id);
+    Set<DTOLikableProfile> getAllProfilesForLike(String userName);
 
 
 }

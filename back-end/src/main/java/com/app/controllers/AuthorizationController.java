@@ -30,7 +30,7 @@ import static com.app.configtoken.Constants.TOKEN_PREFIX;
 @RequestMapping("/api/users")
 public class AuthorizationController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationController.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationController.class);
 
    private ValidationErrorService validationErrorService;
    private UserService userService;

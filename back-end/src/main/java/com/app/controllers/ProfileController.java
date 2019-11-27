@@ -1,16 +1,14 @@
 package com.app.controllers;
 
+import com.app.DTO.DTOAchievement;
 import com.app.DTO.DTOLikableProfile;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
-import com.app.entities.User;
 import com.app.enums.Mark;
-import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.util.CustomException;
 import com.app.validators.ValidationErrorService;
-import com.app.DTO.DTOAchievement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +35,7 @@ public class ProfileController {
     private ValidationErrorService validationErrorService;
     @Autowired
     private RatingService ratingService;
-    @Autowired
-    private UserRepository userRepository;
+
 
     @GetMapping("/{profileId}")
     public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
@@ -89,15 +86,12 @@ public class ProfileController {
    }
 
     @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName,
-                                                      @RequestParam Long id, Principal principal)  {
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal)  {
 
-
-
-        return fullName.length() > 0 ? profileService.getAllProfilesForLike(id).stream()
+        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName()).stream()
                 .filter(DTOLikableProfile ->
                         Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
-                profileService.getAllProfilesForLike(id);
+                profileService.getAllProfilesForLike(principal.getName());
     }
 
     @GetMapping("/achieve")
