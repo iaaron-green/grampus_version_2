@@ -72,8 +72,7 @@ public class AuthorizationController {
       if(errorMap != null)
          return errorMap;
 
-      String userName = loginRequest.getUsername();
-      if (!activationService.isUserActivate(userName)) {
+      if (!activationService.isUserActivate(loginRequest.getUsername())) {
          logger.info("|login| - user is not activate");
          return new ResponseEntity<>(HttpStatus.LOCKED);
       }
@@ -100,25 +99,17 @@ public class AuthorizationController {
       ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
       if(errorMap != null) return errorMap;
 
-      if(userRepository.findByUsername(user.getUsername()) != null)
-      {
-         logger.info("|register| - can't find user");
-         return new ResponseEntity<>(HttpStatus.LOCKED);
-      }
-      DTONewUser newUser = userService.saveUser(user);
-      logger.info("|register| - is start");
-      MimeMessage message = emailSender.createMimeMessage();
 
-      boolean multipart = true;
+      DTONewUser newUser = userService.saveUser(user);
+
+      MimeMessage message = emailSender.createMimeMessage();
 
       MimeMessageHelper helper = null;
       try {
-         helper = new MimeMessageHelper(message, multipart, "utf-8");
+         helper = new MimeMessageHelper(message, true, "utf-8");
       } catch (MessagingException e) {
          e.printStackTrace();
       }
-
-
 
       message.setContent(activationService.generateCode(newUser.getUserId()), "text/html");
 
