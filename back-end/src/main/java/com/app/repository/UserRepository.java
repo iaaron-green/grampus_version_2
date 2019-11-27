@@ -1,16 +1,15 @@
 package com.app.repository;
 
 import com.app.DTO.DTOLikableProfile;
-import com.app.entities.Profile;
 import com.app.entities.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
    User findByUsername(String login);
 
@@ -22,8 +21,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
            nativeQuery = true)
    Set<Long> getAllId();
 
-   @Query(
-           value = "SELECT id, full_name, profile_picture  FROM users JOIN  SELECT id,  profile_picture FROM profile",
-           nativeQuery = true)
+   @Query("SELECT NEW com.app.DTO.DTOLikableProfile(u.id, u.fullName, u.jobTitle, p.profilePicture) FROM User u, Profile p")
    Set<DTOLikableProfile> getLikeableProfiles();
 }

@@ -69,17 +69,6 @@ public class AuthorizationController {
       return ResponseEntity.ok(new JWTLoginSuccessResponse(true, jwt));
    }
 
-//   @PostMapping("/register")
-//   public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) throws CustomException {
-//       LOGGER.info("Registration new user started");
-//      userValidator.validate(user,result);
-//
-//      ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
-//      if(errorMap != null)return errorMap;
-//
-//      return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
-//   }
-
    @PostMapping("/register")
    public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) throws CustomException {
       LOGGER.info("Registration new user started");

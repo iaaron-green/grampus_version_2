@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,14 +19,12 @@ import java.util.Collection;
 @Table(name = "users")
 public class User implements UserDetails {
 
-    @Value("${email.is.empty}")
-    private String someError;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Email
-    @NotBlank(message = "${email.notempty}")
+    @NotBlank()
     @Column(unique = true)
     private String username;
 

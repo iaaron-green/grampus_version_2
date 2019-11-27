@@ -20,7 +20,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -121,7 +120,7 @@ public class ProfileServiceImpl implements ProfileService {
                 profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
                 saveProfile(profile);
             } else throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
-        } else throw new CustomException("", Errors.PROFILE_NOT_EXIST);
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     public List<Profile> getAllProfiles()  {
@@ -129,53 +128,27 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.findAll();
     }
 
-    public Set<DTOLikableProfile> getAllProfilesForLike(String principalName) throws CustomException {
+    public Set<DTOLikableProfile> getAllProfilesForLike(Long id)  {
 
-        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(principalName);
-        Set<DTOLikableProfile> DTOLikableProfiles = userRepository.getLikeableProfiles();
 
-        fillDTOLikableProfile(profilesIdWithLike, DTOLikableProfiles);
+        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userRepository.getById(id).getUsername());
+        Set<DTOLikableProfile> dtoLikableProfiles = userRepository.getLikeableProfiles();
 
-//        profileRepository.findAll().iterator()
-//                .forEachRemaining(profile -> {
-//                    if (CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
-//                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
-//                        return;
-//                    } else if (isProfileRatingIncludeLikeFromCurrentUser(currentProfile, profile)) {
-//                        getDTOLikableProfile(DTOLikableProfiles, profile, false);
-//                        return;
-//                    } else if (!CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile)) {
-//                        getDTOLikableProfile(DTOLikableProfiles, profile, true);
-//                    }
-//                });
+        for (DTOLikableProfile p: dtoLikableProfiles) {
+            if (p.getId().equals(id)) dtoLikableProfiles.remove(p);
+        }
 
-        return DTOLikableProfiles;
+        return fillDTOLikableProfile(profilesIdWithLike, dtoLikableProfiles);
     }
 
+    private Set<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<DTOLikableProfile> dtoLikableProfiles) {
 
-
-    private void fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<DTOLikableProfile> DTOLikableProfiles) {
-
-        DTOLikableProfiles.forEach(profile -> {
-            if (profilesIdWithLike.contains(profile.getProfileId())) {
+        dtoLikableProfiles.forEach(profile -> {
+            if (profilesIdWithLike.contains(profile.getId())) {
                 profile.setIsAbleToLike(false);
             }
             else profile.setIsAbleToLike(true);
         });
-
-//        DTOLikableProfiles.add(DTOLikableProfile.builder()
-//                .profileId(profile.getId())
-//                .picture(profile.getProfilePicture())
-//                .fullName(profile.getUser().getFullName())
-//                .jobTitle(profile.getUser().getJobTitle())
-//                .isAbleToLike(b)
-//                .build());
-    }
-
-    private boolean isProfileRatingIncludeLikeFromCurrentUser(Profile currentProfile, Profile profile) {
-        return !CollectionUtils.isEmpty(profile.getRatings()) && !profile.equals(currentProfile) &&
-                profile.getRatings().stream()
-                        .anyMatch(rating -> currentProfile.getUser().getUsername().equals(rating
-                                .getRatingSourceUsername()));
+        return dtoLikableProfiles;
     }
 }

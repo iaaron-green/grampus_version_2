@@ -3,7 +3,9 @@ package com.app.controllers;
 import com.app.DTO.DTOLikableProfile;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
+import com.app.entities.User;
 import com.app.enums.Mark;
+import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.util.CustomException;
@@ -35,6 +37,8 @@ public class ProfileController {
     private ValidationErrorService validationErrorService;
     @Autowired
     private RatingService ratingService;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/{profileId}")
     public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
@@ -85,12 +89,15 @@ public class ProfileController {
    }
 
     @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal) throws CustomException {
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName,
+                                                      @RequestParam Long id, Principal principal)  {
 
-        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName()).stream()
+
+
+        return fullName.length() > 0 ? profileService.getAllProfilesForLike(id).stream()
                 .filter(DTOLikableProfile ->
                         Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
-                profileService.getAllProfilesForLike(principal.getName());
+                profileService.getAllProfilesForLike(id);
     }
 
     @GetMapping("/achieve")
