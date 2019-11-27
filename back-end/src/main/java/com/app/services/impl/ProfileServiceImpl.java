@@ -15,6 +15,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -69,32 +70,30 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile updateProfile(Profile updatedProfile, String principalName) {
+    public Boolean updateProfile(DTOProfile profile, String principalName) {
         User currentUser = userRepository.findByUsername(principalName);
 
-        fixUpdatedProfileUser(updatedProfile, currentUser);
-
-        if (principalName.equals(updatedProfile.getUser().getUsername())) {
-
-            updatedProfile.setId(currentUser.getId());
-            Profile profileFromDB = profileRepository.findProfileById(updatedProfile.getId());
-
-            if (updatedProfile.getInformation() != null) {
-                profileFromDB.setInformation(updatedProfile.getInformation());
-            }
-            if (updatedProfile.getSkills() != null) {
-                profileFromDB.setSkills(updatedProfile.getSkills());
-            }
-            return profileRepository.save(profileFromDB);
-        }
-        return new Profile();
+        if (currentUser != null) {
+            Profile profileFromDB = profileRepository.findProfileById(currentUser.getId());
+            if (profileFromDB != null){
+                boolean isProfileUpdated = false;
+                if (profile.getInformation() != null) {
+                    profileFromDB.setInformation(profile.getInformation());
+                    isProfileUpdated = true;
+                }
+                if (profile.getSkills() != null) {
+                    profileFromDB.setSkills(profile.getSkills());
+                    isProfileUpdated = true;
+                }
+                if (isProfileUpdated) {
+                    profileRepository.save(profileFromDB);
+                    return true;
+                }
+            } else return false;
+        } else return false;
+        return false;
     }
 
-    private void fixUpdatedProfileUser(Profile updatedProfile, User currentUser) {
-        if (!currentUser.equals(updatedProfile.getUser())) {
-            updatedProfile.setUser(currentUser);
-        }
-    }
 
     @Override
     public Boolean saveProfilePhoto(MultipartFile file, Long id) throws CustomException {

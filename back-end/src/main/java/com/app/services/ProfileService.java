@@ -17,7 +17,7 @@ public interface ProfileService {
 
     DTOProfile getDTOProfileById(Long id) throws CustomException;
 
-    Profile updateProfile(Profile updatedProfile, String principalName);
+    Boolean updateProfile(DTOProfile profile, String principalName);
 
     Boolean saveProfilePhoto(MultipartFile file, Long id) throws CustomException;
 
