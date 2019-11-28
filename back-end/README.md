@@ -28,7 +28,7 @@ Register new User
 {
     "userId": 2,
     "email": "123@gmail.com",
-    "password": null,
+    "password": "******",
     "fullName": "aaa@gmail.com"
 }
 ```
