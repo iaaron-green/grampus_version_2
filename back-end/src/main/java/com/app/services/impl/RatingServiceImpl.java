@@ -1,6 +1,5 @@
 package com.app.services.impl;
 
-import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
@@ -29,7 +28,7 @@ public class RatingServiceImpl implements RatingService {
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
 
-        if (!userName.equals(profile.getUser().getUsername())) {
+        if (!userName.equals(profile.getUser().getEmail())) {
             Long profileLike = profile.getLikes();
             profile.setLikes(++profileLike);
             updatedRating.setRatingSourceUsername(userName);
@@ -43,7 +42,7 @@ public class RatingServiceImpl implements RatingService {
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
 
-        if (!userName.equals(profile.getUser().getUsername())) {
+        if (!userName.equals(profile.getUser().getEmail())) {
             Long profileDislike = profile.getDislikes();
             profile.setDislikes(++profileDislike);
             updatedRating.setRatingSourceUsername(userName);

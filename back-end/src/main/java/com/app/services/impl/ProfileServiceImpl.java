@@ -66,7 +66,7 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setInformation(profileFromDB.getInformation());
             dtoProfile.setProfilePicture(profileFromDB.getProfilePicture());
             dtoProfile.setSkills(profileFromDB.getSkills());
-            dtoProfile.setEmail(profileFromDB.getUser().getUsername());
+            dtoProfile.setEmail(profileFromDB.getUser().getEmail());
             dtoProfile.setJobTitle(profileFromDB.getUser().getJobTitle());
             dtoProfile.setFullName(profileFromDB.getUser().getFullName());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
@@ -76,7 +76,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Boolean updateProfile(DTOProfile profile, String principalName) {
-        User currentUser = userRepository.findByUsername(principalName);
+        User currentUser = userRepository.findByEmail(principalName);
 
         if (currentUser != null) {
             Profile profileFromDB = profileRepository.findProfileById(currentUser.getId());
@@ -134,7 +134,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     public Set<DTOLikableProfile> getAllProfilesForLike(String userName)  {
 
-        User user = userRepository.findByUsername(userName);
+        User user = userRepository.findByEmail(userName);
         Set<Long> profilesIdWithLike;
         Set<DTOLikableProfile> dtoLikableProfiles = new HashSet<>();
         if (user != null) {

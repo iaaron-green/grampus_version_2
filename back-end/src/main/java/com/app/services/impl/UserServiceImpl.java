@@ -1,10 +1,9 @@
 package com.app.services.impl;
 
-import com.app.DTO.DTOUserShortInfo;
 import com.app.DTO.DTONewUser;
+import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Profile;
 import com.app.entities.User;
-import com.app.exceptions.UserExistException;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.UserService;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,21 +37,22 @@ public class UserServiceImpl implements UserService {
     private MessageSource messageSource;
 
     @Override
-    public DTONewUser saveUser(User newUser) throws CustomException {
+    public DTONewUser saveUser(DTONewUser newUser) throws CustomException {
 
         LOGGER.info("Check if user already exist");
-        if (userRepository.findByUsername(newUser.getUsername()) != null) {
+        if (userRepository.findByEmail(newUser.getEmail()) != null) {
             throw new CustomException(messageSource.getMessage("user.already.exist", null, LocaleContextHolder.getLocale()), Errors.USER_ALREADY_EXIST);
         } else {
-            newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
-            newUser.setUsername(newUser.getUsername());
-            newUser = userRepository.save(newUser);
-            DTONewUser dtoNewUser = new DTONewUser();
-            dtoNewUser.setUserId(newUser.getId());
-            dtoNewUser.setEmail(newUser.getUsername());
-            profileService.saveProfile(new Profile(newUser));
+            User userFromDB = new User();
+            userFromDB.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
+            userFromDB.setEmail(newUser.getEmail());
+            userFromDB.setFullName(newUser.getFullName());
+            userFromDB = userRepository.save(userFromDB);
+            newUser.setUserId(userFromDB.getId());
+            newUser.setEmail(userFromDB.getEmail());
+            profileService.saveProfile(new Profile(userFromDB));
             LOGGER.info("New user registration successful");
-            return dtoNewUser;
+            return newUser;
         }
     }
 
@@ -64,7 +63,7 @@ public class UserServiceImpl implements UserService {
             DTOUserShortInfo s = DTOUserShortInfo.builder()
                     .profileId(user.getId())
                     .jobTitle(user.getJobTitle())
-                    .fullName(user.getUsername())
+                    .fullName(user.getEmail())
                     .picture(user.getProfile().getProfilePicture())
                     .build();
            dtoUser.add(s);

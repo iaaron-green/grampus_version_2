@@ -7,8 +7,6 @@ import com.app.repository.ActivationRepository;
 import com.app.repository.ProfileRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +36,10 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     public boolean isUserActivate(String login) {
-        User user = userRepository.findByUsername(login);
+        User user = userRepository.findByEmail(login);
 
         if(user != null &&activationRepository.findByUserId(user.getId()).isActivate()) {
-            User newUser = userRepository.findByUsername(user.getUsername());
+            User newUser = userRepository.findByEmail(user.getEmail());
             Profile newProfile = profileRepository.save(new Profile(newUser));
             return true;
         }

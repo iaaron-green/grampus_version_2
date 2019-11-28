@@ -26,7 +26,7 @@ public class User implements UserDetails {
     @Email
     @NotBlank()
     @Column(unique = true)
-    private String username;
+    private String email;
 
     @NotBlank(message = "Password is required")
     private String password;
@@ -46,6 +46,11 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
     @Override

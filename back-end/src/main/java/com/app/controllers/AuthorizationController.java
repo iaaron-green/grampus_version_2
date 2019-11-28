@@ -92,7 +92,8 @@ public class AuthorizationController {
    }
 
    @PostMapping("/register")
-   public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) throws MessagingException, CustomException {
+   public ResponseEntity<?> registerUser(@Valid @RequestBody DTONewUser user, BindingResult result) throws MessagingException, CustomException {
+
       logger.info("|register| - is start");
       userValidator.validate(user,result);
 
@@ -113,13 +114,12 @@ public class AuthorizationController {
 
       message.setContent(activationService.generateCode(newUser.getUserId()), "text/html");
 
-      helper.setTo(user.getUsername());
+      helper.setTo(newUser.getEmail());
 
       helper.setSubject("Profile registration(GRAMPUS)");
 
       this.emailSender.send(message);
-      logger.info("|register| - email was sent");
-      logger.info("|register| - success");
+      logger.info("|register| - email was sent register success");
       return new ResponseEntity<>(newUser, HttpStatus.CREATED);
    }
 
