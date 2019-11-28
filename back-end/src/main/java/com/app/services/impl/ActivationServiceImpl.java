@@ -55,8 +55,8 @@ public class ActivationServiceImpl implements ActivationService {
             activationCode.setActivate(true);
             activationRepository.save(activationCode);
         }
-
-        throw new CustomException(messageSource.getMessage("activation.code.is.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_ACTIVE);
+        else
+            throw new CustomException(messageSource.getMessage("activation.code.is.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_ACTIVE);
     }
 
     @Override
