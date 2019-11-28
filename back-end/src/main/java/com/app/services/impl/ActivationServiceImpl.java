@@ -10,9 +10,12 @@ import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
 import com.app.services.UserService;
 import com.app.util.CustomException;
+import com.app.util.Errors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -42,28 +45,31 @@ public class ActivationServiceImpl implements ActivationService {
     @Autowired
     private ActivationService activationService;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @Override
-    public void activateUser(Long id) {
+    public void activateUser(Long id) throws CustomException {
         ActivationCode activationCode = activationRepository.findByUserId(id);
         if (activationCode != null && !activationCode.isActivate()) {
             activationCode.setActivate(true);
             activationRepository.save(activationCode);
         }
 
-        // trow exception
+        throw new CustomException(messageSource.getMessage("activation.code.is.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_ACTIVE);
     }
 
     @Override
-    public boolean isUserActivate(String login) {
+    public boolean isUserActivate(String login) throws CustomException {
         User user = userRepository.findByUsername(login);
 
         if (user != null && activationRepository.findByUserId(user.getId()).isActivate()) {
             User newUser = userRepository.findByUsername(user.getUsername());
             Profile newProfile = profileRepository.save(new Profile(newUser));
             return true;
-        } else
-            return false;
-        //throw exception
+        }
+        else
+            throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
     }
 
     @Override

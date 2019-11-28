@@ -4,20 +4,15 @@ package com.app.controllers;
 import com.app.DTO.DTONewUser;
 import com.app.configtoken.JwtTokenProvider;
 import com.app.entities.User;
-import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
-import com.app.services.UserService;
 import com.app.util.CustomException;
 import com.app.validators.JWTLoginSuccessResponse;
 import com.app.validators.LoginRequest;
 import com.app.validators.UserValidator;
 import com.app.validators.ValidationErrorService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -57,7 +52,7 @@ public class AuthorizationController {
    }
 
    @PostMapping("/login")
-   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result){
+   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result) throws CustomException {
       logger.info("|login| - is start");
       ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
       if(errorMap != null)
@@ -98,7 +93,7 @@ public class AuthorizationController {
    }
 
    @GetMapping("/activate/{id}")
-   public String activate(@PathVariable Long id) {
+   public String activate(@PathVariable Long id) throws CustomException {
       logger.info("|activate| - user click on url");
       activationService.activateUser(id);
       logger.info("|activate| - user was activated");

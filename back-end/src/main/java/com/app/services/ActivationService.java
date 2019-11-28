@@ -9,8 +9,8 @@ import javax.mail.MessagingException;
 
 
 public interface ActivationService {
-    void activateUser(Long id);
-    boolean isUserActivate(String login);
+    void activateUser(Long id) throws CustomException;
+    boolean isUserActivate(String login) throws CustomException;
     String generateCode(Long id);
     DTONewUser sendMail(User user) throws CustomException, MessagingException;
 }
