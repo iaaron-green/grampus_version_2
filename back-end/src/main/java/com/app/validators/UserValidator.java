@@ -2,7 +2,6 @@ package com.app.validators;
 
 
 import com.app.DTO.DTONewUser;
-import com.app.entities.User;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

@@ -3,7 +3,6 @@ package com.app.controllers;
 
 import com.app.DTO.DTONewUser;
 import com.app.configtoken.JwtTokenProvider;
-import com.app.entities.User;
 import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
 import com.app.services.UserService;
@@ -12,7 +11,6 @@ import com.app.validators.JWTLoginSuccessResponse;
 import com.app.validators.LoginRequest;
 import com.app.validators.UserValidator;
 import com.app.validators.ValidationErrorService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
-
 import java.util.logging.Logger;
 
 import static com.app.configtoken.Constants.TOKEN_PREFIX;
@@ -49,9 +46,6 @@ public class AuthorizationController {
 
    @Autowired
    private JavaMailSender emailSender;
-
-   @Autowired
-   private UserRepository userRepository;
 
 
    @Autowired

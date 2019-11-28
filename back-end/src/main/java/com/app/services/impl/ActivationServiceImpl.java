@@ -29,6 +29,8 @@ public class ActivationServiceImpl implements ActivationService {
         if(activationCode != null && !activationCode.isActivate()) {
             activationCode.setActivate(true);
             activationRepository.save(activationCode);
+            User user = userRepository.getById(id);
+            profileRepository.save(new Profile(user));
         }
 
         // trow exception
@@ -39,8 +41,6 @@ public class ActivationServiceImpl implements ActivationService {
         User user = userRepository.findByEmail(login);
 
         if(user != null &&activationRepository.findByUserId(user.getId()).isActivate()) {
-            User newUser = userRepository.findByEmail(user.getEmail());
-            Profile newProfile = profileRepository.save(new Profile(newUser));
             return true;
         }
         else
