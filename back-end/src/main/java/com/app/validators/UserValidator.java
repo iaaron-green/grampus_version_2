@@ -11,14 +11,12 @@ import org.springframework.validation.Validator;
 public class UserValidator implements Validator {
     @Override
     public boolean supports(Class<?> aClass) {
-        System.out.println(aClass.toString());
         return  com.app.DTO.DTONewUser.class.equals(aClass);
     }
 
     @Override
     public void validate(Object object, Errors errors) {
         DTONewUser user = (DTONewUser) object;
-        System.out.println(user.toString());
         if (user.getPassword().length() < 6){
             errors.rejectValue("password","Length", "Password must be at least 6 characters");
         }

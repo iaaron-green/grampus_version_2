@@ -52,6 +52,7 @@ public class UserServiceImpl implements UserService {
             newUser.setEmail(userFromDB.getEmail());
             profileService.saveProfile(new Profile(userFromDB));
             LOGGER.info("New user registration successful");
+            newUser.setPassword("******");
             return newUser;
         }
     }
