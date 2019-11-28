@@ -26,7 +26,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
 import java.util.logging.Logger;
@@ -40,26 +39,18 @@ public class AuthorizationController {
 
    private static final Logger logger = Logger.getLogger(String.valueOf(AuthorizationController.class));
    private ValidationErrorService validationErrorService;
-   private UserService userService;
    private UserValidator userValidator;
    private JwtTokenProvider tokenProvider;
    private AuthenticationManager authenticationManager;
-   @Autowired
    private ActivationService activationService;
 
    @Autowired
-   private JavaMailSender emailSender;
-
-   @Autowired
-   private UserRepository userRepository;
-
-
-   @Autowired
-   public AuthorizationController(ValidationErrorService validationErrorService, UserService userService,
-                         UserValidator userValidator,
-                         JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager) {
+   public AuthorizationController(ValidationErrorService validationErrorService,
+                                  ActivationService activationService,
+                                  UserValidator userValidator,
+                                  JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager) {
       this.validationErrorService = validationErrorService;
-      this.userService = userService;
+      this.activationService = activationService;
       this.userValidator = userValidator;
       this.tokenProvider = tokenProvider;
       this.authenticationManager = authenticationManager;
@@ -98,28 +89,11 @@ public class AuthorizationController {
 
       ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
       if(errorMap != null) return errorMap;
-
-
-      DTONewUser newUser = userService.saveUser(user);
-
-      MimeMessage message = emailSender.createMimeMessage();
-
-      MimeMessageHelper helper = null;
-      try {
-         helper = new MimeMessageHelper(message, true, "utf-8");
-      } catch (MessagingException e) {
-         e.printStackTrace();
-      }
-
-      message.setContent(activationService.generateCode(newUser.getUserId()), "text/html");
-
-      helper.setTo(user.getUsername());
-
-      helper.setSubject("Profile registration(GRAMPUS)");
-
-      this.emailSender.send(message);
+      logger.info("|register| - trying to send email");
+      DTONewUser newUser = activationService.sendMail(user);
       logger.info("|register| - email was sent");
       logger.info("|register| - success");
+
       return new ResponseEntity<>(newUser, HttpStatus.CREATED);
    }
 
