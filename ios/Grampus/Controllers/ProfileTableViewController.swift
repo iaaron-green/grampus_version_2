@@ -10,6 +10,7 @@ import UIKit
 import Alamofire
 import Charts
 import SVProgressHUD
+import SDWebImage
 
 class ProfileTableViewController: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ChartViewDelegate {
     
@@ -113,7 +114,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         super.viewDidLoad()
         
         chartView.delegate = self
-
                 
         SVProgressHUD.setMinimumDismissTimeInterval(1)
         SVProgressHUD.setDefaultStyle(.dark)
@@ -153,10 +153,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         tableView.reloadData()
     }
     
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         storage.saveProfileState(state: true)
     }
+    
     
     func addLabelGestures() {
         
@@ -218,6 +220,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     @objc func telegramTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         if let url = URL(string: "tg://resolve?domain=\(telegram!)") {
+            print(url)
           if #available(iOS 10.0, *) {
             UIApplication.shared.open(url)
           } else {
@@ -293,12 +296,18 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             if success {
                 self.profileImageView.image = selectedImage
                 
-                //Update image cache
-                self.imageService.cache.setObject(selectedImage!, forKey: self.profilePicture! as NSString)
-                
+                //Clear image cache
+                SDImageCache.shared.clearMemory()
+                SDImageCache.shared.clearDisk()
+
                 //Setup notification to change profile photo in MenuTableViewController
                 let imageDict = ["image": selectedImage]
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "imageChanged"), object: nil, userInfo: imageDict)
+                
+                if let dataImage: Data = selectedImage!.jpegData(compressionQuality: 1) {
+                    self.storage.saveProfileImage(image: dataImage)
+                }
+                
                 
                 SVProgressHUD.showSuccess(withStatus: "Profile photo changed!")
             } else {
@@ -333,7 +342,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
         if smartMind! >= 5 {
             let count = (smartMind! / 5)
-            let image = UIImage(named: "smart mind")
+            let image = UIImage(named: "smart_mind")
             let achive = Achievements(type: "smart_mind", count: count, image: image)
             achievementsArray.append(achive)
         }
@@ -375,6 +384,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
             
             if let json = json {
+                //print(json)
                 self.fullName = json["fullName"] as? String ?? "Full name"
                 self.profession = json["jobTitle"] as? String ?? "Job Title"
                 self.email = json["email"] as? String ?? ""
@@ -411,7 +421,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     self.noChartImage.isHidden = true
                     self.noChartLabel.isHidden = true
                 }
-                self.tableView.reloadData()
+                    self.tableView.reloadData()
                 
             } else {
                 print("Error")
@@ -533,16 +543,44 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         telegramLabel.text = telegram
         profileSkillsLabel.text = skills
         
+//        DispatchQueue.main.async {
+//            if self.storage.getProfileState() {
+//                let imageData = self.storage.getProfileImage()
+//                if imageData != nil {
+//                    self.profileImageView.image = UIImage(data: self.storage.getProfileImage()!)
+//                } else {
+//
+//                        let url = URL(string: self.profilePicture!)
+//                        self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
+//
+//                }
+//            } else {
+//
+//                    let url = URL(string: self.profilePicture!)
+//                    self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
+//
+//            }
+//        }
+        
+        
         DispatchQueue.main.async {
-            self.imageService.getImage(withURL: self.profilePicture!) { (image) in
-                    if let image = image {
-                        self.profileImageView.image = image
-                        self.tableView.reloadData()
-                    } else {
-                        self.profileImageView.image = UIImage(named: "red cross")
-                    }
-            }
+
+            let url = URL(string: self.profilePicture!)
+            self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
         }
+        
+        //profileImageView.image = UIImage(named: "deadliner")
+        
+//        DispatchQueue.main.async {
+//            self.imageService.getImage(withURL: self.profilePicture!) { (image) in
+//                    if let image = image {
+//                        self.profileImageView.image = image
+//                        self.tableView.reloadData()
+//                    } else {
+//                        self.profileImageView.image = UIImage(named: "red cross")
+//                    }
+//            }
+//        }
     }
     
     func navBarAppearance() {

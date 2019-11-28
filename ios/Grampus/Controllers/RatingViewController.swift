@@ -10,6 +10,7 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 import SVProgressHUD
+import SDWebImage
 
 class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, SWRevealViewControllerDelegate, UITableViewDelegate, UITableViewDataSource {
     
@@ -219,13 +220,16 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
             DispatchQueue.main.async {
                 cell.nameLabelCell.text = userNameToDisplay
                 cell.professionLabelCell.text = jobTitleToDisplay
-                self.imageService.getImage(withURL: profilePictureString) { (image) in
-                    if let image = image {
-                        cell.imageViewCell.image = image
-                    } else {
-                        cell.imageViewCell.image = UIImage(named: "red cross")
-                    }
-                }
+                
+                let url = URL(string: profilePictureString)
+                cell.imageViewCell.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
+//                self.imageService.getImage(withURL: profilePictureString) { (image) in
+//                    if let image = image {
+//                        cell.imageViewCell.image = image
+//                    } else {
+//                        cell.imageViewCell.image = UIImage(named: "red cross")
+//                    }
+//                }
                 if likeDislikeButtonState! {
                     cell.likeButton.isEnabled = true
                     cell.dislikeButton.isEnabled = true

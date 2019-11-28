@@ -72,4 +72,8 @@ final class ImageService {
         }
         return UIImage(named: "deadliner")!
     }
+    
+    func clearCache() {
+        self.cache.removeAllObjects()
+    }
 }

@@ -8,6 +8,7 @@
 
 import UIKit
 import Alamofire
+import SDWebImage
 
 class MenuTableViewController: UITableViewController {
     
@@ -27,11 +28,11 @@ class MenuTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+            
         fetchUserInformation(userId: storage.getUserId()!)
         
         NotificationCenter.default.addObserver(self, selector: #selector(updateImage), name: NSNotification.Name(rawValue: "imageChanged"), object: nil)
-
+        
         
         self.tableView.tableFooterView = UIView(frame: .zero)
         
@@ -53,7 +54,6 @@ class MenuTableViewController: UITableViewController {
     func fetchUserInformation(userId: String) {
         network.fetchUserInformation(userId: userId) { (json) in
             if let json = json {
-                //let user = json["user"] as! NSDictionary
                 self.fullName = json["fullName"] as? String
                 self.email = json["email"] as? String
                 self.profilePicture = json["profilePicture"] as? String
@@ -78,18 +78,36 @@ class MenuTableViewController: UITableViewController {
                 }
                 self.fullNameLabel.text = self.fullName!
                 self.emailLabel.text = self.email!
-                DispatchQueue.global(qos: .userInteractive).async {
-                    self.imageService.getImage(withURL: self.profilePicture!) { (image) in
-                        DispatchQueue.main.async {
-                            if let image = image {
-                                self.imageView.image = image
-                            } else {
-                                self.imageView.image = UIImage(named: "red cross")
-                            }
-                            self.tableView.reloadData()
-                        }
-                    }
+                
+//                DispatchQueue.main.async {
+//                    let imageData = self.storage.getProfileImage()
+//                    if imageData != nil {
+//                        self.imageView.image = UIImage(data: self.storage.getProfileImage()!)
+//                    } else {
+//                            let url = URL(string: self.profilePicture!)
+//                            self.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
+//                    }
+//                }
+                
+                DispatchQueue.main.async {
+                        let url = URL(string: self.profilePicture!)
+                        self.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
                 }
+
+
+                    
+//                DispatchQueue.global(qos: .userInteractive).async {
+//                    self.imageService.getImage(withURL: self.profilePicture!) { (image) in
+//                        DispatchQueue.main.async {
+//                            if let image = image {
+//                                self.imageView.image = image
+//                            } else {
+//                                self.imageView.image = UIImage(named: "red cross")
+//                            }
+//                            self.tableView.reloadData()
+//                        }
+//                    }
+//                }
             }
             
         }

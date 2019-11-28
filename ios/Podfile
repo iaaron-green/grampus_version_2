@@ -11,6 +11,7 @@ target 'Grampus' do
   pod 'SwiftyJSON'
   pod 'Charts'
   pod 'SVProgressHUD'
+  pod 'SDWebImage'
   # Pods for Grampus
 
 end

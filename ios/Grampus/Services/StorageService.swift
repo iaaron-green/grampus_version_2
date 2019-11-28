@@ -43,6 +43,10 @@ class StorageService {
         return def.bool(forKey: UserDefKeys.isLoggedIn.rawValue)
     }
     
+    func getProfileImage() -> Data? {
+        return def.data(forKey: UserDefKeys.profilePicture.rawValue)
+    }
+    
     //MARK: - Save methods
     
     func chooseLikeOrDislike( bool: Bool ) {
@@ -72,6 +76,10 @@ class StorageService {
     
     func saveUserId( userId: String ) {
         def.set("\(userId)", forKey: UserDefKeys.userId.rawValue)
+    }
+    
+    func saveProfileImage(image: Data) {
+        def.set(image, forKey: UserDefKeys.profilePicture.rawValue)
     }
     
     //MARK: - Decode jwt

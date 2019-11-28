@@ -345,7 +345,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="200"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="LBS-rW-gsh">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LBS-rW-gsh">
                                                     <rect key="frame" x="25" y="59" width="100" height="100"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="LBS-rW-gsh" secondAttribute="height" multiplier="1:1" id="Dr2-a5-Uj2"/>
@@ -583,7 +583,7 @@
         <!--Sign Up View Controller-->
         <scene sceneID="cwF-oQ-C9A">
             <objects>
-                <viewController modalPresentationStyle="fullScreen" id="eDi-rb-NyY" customClass="SignUpViewController" customModule="Grampus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController modalTransitionStyle="crossDissolve" modalPresentationStyle="fullScreen" id="eDi-rb-NyY" customClass="SignUpViewController" customModule="Grampus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ou4-Ry-r3L" customClass="Sign">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -896,33 +896,36 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uRt-vu-ipn">
-                                                    <rect key="frame" x="374" y="62" width="30" height="30"/>
+                                                    <rect key="frame" x="389" y="69.5" width="15" height="15"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="30" id="8t6-ZD-FGr"/>
-                                                        <constraint firstAttribute="height" constant="30" id="QT8-JH-ZQ7"/>
+                                                        <constraint firstAttribute="width" constant="15" id="8t6-ZD-FGr"/>
+                                                        <constraint firstAttribute="height" constant="15" id="QT8-JH-ZQ7"/>
                                                     </constraints>
+                                                    <inset key="contentEdgeInsets" minX="-5" minY="-5" maxX="5" maxY="5"/>
                                                     <state key="normal" title="AddSkype" image="pencil"/>
                                                     <connections>
                                                         <action selector="skypeAddAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="Qo7-US-mWR"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u5Y-YA-oWl">
-                                                    <rect key="frame" x="374" y="92.5" width="30" height="30"/>
+                                                    <rect key="frame" x="389" y="100" width="15" height="15"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="30" id="C4u-yx-xEa"/>
-                                                        <constraint firstAttribute="width" constant="30" id="txz-cd-WCK"/>
+                                                        <constraint firstAttribute="height" constant="15" id="C4u-yx-xEa"/>
+                                                        <constraint firstAttribute="width" constant="15" id="txz-cd-WCK"/>
                                                     </constraints>
+                                                    <inset key="contentEdgeInsets" minX="-5" minY="-5" maxX="5" maxY="5"/>
                                                     <state key="normal" title="AddTelephone" image="pencil"/>
                                                     <connections>
                                                         <action selector="telephoneAddAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="g3u-cf-G83"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h7l-Ld-ypO">
-                                                    <rect key="frame" x="374" y="123" width="30" height="30"/>
+                                                    <rect key="frame" x="389" y="130.5" width="15" height="15"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="30" id="JfI-ZM-3qK"/>
-                                                        <constraint firstAttribute="height" constant="30" id="dA2-Wq-Oo6"/>
+                                                        <constraint firstAttribute="width" constant="15" id="JfI-ZM-3qK"/>
+                                                        <constraint firstAttribute="height" constant="15" id="dA2-Wq-Oo6"/>
                                                     </constraints>
+                                                    <inset key="contentEdgeInsets" minX="-5" minY="-5" maxX="5" maxY="5"/>
                                                     <state key="normal" title="AddTelegram" image="pencil"/>
                                                     <connections>
                                                         <action selector="telegramAddAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="W6l-32-Zz7"/>
@@ -935,19 +938,19 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="someSkype" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aIH-GM-WTB">
-                                                    <rect key="frame" x="69" y="67" width="285" height="20"/>
+                                                    <rect key="frame" x="69" y="67" width="300" height="20"/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="someTelephone" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uaL-7n-imi">
-                                                    <rect key="frame" x="100.5" y="97.5" width="253.5" height="20"/>
+                                                    <rect key="frame" x="100.5" y="97.5" width="268.5" height="20"/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="someTelegram" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tmw-Ym-kVB">
-                                                    <rect key="frame" x="91.5" y="128" width="262.5" height="20"/>
+                                                    <rect key="frame" x="91.5" y="128" width="277.5" height="20"/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                                                     <nil key="highlightedColor"/>
