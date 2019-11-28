@@ -1,5 +1,6 @@
 package com.app.services.impl;
 
+import com.app.DTO.DTOLikableProfile;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
@@ -7,9 +8,11 @@ import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.RatingService;
-import com.app.DTO.DTOAchievement;
+import com.app.util.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -22,8 +25,10 @@ public class RatingServiceImpl implements RatingService {
     ProfileRepository profileRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private MessageSource messageSource;
 
-    public Rating addLike(Long profileId, Rating updatedRating, String userName){
+    public Rating addLike(Long profileId, Rating updatedRating, String userName) throws CustomException {
 
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
@@ -37,7 +42,7 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.save(updatedRating);
     }
 
-    public Rating addDislike(Long profileId, Rating updatedRating, String userName){
+    public Rating addDislike(Long profileId, Rating updatedRating, String userName) throws CustomException {
 
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
@@ -52,7 +57,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Map<String, Object> getAndCountLikesByProfileId(Long id) {
+    public Map<String, Object> getAndCountLikesByProfileId(Long id) throws CustomException {
 
         Map<String, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
@@ -63,12 +68,12 @@ public class RatingServiceImpl implements RatingService {
 
     }
 
-    public List<Rating> getAllAchieves() {
+    public List<Rating> getAllAchieves() throws CustomException {
         return ratingRepository.findAllRatingById();
     }
 
     @Override
-    public Map<Long, Map<String, Long>> addInfoAchievement() {
+    public Map<Long, Map<String, Long>> addInfoAchievement() throws CustomException {
 
         Map<Long, Map<String, Long>> userIdAndAchievments = new HashMap<>();
         List<Mark> positiveRating = Arrays.asList(Mark.values());
@@ -88,17 +93,12 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public List<DTOAchievement> getUserRatingByType(Mark markType) {
-        List<DTOAchievement> achievementData = new ArrayList<>();
-        Set<Long> userIds = userRepository.getAllId();
-        userIds.forEach(userId -> {
-            DTOAchievement achievement = new DTOAchievement();
-            achievement.setUserId(userId);
-            achievement.setCountLike(ratingRepository.countRatingType(userId, markType.toString()));
-            achievementData.add(achievement);
-        });
+    public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException {
+        List<DTOLikableProfile> achievementData = new ArrayList<>();
+        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType.name());
+        if (!CollectionUtils.isEmpty(profilesWithMark)) {
+            achievementData.addAll(profilesWithMark);
+        }
         return achievementData;
     }
-
-
 }
