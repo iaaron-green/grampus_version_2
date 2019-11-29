@@ -1,14 +1,15 @@
 package com.app.repository;
 
+import com.app.DTO.DTOLikableProfile;
 import com.app.configtoken.Constants;
 import com.app.entities.Rating;
-import org.aspectj.apache.bcel.classfile.Constant;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, Long> {
@@ -19,10 +20,12 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             nativeQuery = true)
     List<Rating> findAllRatingById();
 
-
     @Query(
             value = "SELECT COUNT(rating_type) FROM " + Constants.DATABASE + ".ratings WHERE profile_id = ? AND rating_type = ?",
             nativeQuery = true)
     Long countRatingType(Long id, String ratingType);
 
 }
+    @Query("SELECT NEW com.app.DTO.DTOLikableProfile(r.profileRating.user.id, r.profileRating.user.fullName, r.profileRating.user.jobTitle, r.profileRating.profilePicture) " +
+            "FROM  Rating r WHERE r.ratingType = :ratingType")
+    Set<DTOLikableProfile> findProfileByRatingType(@Param("ratingType") String ratingType);
