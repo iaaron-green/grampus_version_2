@@ -8,11 +8,8 @@ import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.RatingService;
-import com.app.util.CustomException;
-import com.app.util.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -30,8 +27,7 @@ public class RatingServiceImpl implements RatingService {
     @Autowired
     private MessageSource messageSource;
 
-    public Rating addLike(Long profileId, Rating updatedRating, String userName) throws CustomException {
-
+    public Rating addLike(Long profileId, Rating updatedRating, String userName) {
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
 
@@ -44,7 +40,7 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.save(updatedRating);
     }
 
-    public Rating addDislike(Long profileId, Rating updatedRating, String userName) throws CustomException {
+    public Rating addDislike(Long profileId, Rating updatedRating, String userName) {
 
         Profile profile = profileRepository.findOneById(profileId);
         updatedRating.setProfileRating(profile);
@@ -59,7 +55,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Map<String, Object> getAndCountLikesByProfileId(Long id) throws CustomException {
+    public Map<String, Object> getAndCountLikesByProfileId(Long id) {
 
         Map<String, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
@@ -70,12 +66,12 @@ public class RatingServiceImpl implements RatingService {
 
     }
 
-    public List<Rating> getAllAchieves() throws CustomException {
+    public List<Rating> getAllAchieves() {
         return ratingRepository.findAllRatingById();
     }
 
     @Override
-    public Map<Long, Map<String, Long>> addInfoAchievement() throws CustomException {
+    public Map<Long, Map<String, Long>> addInfoAchievement() {
 
         Map<Long, Map<String, Long>> userIdAndAchievments = new HashMap<>();
         List<Mark> positiveRating = Arrays.asList(Mark.values());
@@ -94,25 +90,25 @@ public class RatingServiceImpl implements RatingService {
         return userIdAndAchievments;
     }
 
-    //    @Override
-//    public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException {
-//        List<DTOLikableProfile> achievementData = new ArrayList<>();
-//        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType.name());
-//        if (!CollectionUtils.isEmpty(profilesWithMark)) {
-//            achievementData.addAll(profilesWithMark);
-//        }
-//        return achievementData;
-//    }
     @Override
-    public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException {
+    public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) {
         List<DTOLikableProfile> achievementData = new ArrayList<>();
-        Set<Long> userIds = ratingRepository.getProfileIdsByRatingType(markType.name());
-        Set<DTOLikableProfile> profilesWithMark = userRepository.findByIds(userIds);
-        if (!CollectionUtils.isEmpty(profilesWithMark)){
+        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType.name());
+        if (!CollectionUtils.isEmpty(profilesWithMark)) {
             achievementData.addAll(profilesWithMark);
-        } else {
-            throw new CustomException(messageSource.getMessage("user.already.exist", null, LocaleContextHolder.getLocale()), Errors.MARKTYPE_NOT_EXIST);
         }
         return achievementData;
     }
+//    @Override
+//    public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException {
+//        List<DTOLikableProfile> achievementData = new ArrayList<>();
+//        Set<Long> userIds = ratingRepository.getProfileIdsByRatingType(markType.name());
+//        Set<DTOLikableProfile> profilesWithMark = userRepository.findByIds(userIds);
+//        if (!CollectionUtils.isEmpty(profilesWithMark)){
+//            achievementData.addAll(profilesWithMark);
+//        } else {
+//            throw new CustomException(messageSource.getMessage("user.already.exist", null, LocaleContextHolder.getLocale()), Errors.MARKTYPE_NOT_EXIST);
+//        }
+//        return achievementData;
+//    }
 }
