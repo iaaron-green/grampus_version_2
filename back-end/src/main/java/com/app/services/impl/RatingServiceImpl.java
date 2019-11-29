@@ -9,8 +9,10 @@ import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.RatingService;
 import com.app.util.CustomException;
+import com.app.util.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -92,12 +94,24 @@ public class RatingServiceImpl implements RatingService {
         return userIdAndAchievments;
     }
 
+    //    @Override
+//    public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException {
+//        List<DTOLikableProfile> achievementData = new ArrayList<>();
+//        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType.name());
+//        if (!CollectionUtils.isEmpty(profilesWithMark)) {
+//            achievementData.addAll(profilesWithMark);
+//        }
+//        return achievementData;
+//    }
     @Override
     public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException {
         List<DTOLikableProfile> achievementData = new ArrayList<>();
-        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType.name());
-        if (!CollectionUtils.isEmpty(profilesWithMark)) {
+        Set<Long> userIds = ratingRepository.getProfileIdsByRatingType(markType.name());
+        Set<DTOLikableProfile> profilesWithMark = userRepository.findByIds(userIds);
+        if (!CollectionUtils.isEmpty(profilesWithMark)){
             achievementData.addAll(profilesWithMark);
+        } else {
+            throw new CustomException(messageSource.getMessage("user.already.exist", null, LocaleContextHolder.getLocale()), Errors.MARKTYPE_NOT_EXIST);
         }
         return achievementData;
     }
