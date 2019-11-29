@@ -1,8 +1,10 @@
 package com.app.services.impl;
 
 import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOLikeDislike;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
+import com.app.entities.User;
 import com.app.enums.Mark;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
@@ -13,6 +15,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -31,16 +34,32 @@ public class RatingServiceImpl implements RatingService {
         this.messageSource = messageSource;
     }
 
-    public Rating addLike(Long profileId, Rating updatedRating, String userName) {
-        Profile profile = profileRepository.findOneById(profileId);
-        updatedRating.setProfileRating(profile);
+    public Rating addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) {
 
-        if (!userName.equals(profile.getUser().getEmail())) {
+        if (profileId == null || profileId == 0) {
+            //throw exception
+        }
+
+        Profile profile = profileRepository.findOneById(profileId);
+
+        if (profile == null){
+            //throw exception
+        }
+
+        User currentUser = userRepository.findByEmail(principal.getName());
+        if (!currentUser.getId().equals(profileId) &&) {
             Long profileLike = profile.getLikes();
             profile.setLikes(++profileLike);
-            updatedRating.setRatingSourceUsername(userName);
-            profileRepository.save(profile);
+
         }
+
+        updatedRating.setProfileRating(profile);
+
+
+        updatedRating.setRatingSourceUsername(userName);
+        profileRepository.save(profile);
+
+
         return ratingRepository.save(updatedRating);
     }
 

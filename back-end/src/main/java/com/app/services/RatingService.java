@@ -1,16 +1,18 @@
 package com.app.services;
 
 import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOLikeDislike;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
 import com.app.exceptions.CustomException;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
 public interface RatingService {
 
-    Rating addLike(Long profileId, Rating updatedRating, String userName) throws CustomException;
+    Rating addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException;
 
     List<Rating> getAllAchieves() throws CustomException;
 

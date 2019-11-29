@@ -1,6 +1,7 @@
 package com.app.controllers;
 
 import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOLikeDislike;
 import com.app.DTO.DTOProfile;
 import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Rating;
@@ -49,14 +50,14 @@ public class ProfileController {
     }
 
     @PostMapping("/{profileId}/like")
-    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody Rating rating,
+    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
                                               BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException {
+
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        Rating addRating = ratingService.addLike(profileId, rating, principal.getName());
 
-        return new ResponseEntity<>(addRating, HttpStatus.CREATED);
+        return new ResponseEntity<>(ratingService.addLike(dtoLikeDislike, profileId, principal), HttpStatus.CREATED);
     }
 
     @PostMapping("/{profileId}/dislike")
