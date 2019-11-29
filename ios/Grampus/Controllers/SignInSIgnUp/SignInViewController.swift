@@ -21,10 +21,13 @@ class SignInViewController: RootViewController {
     @IBOutlet weak var signUpButton: UIButton!
     
     let network = NetworkService()
+    let storage = StorageService()
     
     // MARK: - Functions
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        storage.def.removeObject(forKey: UserDefKeys.userProfile.rawValue)
         
         SVProgressHUD.setMinimumDismissTimeInterval(2)
         SVProgressHUD.setDefaultStyle(.dark)

@@ -43,8 +43,15 @@ class StorageService {
         return def.bool(forKey: UserDefKeys.isLoggedIn.rawValue)
     }
     
-    func getProfileImage() -> Data? {
-        return def.data(forKey: UserDefKeys.profilePicture.rawValue)
+    func getUserProfile() -> User? {
+        
+        if let savedProfile = def.object(forKey: UserDefKeys.userProfile.rawValue) as? Data {
+            let decoder = JSONDecoder()
+            if let loadedProfile = try? decoder.decode(User.self, from: savedProfile) {
+                return loadedProfile
+            }
+        }
+        return nil
     }
     
     //MARK: - Save methods
@@ -78,8 +85,14 @@ class StorageService {
         def.set("\(userId)", forKey: UserDefKeys.userId.rawValue)
     }
     
-    func saveProfileImage(image: Data) {
-        def.set(image, forKey: UserDefKeys.profilePicture.rawValue)
+    func saveUserProfile(user: User) {
+        
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(user) {
+            def.set(encoded, forKey: UserDefKeys.userProfile.rawValue)
+        }
+        
+        
     }
     
     //MARK: - Decode jwt

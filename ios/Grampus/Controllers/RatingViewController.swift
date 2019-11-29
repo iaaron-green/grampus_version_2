@@ -32,6 +32,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     // MARK: - Functions
     override func loadView() {
         super.loadView()
+        SVProgressHUD.show()
         fetchAllUsers()
     }
     
@@ -93,6 +94,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     func fetchAllUsers() {
         network.fetchAllUsers { (json) in
             if let json = json {
+                SVProgressHUD.dismiss()
                 //print(json)
                 self.json = json
                 self.filteredJson = [JSON]()

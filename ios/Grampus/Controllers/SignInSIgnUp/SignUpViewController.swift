@@ -81,11 +81,13 @@ class SignUpViewController: RootViewController {
     
     @IBAction func SignUpButton(_ sender: UIButton) {
         
+        SVProgressHUD.show()
+        
         self.dismissKeyboard()
 
         if userNameValidation(userName: userNameTextField), emailValidation(email: emailTextField), passwordValidation(password: passwordTextField) {
             //Networking
-            network.signUp(email: emailTextField.text!.trimmingCharacters(in: .whitespaces), password: passwordTextField.text!, fullName: userNameTextField.text!.trimmingCharacters(in: .whitespaces)) { (success, error) in
+            network.signUp(username: emailTextField.text!.trimmingCharacters(in: .whitespaces), password: passwordTextField.text!, fullName: userNameTextField.text!.trimmingCharacters(in: .whitespaces)) { (success, error) in
                 if success {
                     let userInformation = [
                         "email" : self.emailTextField.text,

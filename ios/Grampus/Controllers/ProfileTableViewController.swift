@@ -94,6 +94,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     override func loadView() {
         super.loadView()
+        SVProgressHUD.show()
         if storage.getProfileState() {
             userID = storage.getUserId()!
             fetchUser(userId: storage.getUserId()!)
@@ -304,9 +305,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 let imageDict = ["image": selectedImage]
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "imageChanged"), object: nil, userInfo: imageDict)
                 
-                if let dataImage: Data = selectedImage!.jpegData(compressionQuality: 1) {
-                    self.storage.saveProfileImage(image: dataImage)
-                }
+                let imageData = selectedImage?.jpegData(compressionQuality: 1)
+                let user = User(image: imageData!, name: self.fullName!, profession: self.profession!, email: self.email!)
+                self.storage.saveUserProfile(user: user)
                 
                 
                 SVProgressHUD.showSuccess(withStatus: "Profile photo changed!")
@@ -384,6 +385,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
             
             if let json = json {
+                SVProgressHUD.dismiss()
                 //print(json)
                 self.fullName = json["fullName"] as? String ?? "Full name"
                 self.profession = json["jobTitle"] as? String ?? "Job Title"
@@ -533,34 +535,16 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     func setUpProfile( fullName: String, profession: String, likes: Int, dislikes: Int, email: String, skype: String, telephone: String, telegram: String, skills: String, photo: String) {
         
-        profileFullNameLabel.text = fullName
         profileProfessionLabel.text = profession
         profileLikeLabel.text = "Likes: \(String(describing: likes))"
         profileDislikeLabel.text = "Dislikes: \(String(describing: dislikes))"
-        emailLabel.text = email
         skypeLabel.text = skype
         telephoneLabel.text = telephone
         telegramLabel.text = telegram
         profileSkillsLabel.text = skills
         
-//        DispatchQueue.main.async {
-//            if self.storage.getProfileState() {
-//                let imageData = self.storage.getProfileImage()
-//                if imageData != nil {
-//                    self.profileImageView.image = UIImage(data: self.storage.getProfileImage()!)
-//                } else {
-//
-//                        let url = URL(string: self.profilePicture!)
-//                        self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
-//
-//                }
-//            } else {
-//
-//                    let url = URL(string: self.profilePicture!)
-//                    self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
-//
-//            }
-//        }
+        profileFullNameLabel.text = fullName
+        emailLabel.text = email
         
         
         DispatchQueue.main.async {
@@ -568,6 +552,37 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             let url = URL(string: self.profilePicture!)
             self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
         }
+        
+        
+        
+        let savedUser = self.storage.getUserProfile()
+        if savedUser != nil && storage.getProfileState() {
+            profileFullNameLabel.text = savedUser?.name
+            emailLabel.text = savedUser?.email
+            if let imageData = savedUser?.image {
+                    profileImageView.image = UIImage(data: imageData)
+                } else {
+                    profileImageView.image = UIImage(named: "red cross")
+                }
+            } else {
+                
+                profileFullNameLabel.text = fullName
+                emailLabel.text = email
+                
+                
+                DispatchQueue.main.async {
+
+                    let url = URL(string: self.profilePicture!)
+                    self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
+                }
+                
+            }
+        }
+        
+//        if let user = self.storage.getUserProfile() {
+
+            
+        
         
         //profileImageView.image = UIImage(named: "deadliner")
         
@@ -581,7 +596,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
 //                    }
 //            }
 //        }
-    }
+//    }
     
     func navBarAppearance() {
         profileImageView.layer.cornerRadius = 50

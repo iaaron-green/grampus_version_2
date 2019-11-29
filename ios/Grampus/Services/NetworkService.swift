@@ -60,7 +60,7 @@ class NetworkService {
     }
     
     
-    func signUp(email: String, password: String, fullName: String, completion: @escaping (Bool, String?) -> ()) {
+    func signUp(username: String, password: String, fullName: String, completion: @escaping (Bool, String?) -> ()) {
         
         let registerURL: String = "\(DynamicURL.dynamicURL.rawValue)users/register"
         
@@ -69,7 +69,7 @@ class NetworkService {
         ]
         
         let body: [String : Any] = [
-            "email": email,
+            "username": username,
             "password": password,
             "fullName": fullName
         ]

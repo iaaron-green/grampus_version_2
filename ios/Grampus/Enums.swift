@@ -28,7 +28,7 @@ enum UserDefKeys: String {
     case selectedUserId = "selectedUserId"
     case profileState = "profileState"  // if true show logged user profile, if false show selected user profile
     case selectedUserIdProfile = "selectedUserIdProfile"
-    case profilePicture = "profilePicture"
+    case userProfile = "userProfile"
 }
 
 extension String {

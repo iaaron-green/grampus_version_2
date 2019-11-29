@@ -8,9 +8,9 @@
 
 import Foundation
 
-struct User {
+struct User: Codable {
     var image: Data?
-    var name: String?
-    var profession: String?
-    var email: String?
+    var name: String
+    var profession: String
+    var email: String
 }
