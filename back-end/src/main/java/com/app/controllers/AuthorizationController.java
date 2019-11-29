@@ -2,7 +2,6 @@ package com.app.controllers;
 
 
 import com.app.DTO.DTONewUser;
-import com.app.aspect.LogExecutionTime;
 import com.app.configtoken.JwtTokenProvider;
 import com.app.entities.User;
 import com.app.services.ActivationService;
@@ -85,7 +84,6 @@ public class AuthorizationController {
       return ResponseEntity.ok(new JWTLoginSuccessResponse(true, jwt));
    }
 
-   @LogExecutionTime
    @PostMapping("/register")
    public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) throws MessagingException, CustomException {
       logger.info("|register| - is start");
