@@ -54,7 +54,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public DTONewUser saveUser(User newUser) throws CustomException {
 
-        LOGGER.info("Check if user already exist");
         if (userRepository.findByUsername(newUser.getUsername()) != null) {
             throw new CustomException(messageSource.getMessage("user.already.exist", null, LocaleContextHolder.getLocale()), Errors.USER_ALREADY_EXIST);
         } else {
@@ -65,7 +64,6 @@ public class UserServiceImpl implements UserService {
             dtoNewUser.setUserId(newUser.getId());
             dtoNewUser.setEmail(newUser.getUsername());
             profileService.saveProfile(new Profile(newUser));
-            LOGGER.info("New user registration successful");
             return dtoNewUser;
         }
 

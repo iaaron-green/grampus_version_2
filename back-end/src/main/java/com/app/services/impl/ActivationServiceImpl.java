@@ -11,8 +11,6 @@ import com.app.services.ActivationService;
 import com.app.services.UserService;
 import com.app.util.CustomException;
 import com.app.util.Errors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
