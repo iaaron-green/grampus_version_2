@@ -1,6 +1,5 @@
 package com.app.repository;
 
-import com.app.DTO.DTOLikableProfile;
 import com.app.entities.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

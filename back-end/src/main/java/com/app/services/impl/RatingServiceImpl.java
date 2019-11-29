@@ -18,14 +18,18 @@ import java.util.*;
 @Service
 public class RatingServiceImpl implements RatingService {
 
-    @Autowired
     RatingRepository ratingRepository;
-    @Autowired
     ProfileRepository profileRepository;
-    @Autowired
     UserRepository userRepository;
-    @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    public RatingServiceImpl(RatingRepository ratingRepository, ProfileRepository profileRepository, UserRepository userRepository, MessageSource messageSource) {
+        this.ratingRepository = ratingRepository;
+        this.profileRepository = profileRepository;
+        this.userRepository = userRepository;
+        this.messageSource = messageSource;
+    }
 
     public Rating addLike(Long profileId, Rating updatedRating, String userName) {
         Profile profile = profileRepository.findOneById(profileId);

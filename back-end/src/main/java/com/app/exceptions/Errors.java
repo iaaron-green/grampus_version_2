@@ -1,4 +1,4 @@
-package com.app.util;
+package com.app.exceptions;
 
 public class Errors {
 

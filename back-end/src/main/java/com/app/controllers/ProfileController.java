@@ -1,6 +1,5 @@
 package com.app.controllers;
 
-import com.app.DTO.DTOAchievement;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOProfile;
 import com.app.DTO.DTOUserShortInfo;
@@ -9,7 +8,7 @@ import com.app.enums.Mark;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.services.UserService;
-import com.app.util.CustomException;
+import com.app.exceptions.CustomException;
 import com.app.validators.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -104,11 +103,6 @@ public class ProfileController {
         List<Rating> profile = ratingService.getAllAchieves();
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
-
-//    @GetMapping("/test")
-//    public String getTestById() {
-//        return ratingService.addAchievement(3L);
-//    }
 
     @GetMapping("/catalogue")
     public Map<Long, Map<String, Long>> getAllInfo() throws CustomException {

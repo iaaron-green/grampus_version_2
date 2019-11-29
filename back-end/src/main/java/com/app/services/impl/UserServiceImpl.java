@@ -2,13 +2,12 @@ package com.app.services.impl;
 
 import com.app.DTO.DTONewUser;
 import com.app.DTO.DTOUserShortInfo;
-import com.app.entities.Profile;
 import com.app.entities.User;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.UserService;
-import com.app.util.CustomException;
-import com.app.util.Errors;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +25,18 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private ProfileService profileService;
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private MessageSource messageSource;
 
     @Autowired
-    private MessageSource messageSource;
+    public UserServiceImpl(UserRepository userRepository, ProfileService profileService, BCryptPasswordEncoder bCryptPasswordEncoder, MessageSource messageSource) {
+        this.userRepository = userRepository;
+        this.profileService = profileService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.messageSource = messageSource;
+    }
 
     @Override
     public DTONewUser saveUser(DTONewUser newUser) throws CustomException {

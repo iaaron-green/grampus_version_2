@@ -3,7 +3,7 @@ package com.app.services;
 import com.app.DTO.DTOLikableProfile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
-import com.app.util.CustomException;
+import com.app.exceptions.CustomException;
 
 import java.util.List;
 import java.util.Map;

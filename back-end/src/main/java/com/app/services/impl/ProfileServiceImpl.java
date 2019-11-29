@@ -9,8 +9,8 @@ import com.app.repository.ProfileRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
-import com.app.util.CustomException;
-import com.app.util.Errors;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -28,15 +28,15 @@ import java.util.Set;
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-    @Autowired
+
     private MessageSource messageSource;
-    @Autowired
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
     private RatingService ratingService;
 
     @Autowired
-    public ProfileServiceImpl(ProfileRepository profileRepository, UserRepository userRepository, RatingService ratingService) {
+    public ProfileServiceImpl(MessageSource messageSource, ProfileRepository profileRepository, UserRepository userRepository, RatingService ratingService) {
+        this.messageSource = messageSource;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.ratingService = ratingService;

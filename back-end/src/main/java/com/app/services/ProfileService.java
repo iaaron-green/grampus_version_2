@@ -3,7 +3,7 @@ package com.app.services;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOProfile;
 import com.app.entities.Profile;
-import com.app.util.CustomException;
+import com.app.exceptions.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

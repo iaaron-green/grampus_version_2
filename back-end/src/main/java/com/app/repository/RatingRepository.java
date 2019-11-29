@@ -25,7 +25,9 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             nativeQuery = true)
     Long countRatingType(Long id, String ratingType);
 
-}
+
     @Query("SELECT NEW com.app.DTO.DTOLikableProfile(r.profileRating.user.id, r.profileRating.user.fullName, r.profileRating.user.jobTitle, r.profileRating.profilePicture) " +
             "FROM  Rating r WHERE r.ratingType = :ratingType")
     Set<DTOLikableProfile> findProfileByRatingType(@Param("ratingType") String ratingType);
+
+}
