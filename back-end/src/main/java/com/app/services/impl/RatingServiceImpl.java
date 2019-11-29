@@ -36,7 +36,6 @@ public class RatingServiceImpl implements RatingService {
         }
         return ratingRepository.save(updatedRating);
     }
-
     public Rating addDislike(Long profileId, Rating updatedRating, String userName){
 
         Profile profile = profileRepository.findOneById(profileId);
