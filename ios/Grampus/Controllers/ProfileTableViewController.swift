@@ -11,6 +11,8 @@ import Alamofire
 import Charts
 import SVProgressHUD
 import SDWebImage
+import SkeletonView
+
 
 class ProfileTableViewController: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ChartViewDelegate {
     
@@ -94,7 +96,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     override func loadView() {
         super.loadView()
-        SVProgressHUD.show()
         if storage.getProfileState() {
             userID = storage.getUserId()!
             fetchUser(userId: storage.getUserId()!)
@@ -113,7 +114,8 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        SVProgressHUD.show()
+        addSkeleton()
         chartView.delegate = self
                 
         SVProgressHUD.setMinimumDismissTimeInterval(1)
@@ -158,6 +160,43 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         storage.saveProfileState(state: true)
+    }
+    
+    func addSkeleton() {
+        profileImageView.showAnimatedGradientSkeleton()
+        profileLikeLabel.showAnimatedGradientSkeleton()
+        profileDislikeLabel.showAnimatedGradientSkeleton()
+        profileFullNameLabel.showAnimatedGradientSkeleton()
+        profileProfessionLabel.showAnimatedGradientSkeleton()
+        emailLabel.showAnimatedGradientSkeleton()
+        skypeLabel.showAnimatedGradientSkeleton()
+        telephoneLabel.showAnimatedGradientSkeleton()
+        telegramLabel.showAnimatedGradientSkeleton()
+        profileSkillsLabel.showAnimatedGradientSkeleton()
+        noChartImage.showAnimatedGradientSkeleton()
+        noChartLabel.showAnimatedGradientSkeleton()
+        skypeAddButton.showAnimatedGradientSkeleton()
+        telephoneAddButton.showAnimatedGradientSkeleton()
+        telegramAddButton.showAnimatedGradientSkeleton()
+    }
+    
+    func removeSkeleton() {
+        profileImageView.hideSkeleton()
+        profileLikeLabel.hideSkeleton()
+        profileDislikeLabel.hideSkeleton()
+        profileFullNameLabel.hideSkeleton()
+        profileProfessionLabel.hideSkeleton()
+        emailLabel.hideSkeleton()
+        skypeLabel.hideSkeleton()
+        telephoneLabel.hideSkeleton()
+        telegramLabel.hideSkeleton()
+        noChartLabel.hideSkeleton()
+        noChartImage.hideSkeleton()
+        profileSkillsLabel.hideSkeleton()
+        skypeAddButton.hideSkeleton()
+        telephoneAddButton.hideSkeleton()
+        telegramAddButton.hideSkeleton()
+        navBarAppearance()
     }
     
     
@@ -385,8 +424,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
             
             if let json = json {
-                SVProgressHUD.dismiss()
                 //print(json)
+                self.removeSkeleton()
+                SVProgressHUD.dismiss()
                 self.fullName = json["fullName"] as? String ?? "Full name"
                 self.profession = json["jobTitle"] as? String ?? "Job Title"
                 self.email = json["email"] as? String ?? ""
@@ -578,25 +618,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 
             }
         }
-        
-//        if let user = self.storage.getUserProfile() {
 
-            
-        
-        
-        //profileImageView.image = UIImage(named: "deadliner")
-        
-//        DispatchQueue.main.async {
-//            self.imageService.getImage(withURL: self.profilePicture!) { (image) in
-//                    if let image = image {
-//                        self.profileImageView.image = image
-//                        self.tableView.reloadData()
-//                    } else {
-//                        self.profileImageView.image = UIImage(named: "red cross")
-//                    }
-//            }
-//        }
-//    }
     
     func navBarAppearance() {
         profileImageView.layer.cornerRadius = 50

@@ -69,7 +69,7 @@ class NetworkService {
         ]
         
         let body: [String : Any] = [
-            "username": username,
+            "email": username,
             "password": password,
             "fullName": fullName
         ]

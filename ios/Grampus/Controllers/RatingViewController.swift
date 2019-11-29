@@ -32,12 +32,13 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     // MARK: - Functions
     override func loadView() {
         super.loadView()
-        SVProgressHUD.show()
         fetchAllUsers()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        SVProgressHUD.show()
         
         SVProgressHUD.setMinimumDismissTimeInterval(2)
         SVProgressHUD.setDefaultStyle(.dark)
@@ -212,26 +213,19 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         var likeDislikeButtonState: Bool?
         var profilePictureString = ""
         
-        DispatchQueue.global(qos: .userInteractive).async {
+        DispatchQueue.main.async {
 
             userNameToDisplay = self.filteredJson[indexPath.row]["fullName"].string ?? ""
             jobTitleToDisplay = self.filteredJson[indexPath.row]["jobTitle"].string ?? ""
             profilePictureString = self.filteredJson[indexPath.row]["profilePicture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
             likeDislikeButtonState = self.filteredJson[indexPath.row]["isAbleToLike"].bool ?? false
-            
-            DispatchQueue.main.async {
+                
                 cell.nameLabelCell.text = userNameToDisplay
                 cell.professionLabelCell.text = jobTitleToDisplay
                 
                 let url = URL(string: profilePictureString)
                 cell.imageViewCell.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
-//                self.imageService.getImage(withURL: profilePictureString) { (image) in
-//                    if let image = image {
-//                        cell.imageViewCell.image = image
-//                    } else {
-//                        cell.imageViewCell.image = UIImage(named: "red cross")
-//                    }
-//                }
+
                 if likeDislikeButtonState! {
                     cell.likeButton.isEnabled = true
                     cell.dislikeButton.isEnabled = true
@@ -246,11 +240,9 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
                 cell.dislikeButton.tag = indexPath.row
                 cell.likeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
                 cell.dislikeButton.addTarget(self, action: #selector(self.buttonClicked), for: UIControl.Event.touchUpInside)
-            }
         }
-        
         return cell
-        
+
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

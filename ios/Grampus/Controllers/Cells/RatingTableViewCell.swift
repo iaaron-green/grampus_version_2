@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SkeletonView
 
 class RatingTableViewCell: UITableViewCell {
     
@@ -18,11 +19,13 @@ class RatingTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+
         imageViewCell.layer.cornerRadius = 40
         imageViewCell.layer.borderWidth = 1.5
         imageViewCell.layer.borderColor = UIColor.darkGray.cgColor
+
     }
+    
     
     override func prepareForReuse() {
         nameLabelCell.text = ""
