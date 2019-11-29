@@ -2,15 +2,19 @@ package com.app.controllers;
 
 
 import com.app.DTO.DTONewUser;
+import com.app.aspect.LogExecutionTime;
 import com.app.configtoken.JwtTokenProvider;
 import com.app.entities.User;
 import com.app.services.ActivationService;
 import com.app.util.CustomException;
+import com.app.util.Errors;
 import com.app.validators.JWTLoginSuccessResponse;
 import com.app.validators.LoginRequest;
 import com.app.validators.UserValidator;
 import com.app.validators.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,17 +42,21 @@ public class AuthorizationController {
    private JwtTokenProvider tokenProvider;
    private AuthenticationManager authenticationManager;
    private ActivationService activationService;
+   private MessageSource messageSource;
 
    @Autowired
    public AuthorizationController(ValidationErrorService validationErrorService,
                                   ActivationService activationService,
                                   UserValidator userValidator,
-                                  JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager) {
+                                  JwtTokenProvider tokenProvider,
+                                  AuthenticationManager authenticationManager,
+                                  MessageSource messageSource) {
       this.validationErrorService = validationErrorService;
       this.activationService = activationService;
       this.userValidator = userValidator;
       this.tokenProvider = tokenProvider;
       this.authenticationManager = authenticationManager;
+      this.messageSource = messageSource;
    }
 
    @PostMapping("/login")
@@ -60,7 +68,7 @@ public class AuthorizationController {
 
       if (!activationService.isUserActivate(loginRequest.getUsername())) {
          logger.info("|login| - user is not activate");
-         return new ResponseEntity<>(HttpStatus.LOCKED);
+         throw new CustomException(messageSource.getMessage("activation.code.is.not.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_NOT_ACTIVE);
       }
 
       Authentication authentication = authenticationManager.authenticate(
@@ -77,6 +85,7 @@ public class AuthorizationController {
       return ResponseEntity.ok(new JWTLoginSuccessResponse(true, jwt));
    }
 
+   @LogExecutionTime
    @PostMapping("/register")
    public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) throws MessagingException, CustomException {
       logger.info("|register| - is start");
