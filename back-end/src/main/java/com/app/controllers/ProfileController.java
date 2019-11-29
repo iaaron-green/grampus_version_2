@@ -51,7 +51,7 @@ public class ProfileController {
 
     @PostMapping("/{profileId}/like")
     public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody Rating rating,
-                                              BindingResult result, @PathVariable Long profileId, Principal principal) {
+                                              BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
@@ -62,7 +62,7 @@ public class ProfileController {
 
     @PostMapping("/{profileId}/dislike")
     public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody Rating rating,
-                                                 BindingResult result, @PathVariable Long profileId, Principal principal) {
+                                                 BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
@@ -100,7 +100,7 @@ public class ProfileController {
     }
 
     @GetMapping("/achieve")
-    public ResponseEntity<?> getAllAchieve() {
+    public ResponseEntity<?> getAllAchieve() throws CustomException {
         List<Rating> profile = ratingService.getAllAchieves();
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
@@ -111,13 +111,13 @@ public class ProfileController {
 //    }
 
     @GetMapping("/catalogue")
-    public Map<Long, Map<String, Long>> getAllInfo() {
+    public Map<Long, Map<String, Long>> getAllInfo() throws CustomException {
         return ratingService.addInfoAchievement();
     }
 
     @GetMapping("/userRating/{markType}")
-    public List<DTOAchievement> getUserRating(@PathVariable Mark markType) {
-        return ratingService.getUserRatingByType(markType);
+    public List<DTOLikableProfile> getUserRating(@PathVariable Mark markType) throws CustomException {
+        return ratingService.getUserRatingByMarkType(markType);
     }
 
     @GetMapping("/userJobTitle/{jobTitle}")
