@@ -26,5 +26,4 @@ public interface ProfileService {
 
     Set<DTOLikableProfile> getAllProfilesForLike(String userName);
 
-
 }

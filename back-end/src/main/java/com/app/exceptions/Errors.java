@@ -18,6 +18,7 @@ public class Errors {
     public static final int PROFILE_NOT_EXIST = getError(MIDDLE,PROFILE, 0); // 20700
     public static final int MARKTYPE_NOT_EXIST = getError(MIDDLE,PROFILE, 0); // 20700
     public static final int PROFILE_PICTURE_IS_BAD = getError(LOW,PROFILE, 1); // 10701
+    public static final int WRONG_PROFILE_ID = getError(MIDDLE, PROFILE, 2); //20702
 
 
     public static int getError(int priority, int code, int order){

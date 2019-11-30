@@ -12,8 +12,6 @@ import lombok.ToString;
 @ToString
 public class DTOLikeDislike {
 
-    private String currentUserEmail;
-    private Long profileId;
     private Mark ratingType;
     private String comments;
 

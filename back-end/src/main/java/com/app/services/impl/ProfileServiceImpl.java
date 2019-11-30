@@ -57,6 +57,11 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public DTOProfile getDTOProfileById(Long id) throws CustomException {
+
+        if (id == null || id == 0) {
+            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
+        }
+
         Profile profileFromDB = profileRepository.findProfileById(id);
         if (profileFromDB != null) {
             DTOProfile dtoProfile = new DTOProfile();
