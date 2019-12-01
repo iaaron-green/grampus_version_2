@@ -1,8 +1,10 @@
 package com.app.services.impl;
 
+import com.app.entities.Achievement;
 import com.app.entities.ActivationCode;
 import com.app.entities.Profile;
 import com.app.entities.User;
+import com.app.repository.AchievementRepository;
 import com.app.repository.ActivationRepository;
 import com.app.repository.ProfileRepository;
 import com.app.repository.UserRepository;
@@ -18,7 +20,8 @@ public class ActivationServiceImpl implements ActivationService {
     private ProfileRepository profileRepository;
 
     @Autowired
-    public ActivationServiceImpl(UserRepository userRepository, ActivationRepository activationRepository, ProfileRepository profileRepository) {
+    public ActivationServiceImpl(UserRepository userRepository, ActivationRepository activationRepository,
+                                 ProfileRepository profileRepository) {
         this.userRepository = userRepository;
         this.activationRepository = activationRepository;
         this.profileRepository = profileRepository;
@@ -41,7 +44,7 @@ public class ActivationServiceImpl implements ActivationService {
     public boolean isUserActivate(String login) {
         User user = userRepository.findByEmail(login);
 
-        if(user != null &&activationRepository.findByUserId(user.getId()).isActivate()) {
+        if(user != null && activationRepository.findByUserId(user.getId()).isActivate()) {
             return true;
         }
         else

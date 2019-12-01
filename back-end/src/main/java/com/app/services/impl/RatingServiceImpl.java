@@ -11,6 +11,7 @@ import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
+import com.app.services.AchievementService;
 import com.app.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -28,14 +29,16 @@ public class RatingServiceImpl implements RatingService {
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
     private MessageSource messageSource;
+    private AchievementService achievementService;
 
     @Autowired
     public RatingServiceImpl(RatingRepository ratingRepository, ProfileRepository profileRepository, UserRepository userRepository,
-                             MessageSource messageSource) {
+                             MessageSource messageSource, AchievementService achievementService) {
         this.ratingRepository = ratingRepository;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.messageSource = messageSource;
+        this.achievementService = achievementService;
     }
 
     public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException {
@@ -61,6 +64,7 @@ public class RatingServiceImpl implements RatingService {
             updatedRating.setRatingType(dtoLikeDislike.getRatingType());
             profileRepository.save(profile);
             ratingRepository.save(updatedRating);
+            achievementService.recountUserAchievements(profileId, dtoLikeDislike.getRatingType());
             return true;
         } else return false;
     }
@@ -98,7 +102,7 @@ public class RatingServiceImpl implements RatingService {
         Map<String, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
 
-        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString().toLowerCase(), ratingRepository.countRatingType(id, mark.toString().toLowerCase())));
+        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString().toLowerCase(), ratingRepository.countRatingType(id, mark.toString())));
 
         return mapOfLikes;
 
@@ -121,9 +125,6 @@ public class RatingServiceImpl implements RatingService {
             positiveRating.forEach(mark -> achievements.put(mark.toString(), ratingRepository.countRatingType(user, mark.toString())));
             userIdAndAchievments.put(user, achievements);
         });
-
-        String s = userIdAndAchievments.toString();
-        System.out.println(s);
 
         return userIdAndAchievments;
     }
