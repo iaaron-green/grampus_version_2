@@ -3,11 +3,10 @@ package com.app.services;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOProfile;
 import com.app.entities.Profile;
-import com.app.util.CustomException;
+import com.app.exceptions.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -19,13 +18,12 @@ public interface ProfileService {
 
     DTOProfile getDTOProfileById(Long id) throws CustomException;
 
-    Profile updateProfile(Profile updatedProfile, String principalName);
+    Boolean updateProfile(DTOProfile profile, String principalName);
 
-    void saveProfilePhoto(MultipartFile file, Long id) throws IOException, CustomException;
+    void saveProfilePhoto(MultipartFile file, Long id) throws CustomException;
 
     List<Profile> getAllProfiles() throws CustomException;
 
     Set<DTOLikableProfile> getAllProfilesForLike(String userName);
-
 
 }

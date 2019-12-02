@@ -24,27 +24,26 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class ActivationServiceImpl implements ActivationService {
 
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ActivationRepository activationRepository;
-
-    @Autowired
-    ProfileRepository profileRepository;
-
-    @Autowired
+    private UserRepository userRepository;
+    private ActivationRepository activationRepository;
+    private ProfileRepository profileRepository;
     private JavaMailSender emailSender;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private ActivationService activationService;
+    private MessageSource messageSource;
 
     @Autowired
-    private MessageSource messageSource;
+    public ActivationServiceImpl(UserRepository userRepository, ActivationRepository activationRepository,
+                                 ProfileRepository profileRepository, JavaMailSender emailSender,
+                                 UserService userService, ActivationService activationService, MessageSource messageSource) {
+        this.userRepository = userRepository;
+        this.activationRepository = activationRepository;
+        this.profileRepository = profileRepository;
+        this.emailSender = emailSender;
+        this.userService = userService;
+        this.activationService = activationService;
+        this.messageSource = messageSource;
+    }
 
     @Override
     public void activateUser(Long id) throws CustomException {
@@ -52,6 +51,8 @@ public class ActivationServiceImpl implements ActivationService {
         if (activationCode != null && !activationCode.isActivate()) {
             activationCode.setActivate(true);
             activationRepository.save(activationCode);
+            User user = userRepository.getById(id);
+            profileRepository.save(new Profile(user));
         }
         else
             throw new CustomException(messageSource.getMessage("activation.code.is.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_ACTIVE);

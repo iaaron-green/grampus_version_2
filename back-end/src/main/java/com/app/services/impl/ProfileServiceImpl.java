@@ -9,8 +9,8 @@ import com.app.repository.ProfileRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
-import com.app.util.CustomException;
-import com.app.util.Errors;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -28,14 +28,19 @@ import java.util.Set;
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-    @Autowired
+
     private MessageSource messageSource;
-    @Autowired
     private ProfileRepository profileRepository;
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private RatingService ratingService;
+
+    @Autowired
+    public ProfileServiceImpl(MessageSource messageSource, ProfileRepository profileRepository, UserRepository userRepository, RatingService ratingService) {
+        this.messageSource = messageSource;
+        this.profileRepository = profileRepository;
+        this.userRepository = userRepository;
+        this.ratingService = ratingService;
+    }
 
     @Override
     public <S extends Profile> S saveProfile(S entity) {
@@ -52,6 +57,11 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public DTOProfile getDTOProfileById(Long id) throws CustomException {
+
+        if (id == null || id == 0) {
+            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
+        }
+
         Profile profileFromDB = profileRepository.findProfileById(id);
         if (profileFromDB != null) {
             DTOProfile dtoProfile = new DTOProfile();
@@ -61,7 +71,7 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setInformation(profileFromDB.getInformation());
             dtoProfile.setProfilePicture(profileFromDB.getProfilePicture());
             dtoProfile.setSkills(profileFromDB.getSkills());
-            dtoProfile.setEmail(profileFromDB.getUser().getUsername());
+            dtoProfile.setEmail(profileFromDB.getUser().getEmail());
             dtoProfile.setJobTitle(profileFromDB.getUser().getJobTitle());
             dtoProfile.setFullName(profileFromDB.getUser().getFullName());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
@@ -70,32 +80,30 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile updateProfile(Profile updatedProfile, String principalName) {
-        User currentUser = userRepository.findByUsername(principalName);
+    public Boolean updateProfile(DTOProfile profile, String principalName) {
+        User currentUser = userRepository.findByEmail(principalName);
 
-        fixUpdatedProfileUser(updatedProfile, currentUser);
-
-        if (principalName.equals(updatedProfile.getUser().getUsername())) {
-
-            updatedProfile.setId(currentUser.getId());
-            Profile profileFromDB = profileRepository.findProfileById(updatedProfile.getId());
-
-            if (updatedProfile.getInformation() != null) {
-                profileFromDB.setInformation(updatedProfile.getInformation());
-            }
-            if (updatedProfile.getSkills() != null) {
-                profileFromDB.setSkills(updatedProfile.getSkills());
-            }
-            return profileRepository.save(profileFromDB);
-        }
-        return new Profile();
+        if (currentUser != null) {
+            Profile profileFromDB = profileRepository.findProfileById(currentUser.getId());
+            if (profileFromDB != null){
+                boolean isProfileUpdated = false;
+                if (profile.getInformation() != null) {
+                    profileFromDB.setInformation(profile.getInformation());
+                    isProfileUpdated = true;
+                }
+                if (profile.getSkills() != null) {
+                    profileFromDB.setSkills(profile.getSkills());
+                    isProfileUpdated = true;
+                }
+                if (isProfileUpdated) {
+                    profileRepository.save(profileFromDB);
+                    return true;
+                }
+            } else return false;
+        } else return false;
+        return false;
     }
 
-    private void fixUpdatedProfileUser(Profile updatedProfile, User currentUser) {
-        if (!currentUser.equals(updatedProfile.getUser())) {
-            updatedProfile.setUser(currentUser);
-        }
-    }
 
     @Override
     public void saveProfilePhoto(MultipartFile file, Long id) throws CustomException {
@@ -131,7 +139,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     public Set<DTOLikableProfile> getAllProfilesForLike(String userName)  {
 
-        User user = userRepository.findByUsername(userName);
+        User user = userRepository.findByEmail(userName);
         Set<Long> profilesIdWithLike;
         Set<DTOLikableProfile> dtoLikableProfiles = new HashSet<>();
         if (user != null) {

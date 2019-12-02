@@ -1,7 +1,7 @@
 package com.app.validators;
 
 
-import com.app.entities.User;
+import com.app.DTO.DTONewUser;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -10,12 +10,12 @@ import org.springframework.validation.Validator;
 public class UserValidator implements Validator {
     @Override
     public boolean supports(Class<?> aClass) {
-        return User.class.equals(aClass);
+        return  com.app.DTO.DTONewUser.class.equals(aClass);
     }
 
     @Override
     public void validate(Object object, Errors errors) {
-        User user = (User) object;
+        DTONewUser user = (DTONewUser) object;
         if (user.getPassword().length() < 6){
             errors.rejectValue("password","Length", "Password must be at least 6 characters");
         }

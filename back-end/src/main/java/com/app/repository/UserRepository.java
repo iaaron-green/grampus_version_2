@@ -12,7 +12,7 @@ import java.util.Set;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-   User findByUsername(String login);
+   User findByEmail(String email);
 
    User getById(Long id);
 
@@ -24,4 +24,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
    @Query("SELECT NEW com.app.DTO.DTOLikableProfile(u.id, u.fullName, u.jobTitle, p.profilePicture) FROM User u, Profile p WHERE u.id NOT LIKE :id AND u.id = p.id")
    Set<DTOLikableProfile> getLikeableProfiles(@Param("id") Long id);
+
+
+   @Query(
+           value = "SELECT *  FROM users WHERE job_title = ?",
+           nativeQuery = true)
+   Set<User> findAllUsersByJobTitle(String jobTitle);
 }

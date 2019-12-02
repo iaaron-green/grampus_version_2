@@ -1,54 +1,95 @@
 package com.app.services.impl;
 
-import com.app.entities.Rating;
+import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOLikeDislike;
 import com.app.entities.Profile;
+import com.app.entities.Rating;
+import com.app.entities.User;
 import com.app.enums.Mark;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.RatingService;
-import com.app.DTO.DTOAchievement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.security.Principal;
 import java.util.*;
 
 @Service
 public class RatingServiceImpl implements RatingService {
 
-    @Autowired
-    RatingRepository ratingRepository;
-    @Autowired
-    ProfileRepository profileRepository;
-    @Autowired
-    UserRepository userRepository;
+    private RatingRepository ratingRepository;
+    private ProfileRepository profileRepository;
+    private UserRepository userRepository;
+    private MessageSource messageSource;
 
-    public Rating addLike(Long profileId, Rating updatedRating, String userName){
-
-        Profile profile = profileRepository.findOneById(profileId);
-        updatedRating.setProfileRating(profile);
-
-        if (!userName.equals(profile.getUser().getUsername())) {
-            Long profileLike = profile.getLikes();
-            profile.setLikes(++profileLike);
-            updatedRating.setRatingSourceUsername(userName);
-            profileRepository.save(profile);
-        }
-        return ratingRepository.save(updatedRating);
+    @Autowired
+    public RatingServiceImpl(RatingRepository ratingRepository, ProfileRepository profileRepository, UserRepository userRepository,
+                             MessageSource messageSource) {
+        this.ratingRepository = ratingRepository;
+        this.profileRepository = profileRepository;
+        this.userRepository = userRepository;
+        this.messageSource = messageSource;
     }
 
-    public Rating addDislike(Long profileId, Rating updatedRating, String userName){
+    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException {
+
+        if (profileId == null || profileId == 0) {
+            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
+        }
 
         Profile profile = profileRepository.findOneById(profileId);
-        updatedRating.setProfileRating(profile);
 
-        if (!userName.equals(profile.getUser().getUsername())) {
+        if (profile == null) {
+            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        }
+
+        User currentUser = userRepository.findByEmail(principal.getName());
+        if (!currentUser.getId().equals(profileId) && ratingRepository.checkLike(profileId, currentUser.getEmail()) == null
+        && !dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
+            Long profileLike = profile.getLikes();
+            profile.setLikes(++profileLike);
+            Rating updatedRating = new Rating();
+            updatedRating.setProfileRating(profile);
+            updatedRating.setRatingSourceUsername(currentUser.getEmail());
+            updatedRating.setRatingType(dtoLikeDislike.getRatingType());
+            profileRepository.save(profile);
+            ratingRepository.save(updatedRating);
+            return true;
+        } else return false;
+    }
+
+    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException {
+
+        if (profileId == null || profileId == 0) {
+            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
+        }
+
+        Profile profile = profileRepository.findOneById(profileId);
+
+        if (profile == null) {
+            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        }
+
+        User currentUser = userRepository.findByEmail(principal.getName());
+        if (!currentUser.getId().equals(profileId) && ratingRepository.checkLike(profileId, currentUser.getEmail()) == null
+        && dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileDislike = profile.getDislikes();
             profile.setDislikes(++profileDislike);
-            updatedRating.setRatingSourceUsername(userName);
+            Rating updatedRating = new Rating();
+            updatedRating.setProfileRating(profile);
+            updatedRating.setRatingSourceUsername(currentUser.getEmail());
+            updatedRating.setRatingType(dtoLikeDislike.getRatingType());
             profileRepository.save(profile);
-        }
-        return ratingRepository.save(updatedRating);
+            ratingRepository.save(updatedRating);
+            return true;
+        } else return false;
     }
 
     @Override
@@ -88,17 +129,12 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public List<DTOAchievement> getUserRatingByType(Mark markType) {
-        List<DTOAchievement> achievementData = new ArrayList<>();
-        Set<Long> userIds = userRepository.getAllId();
-        userIds.forEach(userId -> {
-            DTOAchievement achievement = new DTOAchievement();
-            achievement.setUserId(userId);
-            achievement.setCountLike(ratingRepository.countRatingType(userId, markType.toString()));
-            achievementData.add(achievement);
-        });
+    public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) {
+        List<DTOLikableProfile> achievementData = new ArrayList<>();
+        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType.name());
+        if (!CollectionUtils.isEmpty(profilesWithMark)) {
+            achievementData.addAll(profilesWithMark);
+        }
         return achievementData;
     }
-
-
 }

@@ -12,6 +12,9 @@ public class Constants {
     public static final String FTP_SERVER = "10.11.1.155";
     public static final int FTP_PORT = 21;
     public static final String FTP_IMG_LINK = "ftp://10.11.1.155/";
+    public static final String DATABASE = "grampus_db";
+    public static final String MY_EMAIL = "winlixn@gmail.com";
+    public static final String MY_PASSWORD = "kapuzi121212";
 
     public static final String MY_EMAIL = "winlixn@gmail.com";
     public static final String MY_PASSWORD = "kapuzi121212";
