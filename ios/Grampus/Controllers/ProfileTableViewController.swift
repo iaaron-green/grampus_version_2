@@ -26,6 +26,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @IBOutlet weak var profileProfessionLabel: UILabel!
     @IBOutlet weak var profileLikeLabel: UILabel!
     @IBOutlet weak var profileDislikeLabel: UILabel!
+    @IBOutlet weak var countryLabel: UILabel!
+    @IBOutlet weak var likeButton: UIButton!
+    @IBOutlet weak var dislikeButton: UIButton!
     
     //Achievement cell
     @IBOutlet weak var collectionView: UICollectionView!
@@ -36,8 +39,8 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @IBOutlet weak var skypeLabel: UILabel!
     @IBOutlet weak var telephoneLabel: UILabel!
     @IBOutlet weak var telegramLabel: UILabel!
-    @IBOutlet weak var noChartImage: UIImageView!
     @IBOutlet weak var noChartLabel: UILabel!
+    @IBOutlet weak var noChartImage: UIImageView!
     
     @IBOutlet weak var skypeAddButton: UIButton!
     @IBOutlet weak var telephoneAddButton: UIButton!
@@ -97,31 +100,35 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func loadView() {
         super.loadView()
         if storage.getProfileState() {
+            storage.saveIsAbleToLike(able: false)
             userID = storage.getUserId()!
             fetchUser(userId: storage.getUserId()!)
-            profileImageView.isUserInteractionEnabled = true
+            addSelfLabelGestures()
+
         } else {
-            profileImageView.isUserInteractionEnabled = false
             skillsAddButton.isHidden = true
             skypeAddButton.isHidden = true
             telephoneAddButton.isHidden = true
             telegramAddButton.isHidden = true
             userID = storage.getSelectedUserIdProfile()!
             fetchUser(userId: storage.getSelectedUserIdProfile()!)
+            addOtherLabelGestures()
         }
         tableView.reloadData()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        SVProgressHUD.show()
         addSkeleton()
+        likeButtonsAbility()
+        
         chartView.delegate = self
                 
         SVProgressHUD.setMinimumDismissTimeInterval(1)
         SVProgressHUD.setDefaultStyle(.dark)
         
-        addLabelGestures()
+        NotificationCenter.default.addObserver(self, selector: #selector(loadProfile(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
+
         
         screenSize = UIScreen.main.bounds
         screenWidth = screenSize.width
@@ -156,10 +163,21 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         tableView.reloadData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        SVProgressHUD.show()
+    }
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         storage.saveProfileState(state: true)
+    }
+    
+    func likeButtonsAbility() {
+        if !storage.getIsAbleToLike() {
+            likeButton.isHidden = true
+            dislikeButton.isHidden = true
+        }
     }
     
     func addSkeleton() {
@@ -173,8 +191,8 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         telephoneLabel.showAnimatedGradientSkeleton()
         telegramLabel.showAnimatedGradientSkeleton()
         profileSkillsLabel.showAnimatedGradientSkeleton()
-        noChartImage.showAnimatedGradientSkeleton()
         noChartLabel.showAnimatedGradientSkeleton()
+        noChartImage.showAnimatedGradientSkeleton()
         skypeAddButton.showAnimatedGradientSkeleton()
         telephoneAddButton.showAnimatedGradientSkeleton()
         telegramAddButton.showAnimatedGradientSkeleton()
@@ -199,20 +217,30 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         navBarAppearance()
     }
     
-    
-    func addLabelGestures() {
+    func addSelfLabelGestures() {
         
+        let countryTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(countryTapped(tapGestureRecognizer:)))
+        let professionTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(professionTapped(tapGestureRecognizer:)))
         let imageTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
+        
+        profileImageView.addGestureRecognizer(imageTapGestureRecognizer)
+        countryLabel.addGestureRecognizer(countryTapGestureRecognizer)
+        profileProfessionLabel.addGestureRecognizer(professionTapGestureRecognizer)
+        
+    }
+    
+    func addOtherLabelGestures() {
+        
         let emailTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(emailTapped(tapGestureRecognizer:)))
         let skypeTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(skypeTapped(tapGestureRecognizer:)))
         let telephoneTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(telephoneTapped(tapGestureRecognizer:)))
         let telegramTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(telegramTapped(tapGestureRecognizer:)))
-        
-        profileImageView.addGestureRecognizer(imageTapGestureRecognizer)
+
         emailLabel.addGestureRecognizer(emailTapGestureRecognizer)
         skypeLabel.addGestureRecognizer(skypeTapGestureRecognizer)
         telephoneLabel.addGestureRecognizer(telephoneTapGestureRecognizer)
         telegramLabel.addGestureRecognizer(telegramTapGestureRecognizer)
+        
     }
     
     
@@ -225,6 +253,61 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @objc func pullToRefresh(sender: UIRefreshControl) {
         fetchUser(userId: userID!)
         sender.endRefreshing()
+        
+    }
+    
+    @objc func countryTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Enter your counry:", message: nil, preferredStyle: .alert)
+
+        alert.addTextField()
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            self.network.editProfileText(key: "country", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
+                if success {
+                    if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
+                        self.countryLabel.text = textField?.text
+                        SVProgressHUD.showSuccess(withStatus: "Success!")
+                    } else {
+                        self.countryLabel.text = ""
+                    }
+                    self.tableView.reloadData()
+                } else {
+                    SVProgressHUD.showError(withStatus: "Error updating country!")
+                }
+            }
+            
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
+        self.tableView.reloadData()
+    }
+    
+    @objc func professionTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Enter your profession:", message: nil, preferredStyle: .alert)
+
+        alert.addTextField()
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            self.network.editProfileText(key: "profession", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
+                if success {
+                    if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
+                        self.profileProfessionLabel.text = textField?.text
+                        SVProgressHUD.showSuccess(withStatus: "Success!")
+                    } else {
+                        self.profileProfessionLabel.text = ""
+                    }
+                    self.tableView.reloadData()
+                } else {
+                    SVProgressHUD.showError(withStatus: "Error updating profession!")
+                }
+            }
+            
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
+        self.tableView.reloadData()
     }
     
     @objc func emailTapped(tapGestureRecognizer: UITapGestureRecognizer) {
@@ -260,7 +343,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     @objc func telegramTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         if let url = URL(string: "tg://resolve?domain=\(telegram!)") {
-            print(url)
           if #available(iOS 10.0, *) {
             UIApplication.shared.open(url)
           } else {
@@ -268,6 +350,33 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
           }
         }
     }
+    
+    @IBAction func likeButtonTouched(_ sender: UIButton) {
+        storage.chooseLikeOrDislike(bool: true)
+        storage.saveSelectedUserId(selectedUserId: Int(userID!)!)
+        self.performSegue(withIdentifier: "ShowModalView", sender: self)
+
+    }
+    
+    @IBAction func dislikeButtonTouched(_ sender: UIButton) {
+        storage.chooseLikeOrDislike(bool: false)
+        storage.saveSelectedUserId(selectedUserId: Int(userID!)!)
+        self.performSegue(withIdentifier: "ShowModalView", sender: self)
+
+        
+    }
+    
+    @objc func loadProfile(notification: NSNotification){
+        DispatchQueue.main.async {
+            self.fetchUser(userId: self.userID!)
+            self.likeButton.isHidden = true
+            self.dislikeButton.isHidden = true
+            self.tableView.reloadData()
+            SVProgressHUD.showSuccess(withStatus: "Success!")
+        }
+    }
+    
+    
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
     {
@@ -317,12 +426,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         }
     }
     
-    func handleProfilePicker() {
-        let picker = UIImagePickerController()
-        picker.delegate = self
-        picker.allowsEditing = true
-        self.present(picker,animated: true,completion: nil)
-    }
+//    func handleProfilePicker() {
+//        let picker = UIImagePickerController()
+//        picker.delegate = self
+//        picker.allowsEditing = true
+//        self.present(picker,animated: true,completion: nil)
+//    }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
       var selectedImage: UIImage?
@@ -418,6 +527,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         collectionView.reloadData()
         
     }
+    
     
     func fetchUser(userId: String) {
         
@@ -587,11 +697,11 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         emailLabel.text = email
         
         
-        DispatchQueue.main.async {
-
-            let url = URL(string: self.profilePicture!)
-            self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
-        }
+//        DispatchQueue.main.async {
+//
+//            let url = URL(string: self.profilePicture!)
+//            self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
+//        }
         
         
         
@@ -780,6 +890,8 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
+    
+    
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         

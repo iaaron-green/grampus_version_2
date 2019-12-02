@@ -32,7 +32,7 @@ class NetworkService {
         ]
         
         let body: [String : Any] = [
-            "username": username,
+            "email": username,
             "password": password,
         ]
         
@@ -167,7 +167,7 @@ class NetworkService {
     }
     
     
-    func addLikeOrDislike( ratingType: String, likeState: Bool ) {
+    func addLikeOrDislike( ratingType: String, likeState: Bool, message: String ) {
         
         let headers: HTTPHeaders = [
             "Content-Type": "application/json; charset=utf-8",
@@ -175,7 +175,8 @@ class NetworkService {
         ]
         
         let body: [String : Any] = [
-            "ratingType": ratingType
+            "ratingType": ratingType,
+            "message" : message
         ]
         
         var apiUrl = ""
@@ -190,6 +191,7 @@ class NetworkService {
 
             switch responseJSON.result {
             case .success :
+                print(apiUrl)
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)
                 
             case .failure(let error) :

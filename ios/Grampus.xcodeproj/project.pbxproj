@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0436D54B229413B600BE2612 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0436D54A229413B600BE2612 /* SignUpViewController.swift */; };
 		04DE7C21229BCE6B00BB8B88 /* TableViewCellForPieChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DE7C20229BCE6B00BB8B88 /* TableViewCellForPieChart.swift */; };
+		3F3C4E1E23950E6600927B4C /* dislike_animation.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F3C4E1D23950E6500927B4C /* dislike_animation.json */; };
 		3F4324AE237AF540005D744D /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4324AD237AF540005D744D /* NetworkService.swift */; };
 		3F6B9C982383F8F700C96012 /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B9C972383F8F700C96012 /* ImageService.swift */; };
 		3F7529CD237D7F380021B8AE /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7529CC237D7F380021B8AE /* StorageService.swift */; };
@@ -35,6 +36,7 @@
 /* Begin PBXFileReference section */
 		0436D54A229413B600BE2612 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		04DE7C20229BCE6B00BB8B88 /* TableViewCellForPieChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellForPieChart.swift; sourceTree = "<group>"; };
+		3F3C4E1D23950E6500927B4C /* dislike_animation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = dislike_animation.json; sourceTree = "<group>"; };
 		3F4324AD237AF540005D744D /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		3F6B9C972383F8F700C96012 /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
 		3F7529CC237D7F380021B8AE /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				D93B26EF2292BFEF00741E7F /* AppDelegate.swift */,
+				3F3C4E1D23950E6500927B4C /* dislike_animation.json */,
 				761E1522237EC1080088CBF8 /* Services */,
 				D965BC9B22949ACF001B71C3 /* Controllers */,
 				761E1523237EC4490088CBF8 /* AchievementsModel.swift */,
@@ -246,6 +249,7 @@
 			files = (
 				D93B26FA2292BFF000741E7F /* LaunchScreen.storyboard in Resources */,
 				D93B26F72292BFF000741E7F /* Assets.xcassets in Resources */,
+				3F3C4E1E23950E6600927B4C /* dislike_animation.json in Resources */,
 				D93B26F52292BFEF00741E7F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

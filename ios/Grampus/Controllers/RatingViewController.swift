@@ -142,17 +142,13 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @IBAction func dislikeButtonAction(_ sender: Any) {
         
-        let alert = UIAlertController(title: "A you shure?", message: "This action cannot be undone", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Cancel", style: .destructive, handler: nil))
-        alert.addAction(UIAlertAction(title: "Dislike", style: .default, handler: { _ in
-            self.storage.chooseLikeOrDislike(bool: false)
-            self.network.addLikeOrDislike(ratingType: "dislike", likeState: false)
-            SVProgressHUD.showSuccess(withStatus: "Sucess!")
-            self.fetchAllUsers()
+            storage.chooseLikeOrDislike(bool: false)
             
-        }))
-
-        self.present(alert, animated: true, completion: nil)
+            self.performSegue(withIdentifier: "ShowModalView", sender: self)
+            self.definesPresentationContext = true
+            self.providesPresentationContextTransitionStyle = true
+            
+            self.overlayBlurredBackgroundView()
     }
     
     func overlayBlurredBackgroundView() {
@@ -247,6 +243,11 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        if self.filteredJson[indexPath.row]["isAbleToLike"].bool! {
+            storage.saveIsAbleToLike(able: true)
+        } else {
+            storage.saveIsAbleToLike(able: false)
+        }
         if let id = self.filteredJson[indexPath.row]["id"].int {
             storage.saveSelectedUserIdProfile(id: id)
             storage.saveProfileState(state: false)

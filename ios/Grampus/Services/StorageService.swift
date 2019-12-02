@@ -54,6 +54,10 @@ class StorageService {
         return nil
     }
     
+    func getIsAbleToLike() -> Bool {
+        return def.bool(forKey: UserDefKeys.isAbleToLike.rawValue)
+    }
+    
     //MARK: - Save methods
     
     func chooseLikeOrDislike( bool: Bool ) {
@@ -91,8 +95,10 @@ class StorageService {
         if let encoded = try? encoder.encode(user) {
             def.set(encoded, forKey: UserDefKeys.userProfile.rawValue)
         }
-        
-        
+    }
+    
+    func saveIsAbleToLike(able: Bool) {
+        def.set(able, forKey: UserDefKeys.isAbleToLike.rawValue)
     }
     
     //MARK: - Decode jwt

@@ -8,6 +8,7 @@
 
 import UIKit
 import SVProgressHUD
+import Lottie
 
 protocol ModalViewControllerDelegate: class {
     func removeBlurredBackgroundView()
@@ -15,17 +16,15 @@ protocol ModalViewControllerDelegate: class {
 
 class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
     
-    @IBOutlet weak var firstButton: UIButton!
-    @IBOutlet weak var secondButton: UIButton!
-    @IBOutlet weak var thirdButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var okButton: UIButton!
-    @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var messageTextfield: UITextField!
     @IBOutlet weak var countLabel: UILabel!
     @IBOutlet weak var picker: UIPickerView!
     @IBOutlet weak var backView: UIView!
+    @IBOutlet weak var dislikeLottie: AnimationView!
     
-    var ratingType: String = "best_looker"
+    var ratingType: String = "BEST_LOOKER"
     var likeState: Bool? // if true like, if false dislike
     var selectedUserId: Int?
     let network = NetworkService()
@@ -41,12 +40,12 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
         SVProgressHUD.setDefaultStyle(.dark)
         
         likeState = storage.getLikeState()
-        configureButtons()
-        textField.delegate = self
+        configureView()
+        messageTextfield.delegate = self
         picker.delegate = self
         picker.dataSource = self
 
-        textField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
+        messageTextfield.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
         countLabel.text = "0/24"
     }
     
@@ -64,23 +63,41 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
         removeNotifications()
     }
     
-    func configureButtons() {
+    func configureView() {
         
         backView.layer.cornerRadius = 7
         cancelButton.layer.cornerRadius = 5
         okButton.layer.cornerRadius = 5
+        
+        if likeState! {
+            dislikeLottie.isHidden = true
+            
+        } else {
+            picker.isHidden = true
+            ratingType = "DISLIKE"
+            startAnimation()
+            
+        }
+    }
+    
+    func startAnimation() {
+        dislikeLottie.animation = Animation.named("dislike_animation")
+        dislikeLottie.loopMode = .loop
+        dislikeLottie.play()
     }
     
    
     
     @IBAction func okButtonAction(_ sender: Any) {
         
-            network.addLikeOrDislike(ratingType: ratingType, likeState: likeState!)
-            print(ratingType)
-            dismiss(animated: true, completion: nil)
-            delegate?.removeBlurredBackgroundView()
-            SVProgressHUD.showSuccess(withStatus: "Sucess!")
-
+        let message = messageTextfield.text!
+        network.addLikeOrDislike(ratingType: ratingType, likeState: likeState!, message: message)
+        print(ratingType)
+        dismiss(animated: true, completion: nil)
+        dislikeLottie.stop()
+        delegate?.removeBlurredBackgroundView()
+        SVProgressHUD.showSuccess(withStatus: "Sucess!")
+        
         
     }
     
@@ -109,7 +126,7 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
     @objc func keyboardWillChange(notification: NSNotification) {
         
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            if textField.isFirstResponder {
+            if messageTextfield.isFirstResponder {
                 self.view.frame.origin.y = -keyboardSize.height + 100
             }
         }
@@ -130,21 +147,21 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch row {
         case 0:
-            ratingType = "best_looker"
+            ratingType = "BEST_LOOKER"
         case 1:
-            ratingType = "deadliner"
+            ratingType = "DEADLINER"
         case 2:
-            ratingType = "smart_mind"
+            ratingType = "SMART_MIND"
         case 3:
-            ratingType = "super_worker"
+            ratingType = "SUPER_WORKER"
         case 4:
-            ratingType = "motivator"
+            ratingType = "MOTIVATOR"
         case 5:
-            ratingType = "top1"
+            ratingType = "TOP1"
         case 6:
-            ratingType = "mentor"
+            ratingType = "MENTOR"
         default:
-            ratingType = "best_looker"
+            ratingType = "BEST_LOOKER"
         }
     }
     

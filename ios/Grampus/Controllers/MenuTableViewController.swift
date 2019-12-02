@@ -15,7 +15,8 @@ class MenuTableViewController: UITableViewController {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var fullNameLabel: UILabel!
-    @IBOutlet weak var emailLabel: UILabel!
+    @IBOutlet weak var jobLabel: UILabel!
+    @IBOutlet weak var firstCell: UITableViewCell!
     
     var profilePicture: String?
     var fullName: String?
@@ -27,8 +28,12 @@ class MenuTableViewController: UITableViewController {
     let imageService = ImageService()
     
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        firstCell.layer.insertSublayer(gradient(frame: view.bounds), at:0)
             
         fetchUserInformation(userId: storage.getUserId()!)
         
@@ -46,6 +51,8 @@ class MenuTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
+    
+    
     @objc func updateImage(notification: NSNotification) {
         if let image = notification.userInfo?["image"] as? UIImage {
             imageView.image = image
@@ -56,91 +63,55 @@ class MenuTableViewController: UITableViewController {
         
         if let user = self.storage.getUserProfile() {
             fullNameLabel.text = user.name
-            emailLabel.text = user.email
+            jobLabel.text = user.profession
             if let imageData = user.image {
                 imageView.image = UIImage(data: imageData)
             } else {
                 imageView.image = UIImage(named: "red cross")
             }
         } else {
-                    network.fetchUserInformation(userId: userId) { (json) in
-                        if let json = json {
-                            self.fullName = json["fullName"] as? String
-                            self.email = json["email"] as? String
-                            self.profilePicture = json["profilePicture"] as? String
-                            self.UserID = json["id"] as? Int
-                            self.jobTitle = json["jobTitle"] as? String
-                            
-                            
-                            if let unwrappedFullName = self.fullNameLabel {
-                                self.fullNameLabel = unwrappedFullName
-                            } else {
-                                self.fullName = "Full Name"
+            network.fetchUserInformation(userId: userId) { (json) in
+                if let json = json {
+                    self.fullName = json["fullName"] as? String ?? ""
+                    self.email = json["email"] as? String ?? ""
+                    self.profilePicture = json["profilePicture"] as? String ?? ""
+                    self.UserID = json["id"] as? Int
+                    self.jobTitle = json["jobTitle"] as? String ?? ""
+                    
+                    self.fullNameLabel.text = self.fullName!
+                    self.jobLabel.text = self.jobTitle!
+                    
+                    DispatchQueue.main.async {
+                        let url = URL(string: self.profilePicture!)
+                        
+                        self.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross")) { (image, error, cache, url) in
+                            var imageData: Data?
+                            if let image = image {
+                                imageData = image.jpegData(compressionQuality: 1)
                             }
-                            
-                            if let unwrappedEmail = self.email {
-                                self.email = unwrappedEmail
-                            } else {
-                                self.email = "email"
-                            }
-                            
-                            if let unwrappedProfilePicture = self.profilePicture {
-                                self.profilePicture = unwrappedProfilePicture
-                            } else {
-                                self.profilePicture = ""
-                            }
-                            self.fullNameLabel.text = self.fullName!
-                            self.emailLabel.text = self.email!
-                            
-            //                DispatchQueue.main.async {
-            //                    let imageData = self.storage.getProfileImage()
-            //                    if imageData != nil {
-            //                        self.imageView.image = UIImage(data: self.storage.getProfileImage()!)
-            //                    } else {
-            //                            let url = URL(string: self.profilePicture!)
-            //                            self.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
-            //                    }
-            //                }
-                            
-                            DispatchQueue.main.async {
-                                    let url = URL(string: self.profilePicture!)
-                                    //self.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
-
-                                self.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross")) { (image, error, cache, url) in
-                                    var imageData: Data?
-                                    if let image = image {
-                                        imageData = image.jpegData(compressionQuality: 1)
-                                    }
-                                    let user = User(image: imageData, name: self.fullName!, profession: self.jobTitle!, email: self.email!)
-                                    self.storage.saveUserProfile(user: user)
-                                }
-                                //let imageData = UIImage(named: "deadliner")?.jpegData(compressionQuality: 1)
-
-                                
-                            }
-
-
-                                
-            //                DispatchQueue.global(qos: .userInteractive).async {
-            //                    self.imageService.getImage(withURL: self.profilePicture!) { (image) in
-            //                        DispatchQueue.main.async {
-            //                            if let image = image {
-            //                                self.imageView.image = image
-            //                            } else {
-            //                                self.imageView.image = UIImage(named: "red cross")
-            //                            }
-            //                            self.tableView.reloadData()
-            //                        }
-            //                    }
-            //                }
-
+                            let user = User(image: imageData, name: self.fullName!, profession: self.jobTitle!, email: self.email!)
+                            self.storage.saveUserProfile(user: user)
                         }
                         
                     }
+                }
+            }
         }
         
-
+        
     }
+    
+    
+    //Gradient method for first cell
+    func gradient(frame:CGRect) -> CAGradientLayer {
+          let layer = CAGradientLayer()
+          layer.frame = frame
+          layer.startPoint = CGPoint(x: 0, y: 0.5)
+          layer.endPoint = CGPoint(x: 1, y: 0.5)
+          layer.colors = [
+              UIColor.black.cgColor,UIColor.darkGray.cgColor]
+          return layer
+      }
     
     
     // MARK: - Table view data source
