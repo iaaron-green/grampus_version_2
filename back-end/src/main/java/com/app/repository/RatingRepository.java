@@ -14,7 +14,6 @@ import java.util.Set;
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 
-
     @Query(
             value = "SELECT id, profile_id, rating_source_username, profile_id as user_id, rating_type, COUNT(rating_type) as raiting_count FROM " + Constants.DATABASE + ".ratings GROUP BY profile_id, rating_type",
             nativeQuery = true)
