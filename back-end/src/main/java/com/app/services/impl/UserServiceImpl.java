@@ -2,18 +2,21 @@ package com.app.services.impl;
 
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTONewUser;
+import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.User;
-import com.app.repository.ActivationRepository;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.UserService;
-import com.app.exceptions.CustomException;
-import com.app.exceptions.Errors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,23 +32,20 @@ public class UserServiceImpl implements UserService {
     private ProfileService profileService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private MessageSource messageSource;
-    private ActivationRepository activationRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ProfileService profileService, BCryptPasswordEncoder bCryptPasswordEncoder, MessageSource messageSource, ActivationRepository activationRepository) {
+    public UserServiceImpl(UserRepository userRepository, ProfileService profileService, BCryptPasswordEncoder bCryptPasswordEncoder, MessageSource messageSource) {
         this.userRepository = userRepository;
         this.profileService = profileService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.messageSource = messageSource;
-        this.activationRepository = activationRepository;
     }
 
     @Override
     public DTONewUser saveUser(DTONewUser newUser) throws CustomException {
 
-        LOGGER.info("Check if user already exist");
         if (userRepository.findByEmail(newUser.getEmail()) != null) {
             throw new CustomException(messageSource.getMessage("user.already.exist", null, LocaleContextHolder.getLocale()), Errors.USER_ALREADY_EXIST);
         } else {
@@ -62,21 +62,24 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public List<DTOLikableProfile> findAllByJobTitle(String jobTitle) {
-        List<DTOLikableProfile> dtoUser = new ArrayList<>();
-        Set<User> userData = userRepository.findAllUsersByJobTitle(jobTitle);
+    public List<DTOUserShortInfo> findAllByJobTitle(String jobTitle, int page, int size) {
+        List<DTOUserShortInfo> dtoUser = new ArrayList<>();
+        Page<User> userData = userRepository.findAllUsersByJobTitle(jobTitle, pageRequest(page, size));
         userData.forEach(user -> {
-            DTOLikableProfile s = DTOLikableProfile.builder()
-                    .id(user.getId())
+            DTOUserShortInfo s = DTOUserShortInfo.builder()
+                    .profileId(user.getId())
                     .jobTitle(user.getJobTitle())
                     .fullName(user.getEmail())
-                    .profilePicture(user.getProfile().getProfilePicture())
+                    .picture(user.getProfile().getProfilePicture())
                     .build();
            dtoUser.add(s);
         });
         return dtoUser;
     }
 
+    private Pageable pageRequest(int page, int size) {
+        return PageRequest.of(page, size);
+    }
 }
 
 
