@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -93,12 +94,12 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Map<String, Object> getAndCountLikesByProfileId(Long id) {
+    public Map<Mark, Object> getAndCountLikesByProfileId(Long id) {
 
-        Map<String, Object> mapOfLikes = new HashMap<>();
+        Map<Mark, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
 
-        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString().toLowerCase(), ratingRepository.countRatingType(id, mark.toString().toLowerCase())));
+        listOfMarks.forEach(mark -> mapOfLikes.put(mark, ratingRepository.countRatingType(id, mark)));
 
         return mapOfLikes;
 
@@ -109,32 +110,46 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Map<Long, Map<String, Long>> addInfoAchievement() {
+    public Map<Long, Map<Mark, Long>> addInfoAchievement() {
 
-        Map<Long, Map<String, Long>> userIdAndAchievments = new HashMap<>();
+        Map<Long, Map<Mark, Long>> userIdAndAchievments = new HashMap<>();
         List<Mark> positiveRating = Arrays.asList(Mark.values());
 
         Set<Long> userId = userRepository.getAllId();
 
         userId.forEach(user -> {
-            Map<String, Long> achievements = new HashMap<>();
-            positiveRating.forEach(mark -> achievements.put(mark.toString(), ratingRepository.countRatingType(user, mark.toString())));
+            Map<Mark, Long> achievements = new HashMap<>();
+            positiveRating.forEach(mark -> achievements.put(mark, ratingRepository.countRatingType(user, mark)));
             userIdAndAchievments.put(user, achievements);
         });
-
-        String s = userIdAndAchievments.toString();
-        System.out.println(s);
-
         return userIdAndAchievments;
     }
 
     @Override
     public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) {
         List<DTOLikableProfile> achievementData = new ArrayList<>();
-        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType.name());
+        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType);
         if (!CollectionUtils.isEmpty(profilesWithMark)) {
             achievementData.addAll(profilesWithMark);
         }
         return achievementData;
+    }
+    @Override
+    public List<DTOLikableProfile> addDTOInfoAchievement() {
+
+        List<DTOLikableProfile> userIdAndAchievments = new ArrayList<>();
+        List<Mark> marks = Arrays.asList(Mark.values());
+
+        Set<Long> dtoUserShortInfoId = userRepository.getAllId();
+        List<DTOLikableProfile> dtoProfiles = userRepository.findProfileByRatingType(marks, dtoUserShortInfoId);
+
+        if (!CollectionUtils.isEmpty(dtoProfiles)){
+            dtoProfiles.stream().sorted(Comparator.comparing(DTOLikableProfile::getId)).collect(Collectors.toList());
+        }
+
+        dtoProfiles.forEach(profile -> profile.setAchieveCount(getAndCountLikesByProfileId(profile.getId())));
+
+        userIdAndAchievments.addAll(dtoProfiles);
+        return userIdAndAchievments;
     }
 }

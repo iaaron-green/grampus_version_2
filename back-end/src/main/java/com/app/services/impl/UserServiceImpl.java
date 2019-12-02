@@ -1,8 +1,9 @@
 package com.app.services.impl;
 
+import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTONewUser;
-import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.User;
+import com.app.repository.ActivationRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.UserService;
@@ -28,20 +29,23 @@ public class UserServiceImpl implements UserService {
     private ProfileService profileService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private MessageSource messageSource;
+    private ActivationRepository activationRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ProfileService profileService, BCryptPasswordEncoder bCryptPasswordEncoder, MessageSource messageSource) {
+    public UserServiceImpl(UserRepository userRepository, ProfileService profileService, BCryptPasswordEncoder bCryptPasswordEncoder, MessageSource messageSource, ActivationRepository activationRepository) {
         this.userRepository = userRepository;
         this.profileService = profileService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.messageSource = messageSource;
+        this.activationRepository = activationRepository;
     }
 
     @Override
     public DTONewUser saveUser(DTONewUser newUser) throws CustomException {
 
+        LOGGER.info("Check if user already exist");
         if (userRepository.findByEmail(newUser.getEmail()) != null) {
             throw new CustomException(messageSource.getMessage("user.already.exist", null, LocaleContextHolder.getLocale()), Errors.USER_ALREADY_EXIST);
         } else {
@@ -58,15 +62,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public List<DTOUserShortInfo> findAllByJobTitle(String jobTitle) {
-        List<DTOUserShortInfo> dtoUser = new ArrayList<>();
+    public List<DTOLikableProfile> findAllByJobTitle(String jobTitle) {
+        List<DTOLikableProfile> dtoUser = new ArrayList<>();
         Set<User> userData = userRepository.findAllUsersByJobTitle(jobTitle);
         userData.forEach(user -> {
-            DTOUserShortInfo s = DTOUserShortInfo.builder()
-                    .profileId(user.getId())
+            DTOLikableProfile s = DTOLikableProfile.builder()
+                    .id(user.getId())
                     .jobTitle(user.getJobTitle())
                     .fullName(user.getEmail())
-                    .picture(user.getProfile().getProfilePicture())
+                    .profilePicture(user.getProfile().getProfilePicture())
                     .build();
            dtoUser.add(s);
         });

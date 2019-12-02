@@ -3,7 +3,6 @@ package com.app.controllers;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
 import com.app.DTO.DTOProfile;
-import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
 import com.app.services.ProfileService;
@@ -103,7 +102,7 @@ public class ProfileController {
     }
 
     @GetMapping("/catalogue")
-    public Map<Long, Map<String, Long>> getAllInfo() throws CustomException {
+    public Map<Long, Map<Mark, Long>> getAllInfo() throws CustomException {
         return ratingService.addInfoAchievement();
     }
 
@@ -113,7 +112,13 @@ public class ProfileController {
     }
 
     @GetMapping("/userJobTitle/{jobTitle}")
-    public List<DTOUserShortInfo> getUserByJob(@PathVariable String jobTitle) {
+    public List<DTOLikableProfile> getUserByJob(@PathVariable String jobTitle) {
         return userService.findAllByJobTitle(jobTitle);
+    }
+
+
+    @GetMapping("/catalogueDTO")
+    public List<DTOLikableProfile> getAllDTOInfo() {
+        return ratingService.addDTOInfoAchievement();
     }
 }
