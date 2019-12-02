@@ -25,12 +25,13 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private UserRepository userRepository;
     private ProfileService profileService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private MessageSource messageSource;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, ProfileService profileService, BCryptPasswordEncoder bCryptPasswordEncoder, MessageSource messageSource) {
@@ -43,7 +44,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public DTONewUser saveUser(DTONewUser newUser) throws CustomException {
 
-        LOGGER.info("Check if user already exist");
         if (userRepository.findByEmail(newUser.getEmail()) != null) {
             throw new CustomException(messageSource.getMessage("user.already.exist", null, LocaleContextHolder.getLocale()), Errors.USER_ALREADY_EXIST);
         } else {
