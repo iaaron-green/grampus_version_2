@@ -16,8 +16,5 @@ public class Constants {
     public static final String MY_EMAIL = "winlixn@gmail.com";
     public static final String MY_PASSWORD = "kapuzi121212";
 
-    public static final String MY_EMAIL = "winlixn@gmail.com";
-    public static final String MY_PASSWORD = "kapuzi121212";
-
     public static List<Locale> SUPPORTED_LOCALES =  Arrays.asList(new Locale("en"), new Locale("ru"));
 }

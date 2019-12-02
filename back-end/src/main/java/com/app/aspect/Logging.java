@@ -1,13 +1,13 @@
 package com.app.aspect;
 
-import com.app.util.CustomException;
+import com.app.exceptions.CustomException;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 

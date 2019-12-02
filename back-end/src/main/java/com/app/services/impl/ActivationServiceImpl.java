@@ -4,13 +4,13 @@ import com.app.DTO.DTONewUser;
 import com.app.entities.ActivationCode;
 import com.app.entities.Profile;
 import com.app.entities.User;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import com.app.repository.ActivationRepository;
 import com.app.repository.ProfileRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
 import com.app.services.UserService;
-import com.app.util.CustomException;
-import com.app.util.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -29,19 +29,17 @@ public class ActivationServiceImpl implements ActivationService {
     private ProfileRepository profileRepository;
     private JavaMailSender emailSender;
     private UserService userService;
-    private ActivationService activationService;
     private MessageSource messageSource;
 
     @Autowired
     public ActivationServiceImpl(UserRepository userRepository, ActivationRepository activationRepository,
                                  ProfileRepository profileRepository, JavaMailSender emailSender,
-                                 UserService userService, ActivationService activationService, MessageSource messageSource) {
+                                 UserService userService, MessageSource messageSource) {
         this.userRepository = userRepository;
         this.activationRepository = activationRepository;
         this.profileRepository = profileRepository;
         this.emailSender = emailSender;
         this.userService = userService;
-        this.activationService = activationService;
         this.messageSource = messageSource;
     }
 
@@ -60,10 +58,10 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     public boolean isUserActivate(String login) throws CustomException {
-        User user = userRepository.findByUsername(login);
+        User user = userRepository.findByEmail(login);
 
         if (user != null && activationRepository.findByUserId(user.getId()).isActivate()) {
-            User newUser = userRepository.findByUsername(user.getUsername());
+            User newUser = userRepository.findByEmail(user.getUsername());
             Profile newProfile = profileRepository.save(new Profile(newUser));
             return true;
         }
@@ -84,7 +82,7 @@ public class ActivationServiceImpl implements ActivationService {
     }
 
     @Override
-    public DTONewUser sendMail(User user) throws CustomException, MessagingException {
+    public DTONewUser sendMail(DTONewUser user) throws CustomException, MessagingException {
 
         DTONewUser newUser = userService.saveUser(user);
 
@@ -97,9 +95,9 @@ public class ActivationServiceImpl implements ActivationService {
             e.printStackTrace();
         }
 
-        message.setContent(activationService.generateCode(newUser.getUserId()), "text/html");
+        message.setContent(generateCode(newUser.getUserId()), "text/html");
 
-        helper.setTo(user.getUsername());
+        helper.setTo(user.getEmail());
 
         helper.setSubject("Profile registration(GRAMPUS)");
 
