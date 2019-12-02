@@ -3,10 +3,9 @@ package com.app.controllers;
 
 import com.app.DTO.DTONewUser;
 import com.app.configtoken.JwtTokenProvider;
-import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
 import com.app.services.UserService;
-import com.app.util.CustomException;
+import com.app.exceptions.CustomException;
 import com.app.validators.JWTLoginSuccessResponse;
 import com.app.validators.LoginRequest;
 import com.app.validators.UserValidator;
@@ -41,22 +40,21 @@ public class AuthorizationController {
    private UserValidator userValidator;
    private JwtTokenProvider tokenProvider;
    private AuthenticationManager authenticationManager;
-   @Autowired
    private ActivationService activationService;
-
-   @Autowired
    private JavaMailSender emailSender;
 
 
    @Autowired
    public AuthorizationController(ValidationErrorService validationErrorService, UserService userService,
-                         UserValidator userValidator,
-                         JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager) {
+                         UserValidator userValidator, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager,
+                                  ActivationService activationService, JavaMailSender emailSender) {
       this.validationErrorService = validationErrorService;
       this.userService = userService;
       this.userValidator = userValidator;
       this.tokenProvider = tokenProvider;
       this.authenticationManager = authenticationManager;
+      this.activationService = activationService;
+      this.emailSender = emailSender;
    }
 
    @PostMapping("/login")

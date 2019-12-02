@@ -1,5 +1,6 @@
 package com.app.entities;
 
+import com.app.enums.JobTitle;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

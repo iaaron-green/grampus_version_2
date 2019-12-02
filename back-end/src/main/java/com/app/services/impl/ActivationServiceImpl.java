@@ -13,15 +13,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class ActivationServiceImpl implements ActivationService {
 
+    private UserRepository userRepository;
+    private ActivationRepository activationRepository;
+    private ProfileRepository profileRepository;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ActivationRepository activationRepository;
-
-    @Autowired
-    ProfileRepository profileRepository;
+    public ActivationServiceImpl(UserRepository userRepository, ActivationRepository activationRepository, ProfileRepository profileRepository) {
+        this.userRepository = userRepository;
+        this.activationRepository = activationRepository;
+        this.profileRepository = profileRepository;
+    }
 
     @Override
     public void activateUser(Long id) {

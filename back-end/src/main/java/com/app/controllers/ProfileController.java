@@ -1,7 +1,7 @@
 package com.app.controllers;
 
-import com.app.DTO.DTOAchievement;
 import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOLikeDislike;
 import com.app.DTO.DTOProfile;
 import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Rating;
@@ -9,7 +9,7 @@ import com.app.enums.Mark;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.services.UserService;
-import com.app.util.CustomException;
+import com.app.exceptions.CustomException;
 import com.app.validators.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,25 +50,22 @@ public class ProfileController {
     }
 
     @PostMapping("/{profileId}/like")
-    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody Rating rating,
-                                              BindingResult result, @PathVariable Long profileId, Principal principal) {
+    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
+                                              BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException {
+
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        Rating addRating = ratingService.addLike(profileId, rating, principal.getName());
-
-        return new ResponseEntity<>(addRating, HttpStatus.CREATED);
+        return new ResponseEntity<>(ratingService.addLike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
     }
 
     @PostMapping("/{profileId}/dislike")
-    public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody Rating rating,
-                                                 BindingResult result, @PathVariable Long profileId, Principal principal) {
+    public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
+                                                 BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        Rating addRating = ratingService.addDislike(profileId, rating, principal.getName());
-
-        return new ResponseEntity<>(addRating, HttpStatus.CREATED);
+        return new ResponseEntity<>(ratingService.addDislike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -100,24 +97,19 @@ public class ProfileController {
     }
 
     @GetMapping("/achieve")
-    public ResponseEntity<?> getAllAchieve() {
+    public ResponseEntity<?> getAllAchieve() throws CustomException {
         List<Rating> profile = ratingService.getAllAchieves();
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
-//    @GetMapping("/test")
-//    public String getTestById() {
-//        return ratingService.addAchievement(3L);
-//    }
-
     @GetMapping("/catalogue")
-    public Map<Long, Map<String, Long>> getAllInfo() {
+    public Map<Long, Map<String, Long>> getAllInfo() throws CustomException {
         return ratingService.addInfoAchievement();
     }
 
     @GetMapping("/userRating/{markType}")
-    public List<DTOAchievement> getUserRating(@PathVariable Mark markType) {
-        return ratingService.getUserRatingByType(markType);
+    public List<DTOLikableProfile> getUserRating(@PathVariable Mark markType) throws CustomException {
+        return ratingService.getUserRatingByMarkType(markType);
     }
 
     @GetMapping("/userJobTitle/{jobTitle}")

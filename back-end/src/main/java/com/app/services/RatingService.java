@@ -1,27 +1,26 @@
 package com.app.services;
 
-import com.app.DTO.DTOAchievement;
-import com.app.DTO.DTOUserShortInfo;
+import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOLikeDislike;
 import com.app.entities.Rating;
-import com.app.entities.User;
 import com.app.enums.Mark;
-import com.app.DTO.DTOAchievement;
+import com.app.exceptions.CustomException;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
 public interface RatingService {
 
-    Rating addLike(Long profileId, Rating updatedRating, String userName);
+    Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException;
 
-    List<Rating> getAllAchieves();
+    List<Rating> getAllAchieves() throws CustomException;
 
-    Map<Long, Map<String, Long>> addInfoAchievement();
+    Map<Long, Map<String, Long>> addInfoAchievement() throws CustomException;
 
-//    List<DTOUserShortInfo> getUserRatingByType(Mark markType);
-    List<DTOAchievement> getUserRatingByType(Mark markType);
+    List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException;
 
-    Rating addDislike(Long profileId, Rating updatedRating, String userName);
+    Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException;
 
-    Map<String, Object> getAndCountLikesByProfileId(Long id);
+    Map<String, Object> getAndCountLikesByProfileId(Long id) throws CustomException;
 }
