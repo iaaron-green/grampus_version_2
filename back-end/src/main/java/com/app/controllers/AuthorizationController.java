@@ -3,6 +3,7 @@ package com.app.controllers;
 
 import com.app.DTO.DTONewUser;
 import com.app.configtoken.JwtTokenProvider;
+import com.app.notification.NotificationProducer;
 import com.app.services.ActivationService;
 import com.app.services.UserService;
 import com.app.exceptions.CustomException;
@@ -60,6 +61,8 @@ public class AuthorizationController {
    @PostMapping("/login")
    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result){
       logger.info("|login| - is start");
+      NotificationProducer notificationProducer = new NotificationProducer();
+      notificationProducer.sendMessage("123", "hello world");
       ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
       if(errorMap != null)
          return errorMap;

@@ -1,10 +1,8 @@
 package com.app.services.impl;
 
-import com.app.entities.Achievement;
 import com.app.entities.ActivationCode;
 import com.app.entities.Profile;
 import com.app.entities.User;
-import com.app.repository.AchievementRepository;
 import com.app.repository.ActivationRepository;
 import com.app.repository.ProfileRepository;
 import com.app.repository.UserRepository;

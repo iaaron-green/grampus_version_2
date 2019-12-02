@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
@@ -51,7 +52,7 @@ public class ProfileController {
 
     @PostMapping("/{profileId}/like")
     public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
-                                              BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException {
+                                              BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
 
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
@@ -61,7 +62,7 @@ public class ProfileController {
 
     @PostMapping("/{profileId}/dislike")
     public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
-                                                 BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException {
+                                                 BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 

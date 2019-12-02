@@ -29,7 +29,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
 
     @Query("SELECT NEW com.app.DTO.DTOLikableProfile(r.profileRating.user.id, r.profileRating.user.fullName, r.profileRating.user.jobTitle, r.profileRating.profilePicture) " +
             "FROM  Rating r WHERE r.ratingType = :ratingType")
-    Set<DTOLikableProfile> findProfileByRatingType(@Param("ratingType") String ratingType);
+    Set<DTOLikableProfile> findProfileByRatingType(@Param("ratingType") Mark ratingType);
 
     @Query (
             value = "SELECT rating_type FROM " + Constants.DATABASE + ".ratings WHERE profile_id = ? AND rating_source_username = ?",
