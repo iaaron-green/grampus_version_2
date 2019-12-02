@@ -2,6 +2,8 @@ package com.app.repository;
 
 import com.app.DTO.DTOLikableProfile;
 import com.app.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,11 +25,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
    Set<Long> getAllId();
 
    @Query("SELECT NEW com.app.DTO.DTOLikableProfile(u.id, u.fullName, u.jobTitle, p.profilePicture) FROM User u, Profile p WHERE u.id NOT LIKE :id AND u.id = p.id")
-   Set<DTOLikableProfile> getLikeableProfiles(@Param("id") Long id);
+   Page<DTOLikableProfile> getLikeableProfiles(@Param("id") Long id, Pageable p);
 
 
    @Query(
            value = "SELECT *  FROM users WHERE job_title = ?",
            nativeQuery = true)
-   Set<User> findAllUsersByJobTitle(String jobTitle);
+   Page<User> findAllUsersByJobTitle(String jobTitle, Pageable p);
 }

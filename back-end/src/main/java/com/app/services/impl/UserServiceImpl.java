@@ -3,22 +3,24 @@ package com.app.services.impl;
 import com.app.DTO.DTONewUser;
 import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.User;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.UserService;
-import com.app.exceptions.CustomException;
-import com.app.exceptions.Errors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -58,9 +60,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public List<DTOUserShortInfo> findAllByJobTitle(String jobTitle) {
+    public List<DTOUserShortInfo> findAllByJobTitle(String jobTitle, int page, int size) {
         List<DTOUserShortInfo> dtoUser = new ArrayList<>();
-        Set<User> userData = userRepository.findAllUsersByJobTitle(jobTitle);
+        Page<User> userData = userRepository.findAllUsersByJobTitle(jobTitle, pageRequest(page, size));
         userData.forEach(user -> {
             DTOUserShortInfo s = DTOUserShortInfo.builder()
                     .profileId(user.getId())
@@ -73,6 +75,9 @@ public class UserServiceImpl implements UserService {
         return dtoUser;
     }
 
+    private Pageable pageRequest(int page, int size) {
+        return PageRequest.of(page, size);
+    }
 }
 
 

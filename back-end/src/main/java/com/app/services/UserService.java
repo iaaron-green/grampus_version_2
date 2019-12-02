@@ -10,5 +10,5 @@ import java.util.List;
 public interface UserService {
 
     DTONewUser saveUser(DTONewUser newUser) throws CustomException;
-    List<DTOUserShortInfo> findAllByJobTitle(String jobTitle);
+    List<DTOUserShortInfo> findAllByJobTitle(String jobTitle, int page, int size);
 }
