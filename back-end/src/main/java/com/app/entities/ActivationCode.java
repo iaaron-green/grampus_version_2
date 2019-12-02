@@ -17,13 +17,15 @@ public class ActivationCode {
     private Long id;
     private boolean activate;
     private Long userId;
+    private String code;
 
 
     public ActivationCode() {
     }
 
-    public ActivationCode(Long user_id) {
+    public ActivationCode(Long user_id, String code) {
         this.activate = false;
         this.userId = user_id;
+        this.code = code;
     }
 }
