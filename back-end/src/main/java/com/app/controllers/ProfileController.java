@@ -3,13 +3,12 @@ package com.app.controllers;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
 import com.app.DTO.DTOProfile;
-import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
+import com.app.exceptions.CustomException;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.services.UserService;
-import com.app.exceptions.CustomException;
 import com.app.validators.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -115,7 +114,7 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/userJobTitle/{jobTitle}")
-    public List<DTOUserShortInfo> getUserByJob(@PathVariable String jobTitle,
+    public List<DTOLikableProfile> getUserByJob(@PathVariable String jobTitle,
                                                @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                @RequestParam(value = "size", defaultValue = "2") Integer size) {
         return userService.findAllByJobTitle(jobTitle, page, size);

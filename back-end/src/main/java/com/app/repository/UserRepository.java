@@ -30,12 +30,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
    Page<DTOLikableProfile> getLikeableProfiles(@Param("id") Long id, Pageable p);
 
 
-//   @Query(
-//           value = "SELECT *  FROM users WHERE job_title = ?",
-//           nativeQuery = true)
-//   Page<User> findAllUsersByJobTitle(String jobTitle, Pageable p);
+   @Query(
+           value = "SELECT *  FROM users WHERE job_title = ?",
+           nativeQuery = true)
+   Page<User> findAllUsersByJobTitle(String jobTitle, Pageable p);
 
-    Set<User> findAllUsersByJobTitle(String jobTitle);
 
    @Query("SELECT NEW com.app.DTO.DTOLikableProfile(r.profileRating.user.id, r.profileRating.user.fullName, r.profileRating.user.jobTitle, r.profileRating.profilePicture) " +
            "FROM  Rating r WHERE r.ratingType IN :ratingTypes AND r.profileRating.user.id IN :userIds")
