@@ -19,7 +19,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     Profile findProfileById(Long id);
 
-
     @Query(
             value = "SELECT profile_id FROM ratings WHERE rating_source_username = ?",
             nativeQuery = true)

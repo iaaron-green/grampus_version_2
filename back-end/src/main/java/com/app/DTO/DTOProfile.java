@@ -15,11 +15,15 @@ public class DTOProfile {
     private String profilePicture;
     private Long likes;
     private Long dislikes;
-    private String information;
+    private String skype;
+    private String phone;
+    private String telegram;
     private String skills;
     private String email;
     private String jobTitle;
+    private String country;
     private String fullName;
+    private Boolean isAbleToLike = true;
     private Map<String, Object> likesNumber;
 
 }

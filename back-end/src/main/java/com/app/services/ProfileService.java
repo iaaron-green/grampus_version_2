@@ -7,6 +7,7 @@ import com.app.exceptions.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -16,11 +17,11 @@ public interface ProfileService {
 
     Profile getProfileById(Long id) throws CustomException;
 
-    DTOProfile getDTOProfileById(Long id) throws CustomException;
+    DTOProfile getDTOProfileById(Long id, Principal principal) throws CustomException;
 
     Boolean updateProfile(DTOProfile profile, String principalName);
 
-    void saveProfilePhoto(MultipartFile file, Long id) throws CustomException;
+    void saveProfilePhoto(MultipartFile file, Long id, Principal principal) throws CustomException;
 
     List<Profile> getAllProfiles() throws CustomException;
 

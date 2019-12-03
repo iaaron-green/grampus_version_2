@@ -15,6 +15,7 @@ import com.app.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -33,15 +34,17 @@ public class RatingServiceImpl implements RatingService {
     private UserRepository userRepository;
     private MessageSource messageSource;
     private JavaMailSender emailSender;
+    private JmsTemplate jmsTemplate;
 
     @Autowired
     public RatingServiceImpl(RatingRepository ratingRepository, ProfileRepository profileRepository, UserRepository userRepository,
-                             MessageSource messageSource, JavaMailSender emailSender) {
+                             MessageSource messageSource, JavaMailSender emailSender, JmsTemplate jmsTemplate) {
         this.ratingRepository = ratingRepository;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.messageSource = messageSource;
         this.emailSender = emailSender;
+        this.jmsTemplate = jmsTemplate;
     }
 
     public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
@@ -136,7 +139,9 @@ public class RatingServiceImpl implements RatingService {
 
             if (!ratingType.equals(Mark.DISLIKE)) {
                 Long likes = ratingRepository.countRatingType(profile.getId(), ratingType.toString());
-                if (likes % 5 == 0) {
+                if (likes % 1 == 0) {
+                    jmsTemplate.convertAndSend("achieve", "You got new achievement " + "\"" +ratingType.toString() + "\"");
+
                     MimeMessage message = emailSender.createMimeMessage();
                     MimeMessageHelper helper = null;
                     try {
@@ -146,7 +151,7 @@ public class RatingServiceImpl implements RatingService {
                     }
 
                     String htmlMsg = "<h2><center>Congratulation!</center></h2>" +
-                            "<p><center>You got new achievement " + ratingType.toString() + "<center></p>" +
+                            "<p><center>You got new achievement " + "\"" +ratingType.toString() + "\"" + "<center></p>" +
                             "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
 
                     message.setContent(htmlMsg, "text/html");
@@ -155,7 +160,7 @@ public class RatingServiceImpl implements RatingService {
 
                     helper.setSubject("New Achievement(GRAMPUS)");
 
-                    this.emailSender.send(message);
+                    emailSender.send(message);
                 }
             }
             return true;

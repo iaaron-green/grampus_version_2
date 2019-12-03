@@ -106,15 +106,10 @@
             <artifactId>commons-net</artifactId>
             <version>3.3</version>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-all</artifactId>
-            <version>5.15.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jms</artifactId>
-            <version>5.1.6.RELEASE</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
         </dependency>
     </dependencies>
 

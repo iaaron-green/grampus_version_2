@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,9 +27,15 @@ public class Profile {
 
    private Long dislikes;
 
-   private String information;
+   private String skype;
+
+   private String phone;
+
+   private String telegram;
 
    private String skills;
+
+   private String country;
 
    @OneToOne
    private User user;
@@ -45,7 +52,6 @@ public class Profile {
       this.likes = 0L;
       this.dislikes = 0L;
       this.user = user;
-      this.user.setJobTitle(JobTitle.getById((int) (Math.random() * (10 - 1))+1));
    }
 
 }
