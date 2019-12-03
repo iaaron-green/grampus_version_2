@@ -20,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -51,6 +52,7 @@ public class UserServiceImpl implements UserService {
             userFromDB.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
             userFromDB.setEmail(newUser.getEmail());
             userFromDB.setFullName(newUser.getFullName());
+            userFromDB.setRegistrationDate(new Date(System.currentTimeMillis()));
             userFromDB = userRepository.save(userFromDB);
             newUser.setUserId(userFromDB.getId());
             newUser.setEmail(userFromDB.getEmail());
