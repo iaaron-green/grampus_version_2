@@ -14,6 +14,7 @@ target 'Grampus' do
   pod 'SDWebImage'
   pod "SkeletonView"
   pod 'lottie-ios'
+
   # Pods for Grampus
 
 end

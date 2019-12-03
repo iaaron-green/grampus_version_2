@@ -215,10 +215,10 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jE3-J9-jwg">
-                                                    <rect key="frame" x="100" y="55" width="80" height="17"/>
+                                                    <rect key="frame" x="100" y="55" width="80" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="80" id="M7N-DO-r5H"/>
-                                                        <constraint firstAttribute="height" constant="17" id="WTh-bF-Hm1"/>
+                                                        <constraint firstAttribute="height" constant="20" id="WTh-bF-Hm1"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
@@ -1107,7 +1107,7 @@
                                                         <action selector="saveAction:" destination="drC-Kd-Fe9" eventType="touchUpInside" id="Abh-h2-hia"/>
                                                     </connections>
                                                 </button>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Chart will appear as soon as user receives the first like" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7bR-Lo-r3d">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Chart will appear as soon as user receives the first mark" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7bR-Lo-r3d">
                                                     <rect key="frame" x="74" y="209" width="266" height="40"/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

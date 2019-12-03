@@ -28,11 +28,12 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     let imageService = ImageService()
     var json = JSON()
     var filteredJson = [JSON]()
+    var page = 1
     
     // MARK: - Functions
     override func loadView() {
         super.loadView()
-        fetchAllUsers()
+        fetchAllUsers(page: 0)
     }
     
     override func viewDidLoad() {
@@ -92,8 +93,8 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         tableView.reloadData()
     }
     
-    func fetchAllUsers() {
-        network.fetchAllUsers { (json) in
+    func fetchAllUsers(page: Int) {
+        network.fetchAllUsers(page: page) { (json) in
             if let json = json {
                 SVProgressHUD.dismiss()
                 //print(json)
@@ -112,12 +113,17 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @objc func loadList(notification: NSNotification){
         DispatchQueue.main.async {
-            self.fetchAllUsers()
+            self.fetchAllUsers(page: 0)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                SVProgressHUD.showSuccess(withStatus: "Sucess!")
+            }
         }
     }
     
     @objc override func pullToRefresh(sender: UIRefreshControl) {
-        fetchAllUsers()
+        SDImageCache.shared.clearMemory()
+        SDImageCache.shared.clearDisk()
+        fetchAllUsers(page: 0)
         sender.endRefreshing()
     }
     
@@ -141,13 +147,13 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @IBAction func dislikeButtonAction(_ sender: Any) {
         
-            storage.chooseLikeOrDislike(bool: false)
-            
-            self.performSegue(withIdentifier: "ShowModalView", sender: self)
-            self.definesPresentationContext = true
-            self.providesPresentationContextTransitionStyle = true
-            
-            self.overlayBlurredBackgroundView()
+        storage.chooseLikeOrDislike(bool: false)
+        
+        self.performSegue(withIdentifier: "ShowModalView", sender: self)
+        self.definesPresentationContext = true
+        self.providesPresentationContextTransitionStyle = true
+        
+        self.overlayBlurredBackgroundView()
     }
     
     func overlayBlurredBackgroundView() {
@@ -242,11 +248,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if self.filteredJson[indexPath.row]["isAbleToLike"].bool! {
-            storage.saveIsAbleToLike(able: true)
-        } else {
-            storage.saveIsAbleToLike(able: false)
-        }
         if let id = self.filteredJson[indexPath.row]["id"].int {
             storage.saveSelectedUserIdProfile(id: id)
             storage.saveProfileState(state: false)
@@ -254,4 +255,5 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         } else {
         }
     }
+
 }

@@ -15,6 +15,8 @@ import SkeletonView
 
 
 class ProfileTableViewController: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ChartViewDelegate {
+
+    
     
     @IBOutlet weak var menuBarButton: UIBarButtonItem!
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -83,10 +85,14 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     var deadLiner: Int?
     var motivator: Int?
     var top1: Int?
+    var isAbleToLike = 0
     var mentor: Int?
     var staff = true
     
     var userID: String?
+
+    
+    
     
     var entries: [PieChartDataEntry] = []
     
@@ -100,7 +106,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func loadView() {
         super.loadView()
         if storage.getProfileState() {
-            storage.saveIsAbleToLike(able: false)
             userID = storage.getUserId()!
             fetchUser(userId: storage.getUserId()!)
             addSelfLabelGestures()
@@ -120,9 +125,8 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func viewDidLoad() {
         super.viewDidLoad()
         addSkeleton()
-        likeButtonsAbility()
-        
         chartView.delegate = self
+        
                 
         SVProgressHUD.setMinimumDismissTimeInterval(2)
         SVProgressHUD.setDefaultStyle(.dark)
@@ -163,6 +167,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         tableView.reloadData()
     }
     
+    
     override func viewWillAppear(_ animated: Bool) {
         SVProgressHUD.show()
     }
@@ -171,13 +176,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         storage.saveProfileState(state: true)
-    }
-    
-    func likeButtonsAbility() {
-        if !storage.getIsAbleToLike() {
-            likeButton.isHidden = true
-            dislikeButton.isHidden = true
-        }
     }
     
     func addSkeleton() {
@@ -251,6 +249,8 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     }
     
     @objc func pullToRefresh(sender: UIRefreshControl) {
+        SDImageCache.shared.clearMemory()
+        SDImageCache.shared.clearDisk()
         fetchUser(userId: userID!)
         sender.endRefreshing()
         
@@ -378,10 +378,10 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @objc func loadProfile(notification: NSNotification){
         DispatchQueue.main.async {
             self.fetchUser(userId: self.userID!)
-            self.likeButton.isHidden = true
-            self.dislikeButton.isHidden = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                SVProgressHUD.showSuccess(withStatus: "Sucess!")
+            }
         }
-        //SVProgressHUD.showSuccess(withStatus: "Success!")
     }
     
     
@@ -449,10 +449,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 //Clear image cache
                 SDImageCache.shared.clearMemory()
                 SDImageCache.shared.clearDisk()
-
-                //Setup notification to change profile photo in MenuTableViewController
-//                let imageDict = ["image": selectedImage]
-//                NotificationCenter.default.post(name: Notification.Name(rawValue: "imageChanged"), object: nil, userInfo: imageDict)
                 
                 let imageData = selectedImage?.jpegData(compressionQuality: 1)
                 let user = User(image: imageData!, name: self.fullName!, profession: self.profession!, email: self.email!)
@@ -551,17 +547,19 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 if self.skills == "" || self.skills == nil {
                     self.skills = "no skills"
                 }
+                self.isAbleToLike = json["isAbleToLike"] as? Int ?? 1
+                
                 self.profilePicture = json["profilePicture"] as? String ?? ""
                 
                 let achieves = json["likesNumber"] as? [String: Int]
                 self.achievements = achieves
-                self.bestLooker = self.achievements?["best_looker"]
-                self.superWorker = self.achievements?["super_worker"]
-                self.smartMind = self.achievements?["smart_mind"]
-                self.motivator = self.achievements?["motivator"]
-                self.deadLiner = self.achievements?["deadliner"]
-                self.top1 = self.achievements?["top1"]
-                self.mentor = self.achievements?["mentor"]
+                self.bestLooker = self.achievements?["BEST_LOOKER"]
+                self.superWorker = self.achievements?["SUPER_WORKER"]
+                self.smartMind = self.achievements?["SMART_MIND"]
+                self.motivator = self.achievements?["MOTIVATOR"]
+                self.deadLiner = self.achievements?["DEADLINER"]
+                self.top1 = self.achievements?["TOP1"]
+                self.mentor = self.achievements?["MENTOR"]
                 
                 self.setUpProfile(fullName: self.fullName!, profession: self.profession!, likes: self.likes!, dislikes: self.dislikes!, email: self.email!, skype: self.skype!, telephone: self.telephone!, telegram: self.telegram!, skills: self.skills!, photo: self.profilePicture!)
                 self.setUpCharts()
@@ -611,6 +609,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         var deadLinerColor = UIColor.clear
         var top1 = UIColor.clear
         var mentor = UIColor.clear
+        var dislikeColor = UIColor.clear
 
         
         var colorArray: [UIColor] = []
@@ -624,38 +623,44 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
         if self.mentor! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.mentor!), label: "Mentor"))
-            mentor = #colorLiteral(red: 0.2156862745, green: 0.2980392157, blue: 0.5019607843, alpha: 1)
+            mentor = #colorLiteral(red: 0.1843137255, green: 0.2941176471, blue: 0.4862745098, alpha: 1)
             colorArray.append(mentor)
         }
         
         if self.motivator! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.motivator!), label: "Motivator"))
-            motivator = #colorLiteral(red: 0.4784313725, green: 0.3176470588, blue: 0.5843137255, alpha: 1)
+            motivator = #colorLiteral(red: 0.4, green: 0.3176470588, blue: 0.568627451, alpha: 1)
             colorArray.append(motivator)
         }
         
         if self.deadLiner! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.deadLiner!), label: "Deadliner"))
-            deadLinerColor = #colorLiteral(red: 0.737254902, green: 0.3137254902, blue: 0.5647058824, alpha: 1)
+            deadLinerColor = #colorLiteral(red: 0.6274509804, green: 0.3176470588, blue: 0.5843137255, alpha: 1)
             colorArray.append(deadLinerColor)
         }
 
         if self.superWorker! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.superWorker!), label: "Super worker"))
-            superWorkerColor = #colorLiteral(red: 0.937254902, green: 0.337254902, blue: 0.4588235294, alpha: 1)
+            superWorkerColor = #colorLiteral(red: 0.831372549, green: 0.3137254902, blue: 0.5294117647, alpha: 1)
             colorArray.append(superWorkerColor)
         }
 
         if self.smartMind! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.smartMind!), label: "Smart mind"))
-            smartMind = #colorLiteral(red: 1, green: 0.462745098, blue: 0.2901960784, alpha: 1)
+            smartMind = #colorLiteral(red: 0.9764705882, green: 0.3647058824, blue: 0.4156862745, alpha: 1)
             colorArray.append(smartMind)
         }
 
         if self.bestLooker! != 0 {
             entries.append(PieChartDataEntry(value: Double(self.bestLooker!), label: "Best looker"))
-            bestLookerColor = #colorLiteral(red: 1, green: 0.6509803922, blue: 0, alpha: 1)
+            bestLookerColor = #colorLiteral(red: 1, green: 0.4862745098, blue: 0.262745098, alpha: 1)
             colorArray.append(bestLookerColor)
+        }
+        
+        if self.dislikes! != 0 {
+            entries.append(PieChartDataEntry(value: Double(self.dislikes!), label: "Dislike"))
+            dislikeColor = #colorLiteral(red: 1, green: 0.6509803922, blue: 0, alpha: 1)
+            colorArray.append(dislikeColor)
         }
 
         let dataSet = PieChartDataSet(entries: entries, label: nil)
@@ -676,7 +681,13 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         let label = entries[Int(highlight.x)].label!
         let value = Int(entries[Int(highlight.x)].value)
         
-        SVProgressHUD.show(UIImage(named: "heart")!, status: "\(label) - \(value)")
+        if label == "Dislike" {
+            SVProgressHUD.show(UIImage(named: "dislike")!, status: "\(label) - \(value)")
+        } else {
+            SVProgressHUD.show(UIImage(named: "like")!, status: "\(label) - \(value)")
+        }
+        
+        
     }
     
     @IBAction func saveAction(_ sender: UIButton) {
@@ -697,6 +708,11 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
         profileFullNameLabel.text = fullName
         emailLabel.text = email
+        
+        if isAbleToLike == 0 {
+            likeButton.isHidden = true
+            dislikeButton.isHidden = true
+        }
         
         
         let savedUser = self.storage.getUserProfile()
@@ -825,7 +841,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     @IBAction func telegramAddAction(_ sender: UIButton) {
         
-        let alert = UIAlertController(title: "Enter your Telegram:", message: "Your accoun must begin with '@'", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Enter your Telegram:", message: "Your account must begin with '@'", preferredStyle: .alert)
 
         alert.addTextField()
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
@@ -841,7 +857,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     }
                     self.tableView.reloadData()
                 } else {
-                    SVProgressHUD.showError(withStatus: "Error updating Telegram number!")
+                    SVProgressHUD.showError(withStatus: "Error updating Telegram!")
                 }
             }
             

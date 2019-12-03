@@ -140,7 +140,7 @@ class NetworkService {
     }
     
     
-    func fetchAllUsers(completion: @escaping (JSON?) -> ()) {
+    func fetchAllUsers(page : Int, completion: @escaping (JSON?) -> ()) {
         
         let allProfilesURL = "\(DynamicURL.dynamicURL.rawValue)profiles/all"
         
@@ -149,7 +149,11 @@ class NetworkService {
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-        manager.request(allProfilesURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        let parameters: Parameters = [
+            "page" : String(page)
+        ]
+        
+        manager.request(allProfilesURL, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             
 
             switch responseJSON.result {
@@ -234,24 +238,27 @@ class NetworkService {
     
     func uploadImage(selectedImage: UIImage?, completion: @escaping (Bool) -> ()){
         
-        let imageURL = "\(DynamicURL.dynamicURL.rawValue)profiles/photo"
+        let userID = storage.getUserId()
+
+        
+        let imageURL = "\(DynamicURL.dynamicURL.rawValue)profiles/\(userID!)/photo"
         
         let headers : HTTPHeaders = [
             "Content-Type": "application/json; charset=utf-8",
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-        let userID = storage.getUserId()
-        let parameters: Parameters = [
-        "id" : userID!
-        ]
+//        let userID = storage.getUserId()
+//        let parameters: Parameters = [
+//        "id" : userID!
+//        ]
         
         manager.upload(multipartFormData: { (multipart: MultipartFormData) in
             let imageData = selectedImage!.jpegData(compressionQuality: 0.8)
             multipart.append(imageData!, withName: "file", fileName: "file.png", mimeType: "image/png")
-            for (key,value) in parameters {
-                 multipart.append((value as! String).data(using: .utf8)!, withName: key)
-            }
+//            for (key,value) in parameters {
+//                 multipart.append((value as! String).data(using: .utf8)!, withName: key)
+//            }
             
         },usingThreshold: UInt64.init(),
            to: imageURL,
