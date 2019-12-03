@@ -37,7 +37,10 @@ class MenuTableViewController: UITableViewController {
             
         fetchUserInformation(userId: storage.getUserId()!)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(updateImage), name: NSNotification.Name(rawValue: "imageChanged"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(updateImage), name: NSNotification.Name(rawValue: "imageChanged"), object: nil)
+        
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(loadUser), name: NSNotification.Name(rawValue: "updateUserInfo"), object: nil)
         
         
         self.tableView.tableFooterView = UIView(frame: .zero)
@@ -53,9 +56,21 @@ class MenuTableViewController: UITableViewController {
     
     
     
-    @objc func updateImage(notification: NSNotification) {
-        if let image = notification.userInfo?["image"] as? UIImage {
-            imageView.image = image
+//    @objc func updateImage(notification: NSNotification) {
+//        if let image = notification.userInfo?["image"] as? UIImage {
+//            imageView.image = image
+//        }
+//    }
+    
+    @objc func loadUser(notification: NSNotification) {
+        if let user = self.storage.getUserProfile() {
+        fullNameLabel.text = user.name
+        jobLabel.text = user.profession
+        if let imageData = user.image {
+            imageView.image = UIImage(data: imageData)
+        } else {
+            imageView.image = UIImage(named: "red cross")
+        }
         }
     }
     

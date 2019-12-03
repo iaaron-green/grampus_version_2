@@ -113,7 +113,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     @objc func loadList(notification: NSNotification){
         DispatchQueue.main.async {
             self.fetchAllUsers()
-            self.tableView.reloadData()
         }
     }
     

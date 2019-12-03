@@ -124,7 +124,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
         chartView.delegate = self
                 
-        SVProgressHUD.setMinimumDismissTimeInterval(1)
+        SVProgressHUD.setMinimumDismissTimeInterval(2)
         SVProgressHUD.setDefaultStyle(.dark)
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadProfile(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
@@ -290,10 +290,19 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            self.network.editProfileText(key: "profession", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
+            self.network.editProfileText(key: "jobTitle", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
                 if success {
                     if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
                         self.profileProfessionLabel.text = textField?.text
+                        
+
+                        var user = self.storage.getUserProfile()
+                        user?.profession = textField!.text!
+                        self.storage.def.removeObject(forKey: UserDefKeys.userProfile.rawValue)
+                        self.storage.saveUserProfile(user: user!)
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateUserInfo"), object: nil)
+                        
+                        
                         SVProgressHUD.showSuccess(withStatus: "Success!")
                     } else {
                         self.profileProfessionLabel.text = ""
@@ -371,9 +380,8 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             self.fetchUser(userId: self.userID!)
             self.likeButton.isHidden = true
             self.dislikeButton.isHidden = true
-            self.tableView.reloadData()
-            SVProgressHUD.showSuccess(withStatus: "Success!")
         }
+        //SVProgressHUD.showSuccess(withStatus: "Success!")
     }
     
     
@@ -426,13 +434,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         }
     }
     
-//    func handleProfilePicker() {
-//        let picker = UIImagePickerController()
-//        picker.delegate = self
-//        picker.allowsEditing = true
-//        self.present(picker,animated: true,completion: nil)
-//    }
-    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
       var selectedImage: UIImage?
         if let editedImage = info[.editedImage] as? UIImage {
@@ -450,13 +451,14 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 SDImageCache.shared.clearDisk()
 
                 //Setup notification to change profile photo in MenuTableViewController
-                let imageDict = ["image": selectedImage]
-                NotificationCenter.default.post(name: Notification.Name(rawValue: "imageChanged"), object: nil, userInfo: imageDict)
+//                let imageDict = ["image": selectedImage]
+//                NotificationCenter.default.post(name: Notification.Name(rawValue: "imageChanged"), object: nil, userInfo: imageDict)
                 
                 let imageData = selectedImage?.jpegData(compressionQuality: 1)
                 let user = User(image: imageData!, name: self.fullName!, profession: self.profession!, email: self.email!)
                 self.storage.saveUserProfile(user: user)
                 
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateUserInfo"), object: nil)
                 
                 SVProgressHUD.showSuccess(withStatus: "Profile photo changed!")
             } else {
@@ -541,7 +543,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 self.profession = json["jobTitle"] as? String ?? "Job Title"
                 self.email = json["email"] as? String ?? ""
                 self.skype = json["skype"] as? String ?? ""
-                self.telephone = json["telephone"] as? String ?? ""
+                self.telephone = json["phone"] as? String ?? ""
                 self.telegram = json["telegram"] as? String ?? ""
                 self.likes = json["likes"] as? Int ?? 0
                 self.dislikes = json["dislikes"] as? Int ?? 0
@@ -697,14 +699,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         emailLabel.text = email
         
         
-//        DispatchQueue.main.async {
-//
-//            let url = URL(string: self.profilePicture!)
-//            self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
-//        }
-        
-        
-        
         let savedUser = self.storage.getUserProfile()
         if savedUser != nil && storage.getProfileState() {
             profileFullNameLabel.text = savedUser?.name
@@ -809,7 +803,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            self.network.editProfileText(key: "telephone", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
+            self.network.editProfileText(key: "phone", text: textField!.text!.trimmingCharacters(in: .whitespaces)) { (success) in
                 if success {
                     if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
                         self.telephoneLabel.text = textField?.text
