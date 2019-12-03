@@ -3,13 +3,12 @@ package com.app.controllers;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
 import com.app.DTO.DTOProfile;
-import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
+import com.app.exceptions.CustomException;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.services.UserService;
-import com.app.exceptions.CustomException;
 import com.app.validators.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -85,12 +84,14 @@ public class ProfileController {
     }
 
     @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName, Principal principal) {
-
-        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName()).stream()
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName,
+                                                      Principal principal,
+                                                      @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                      @RequestParam(value = "size", defaultValue = "5") Integer size) {
+        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName(), page, size).getContent().stream()
                 .filter(DTOLikableProfile ->
                         Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
-                profileService.getAllProfilesForLike(principal.getName());
+                profileService.getAllProfilesForLike(principal.getName(), page, size).getContent();
     }
 
     @GetMapping("/achieve")
@@ -100,7 +101,7 @@ public class ProfileController {
     }
 
     @GetMapping("/catalogue")
-    public Map<Long, Map<String, Long>> getAllInfo() throws CustomException {
+    public Map<Long, Map<Mark, Long>> getAllInfo() throws CustomException {
         return ratingService.addInfoAchievement();
     }
 
@@ -109,8 +110,16 @@ public class ProfileController {
         return ratingService.getUserRatingByMarkType(markType);
     }
 
-    @GetMapping("/userJobTitle/{jobTitle}")
-    public List<DTOUserShortInfo> getUserByJob(@PathVariable String jobTitle) {
-        return userService.findAllByJobTitle(jobTitle);
+    @GetMapping(value = "/userJobTitle/{jobTitle}")
+    public List<DTOLikableProfile> getUserByJob(@PathVariable String jobTitle,
+                                               @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                               @RequestParam(value = "size", defaultValue = "2") Integer size) {
+        return userService.findAllByJobTitle(jobTitle, page, size);
+    }
+
+
+    @GetMapping("/catalogueDTO")
+    public List<DTOLikableProfile> getAllDTOInfo() {
+        return ratingService.addDTOInfoAchievement();
     }
 }

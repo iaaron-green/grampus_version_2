@@ -25,6 +25,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -68,12 +69,12 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Map<String, Object> getAndCountLikesByProfileId(Long id) {
+    public Map<Mark, Object> getAndCountLikesByProfileId(Long id) {
 
-        Map<String, Object> mapOfLikes = new HashMap<>();
+        Map<Mark, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
 
-        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString().toLowerCase(), ratingRepository.countRatingType(id, mark.toString())));
+        listOfMarks.forEach(mark -> mapOfLikes.put(mark, ratingRepository.countRatingType(id, mark)));
 
         return mapOfLikes;
 
@@ -84,16 +85,16 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Map<Long, Map<String, Long>> addInfoAchievement() {
+    public Map<Long, Map<Mark, Long>> addInfoAchievement() {
 
-        Map<Long, Map<String, Long>> userIdAndAchievments = new HashMap<>();
+        Map<Long, Map<Mark, Long>> userIdAndAchievments = new HashMap<>();
         List<Mark> positiveRating = Arrays.asList(Mark.values());
 
         Set<Long> userId = userRepository.getAllId();
 
         userId.forEach(user -> {
-            Map<String, Long> achievements = new HashMap<>();
-            positiveRating.forEach(mark -> achievements.put(mark.toString(), ratingRepository.countRatingType(user, mark.toString())));
+            Map<Mark, Long> achievements = new HashMap<>();
+            positiveRating.forEach(mark -> achievements.put(mark, ratingRepository.countRatingType(user, mark)));
             userIdAndAchievments.put(user, achievements);
         });
 
@@ -108,6 +109,24 @@ public class RatingServiceImpl implements RatingService {
             achievementData.addAll(profilesWithMark);
         }
         return achievementData;
+    }
+    @Override
+    public List<DTOLikableProfile> addDTOInfoAchievement() {
+
+        List<DTOLikableProfile> userIdAndAchievments = new ArrayList<>();
+        List<Mark> marks = Arrays.asList(Mark.values());
+
+        Set<Long> dtoUserShortInfoId = userRepository.getAllId();
+        List<DTOLikableProfile> dtoProfiles = userRepository.findProfileByRatingType(marks, dtoUserShortInfoId);
+
+        if (!CollectionUtils.isEmpty(dtoProfiles)){
+            dtoProfiles.stream().sorted(Comparator.comparing(DTOLikableProfile::getId)).collect(Collectors.toList());
+        }
+
+        dtoProfiles.forEach(profile -> profile.setAchieveCount(getAndCountLikesByProfileId(profile.getId())));
+
+        userIdAndAchievments.addAll(dtoProfiles);
+        return userIdAndAchievments;
     }
 
     private Profile checkProfile(Long profileId, DTOLikeDislike dtoLikeDislike) throws CustomException {
@@ -140,6 +159,7 @@ public class RatingServiceImpl implements RatingService {
             if (!ratingType.equals(Mark.DISLIKE)) {
                 Long likes = ratingRepository.countRatingType(profile.getId(), ratingType.toString());
                 if (likes % 1 == 0) {
+
                     jmsTemplate.convertAndSend("achieve", "You got new achievement " + "\"" +ratingType.toString() + "\"");
 
                     MimeMessage message = emailSender.createMimeMessage();
@@ -149,17 +169,13 @@ public class RatingServiceImpl implements RatingService {
                     } catch (MessagingException e) {
                         e.printStackTrace();
                     }
-
                     String htmlMsg = "<h2><center>Congratulation!</center></h2>" +
                             "<p><center>You got new achievement " + "\"" +ratingType.toString() + "\"" + "<center></p>" +
                             "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
 
                     message.setContent(htmlMsg, "text/html");
-
                     helper.setTo(profile.getUser().getEmail());
-
                     helper.setSubject("New Achievement(GRAMPUS)");
-
                     emailSender.send(message);
                 }
             }

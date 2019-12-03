@@ -5,17 +5,20 @@ import com.app.DTO.DTOProfile;
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
 import com.app.entities.User;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
-import com.app.exceptions.CustomException;
-import com.app.exceptions.Errors;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -168,22 +171,22 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.findAll();
     }
 
-    public Set<DTOLikableProfile> getAllProfilesForLike(String userName)  {
+    public Page<DTOLikableProfile> getAllProfilesForLike(String userName, Integer page, Integer size)  {
 
         User user = userRepository.findByEmail(userName);
         Set<Long> profilesIdWithLike;
-        Set<DTOLikableProfile> dtoLikableProfiles = new HashSet<>();
+        Page<DTOLikableProfile> dtoLikableProfiles = null;
         if (user != null) {
             profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
-            dtoLikableProfiles = userRepository.getLikeableProfiles(user.getId());
-            if (!CollectionUtils.isEmpty(profilesIdWithLike) && !CollectionUtils.isEmpty(dtoLikableProfiles)){
+            dtoLikableProfiles = userRepository.getLikeableProfiles(user.getId(), pageRequest(page, size));
+            if (!CollectionUtils.isEmpty(profilesIdWithLike)){
                 return fillDTOLikableProfile(profilesIdWithLike, dtoLikableProfiles);
             }
         }
         return dtoLikableProfiles;
     }
 
-    private Set<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<DTOLikableProfile> dtoLikableProfiles) {
+    private Page<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Page<DTOLikableProfile> dtoLikableProfiles) {
 
         dtoLikableProfiles.forEach(profile -> {
             if (profilesIdWithLike.contains(profile.getId())) {
@@ -192,5 +195,9 @@ public class ProfileServiceImpl implements ProfileService {
             else profile.setIsAbleToLike(true);
         });
         return dtoLikableProfiles;
+    }
+
+    private Pageable pageRequest(int page, int size) {
+        return PageRequest.of(page, size);
     }
 }

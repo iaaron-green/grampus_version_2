@@ -16,6 +16,9 @@ public class Errors {
     public static final int AUTHORIZATION_ERROR = getError(HIGH, COMMON, 0); // 30500
     public static final int USER_NOT_EXIST = getError(MIDDLE, USER, 0); // 20600
     public static final int USER_ALREADY_EXIST = getError(MIDDLE, USER, 1); // 20601
+    public static final int USER_ALREADY_EXIST_ENTER_ACTIVATION_CODE = getError(MIDDLE, USER, 1); // 20601
+    public static  final int ACTIVATION_CODE_IS_ACTIVE = getError(LOW, USER, 1); // 10601
+    public static  final int ACTIVATION_CODE_IS_NOT_ACTIVE = getError(LOW, USER, 2); // 10602
     public static final int PROFILE_NOT_EXIST = getError(MIDDLE,PROFILE, 0); // 20700
     public static final int PROFILE_PICTURE_IS_BAD = getError(LOW,PROFILE, 1); // 10701
     public static final int MARKTYPE_NOT_EXIST = getError(MIDDLE,PROFILE, 3); // 20703

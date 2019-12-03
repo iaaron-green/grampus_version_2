@@ -1,11 +1,14 @@
 package com.app.services;
 
-import org.springframework.stereotype.Service;
+import com.app.DTO.DTONewUser;
+import com.app.exceptions.CustomException;
+
+import javax.mail.MessagingException;
 
 
 public interface ActivationService {
-    void activateUser(Long id);
-    boolean isUserActivate(String login);
+    void activateUser(Long id) throws CustomException;
+    boolean isUserActivate(String login) throws CustomException;
     String generateCode(Long id);
-
+    DTONewUser sendMail(DTONewUser user) throws  MessagingException, CustomException;
 }

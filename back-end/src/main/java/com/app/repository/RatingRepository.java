@@ -17,14 +17,12 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
 
 
     @Query(
-            value = "SELECT id, profile_id, rating_source_username, profile_id as user_id, rating_type, COUNT(rating_type) as raiting_count FROM " + Constants.DATABASE + ".ratings GROUP BY profile_id, rating_type",
+            value = "SELECT id, profile_id, rating_source_username,profile_id as user_id, rating_type, COUNT(rating_type) as raiting_count FROM " + Constants.DATABASE + ".ratings GROUP BY profile_id, rating_type",
             nativeQuery = true)
     List<Rating> findAllRatingById();
 
-    @Query(
-            value = "SELECT COUNT(rating_type) FROM " + Constants.DATABASE + ".ratings WHERE profile_id = ? AND rating_type = ?",
-            nativeQuery = true)
-    Long countRatingType(Long id, String ratingType);
+    @Query("SELECT COUNT(r.ratingType) FROM Rating r WHERE r.id = :id AND r.ratingType = :ratingType")
+    Long countRatingType(@Param("id")Long id, @Param("ratingType") Mark ratingType);
 
 
     @Query("SELECT NEW com.app.DTO.DTOLikableProfile(r.profileRating.user.id, r.profileRating.user.fullName, r.profileRating.user.jobTitle, r.profileRating.profilePicture) " +
