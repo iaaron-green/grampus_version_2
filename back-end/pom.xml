@@ -6,7 +6,7 @@
 
     <groupId>com.firstapp</groupId>
     <artifactId>first_app</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -115,6 +115,14 @@
             <artifactId>aspectjweaver</artifactId>
             <version>1.6.11</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-activemq -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+            <version>2.2.1.RELEASE</version>
+        </dependency>
+
 
     </dependencies>
 

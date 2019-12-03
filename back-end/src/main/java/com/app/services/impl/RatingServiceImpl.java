@@ -15,9 +15,14 @@ import com.app.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,68 +34,38 @@ public class RatingServiceImpl implements RatingService {
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
     private MessageSource messageSource;
+    private JavaMailSender emailSender;
+    private JmsTemplate jmsTemplate;
 
     @Autowired
     public RatingServiceImpl(RatingRepository ratingRepository, ProfileRepository profileRepository, UserRepository userRepository,
-                             MessageSource messageSource) {
+                             MessageSource messageSource, JavaMailSender emailSender, JmsTemplate jmsTemplate) {
         this.ratingRepository = ratingRepository;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.messageSource = messageSource;
+        this.emailSender = emailSender;
+        this.jmsTemplate = jmsTemplate;
     }
 
-    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException {
+    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
 
-        if (profileId == null || profileId == 0) {
-            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
-        }
-
-        Profile profile = profileRepository.findOneById(profileId);
-
-        if (profile == null) {
-            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
-        }
-
-        User currentUser = userRepository.findByEmail(principal.getName());
-        if (!currentUser.getId().equals(profileId) && ratingRepository.checkLike(profileId, currentUser.getEmail()) == null
-        && !dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
+        Profile profile = checkProfile(profileId, dtoLikeDislike);
+        if (!dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileLike = profile.getLikes();
             profile.setLikes(++profileLike);
-            Rating updatedRating = new Rating();
-            updatedRating.setProfileRating(profile);
-            updatedRating.setRatingSourceUsername(currentUser.getEmail());
-            updatedRating.setRatingType(dtoLikeDislike.getRatingType());
-            profileRepository.save(profile);
-            ratingRepository.save(updatedRating);
-            return true;
-        } else return false;
+        }
+        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType());
     }
 
-    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException {
+    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
 
-        if (profileId == null || profileId == 0) {
-            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
-        }
-
-        Profile profile = profileRepository.findOneById(profileId);
-
-        if (profile == null) {
-            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
-        }
-
-        User currentUser = userRepository.findByEmail(principal.getName());
-        if (!currentUser.getId().equals(profileId) && ratingRepository.checkLike(profileId, currentUser.getEmail()) == null
-        && dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
+        Profile profile = checkProfile(profileId, dtoLikeDislike);
+        if (dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileDislike = profile.getDislikes();
             profile.setDislikes(++profileDislike);
-            Rating updatedRating = new Rating();
-            updatedRating.setProfileRating(profile);
-            updatedRating.setRatingSourceUsername(currentUser.getEmail());
-            updatedRating.setRatingType(dtoLikeDislike.getRatingType());
-            profileRepository.save(profile);
-            ratingRepository.save(updatedRating);
-            return true;
-        } else return false;
+        }
+        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType());
     }
 
     @Override
@@ -122,6 +97,7 @@ public class RatingServiceImpl implements RatingService {
             positiveRating.forEach(mark -> achievements.put(mark, ratingRepository.countRatingType(user, mark)));
             userIdAndAchievments.put(user, achievements);
         });
+
         return userIdAndAchievments;
     }
 
@@ -151,5 +127,59 @@ public class RatingServiceImpl implements RatingService {
 
         userIdAndAchievments.addAll(dtoProfiles);
         return userIdAndAchievments;
+    }
+
+    private Profile checkProfile(Long profileId, DTOLikeDislike dtoLikeDislike) throws CustomException {
+
+        if (profileId == null || profileId == 0) {
+            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
+        }
+
+        Profile profile = profileRepository.findOneById(profileId);
+
+        if (profile == null) {
+            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        }
+
+        if (dtoLikeDislike == null) {
+            throw new CustomException(messageSource.getMessage("rating.type.is.empty", null, LocaleContextHolder.getLocale()), Errors.RATING_TYPE_IS_EMPTY);
+        } else return profile;
+    }
+
+    private Boolean updateRatingAndProfile(Profile profile, String userEmail, Mark ratingType) throws MessagingException {
+        User currentUser = userRepository.findByEmail(userEmail);
+        if (!currentUser.getId().equals(profile.getId()) && ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
+            Rating updatedRating = new Rating();
+            updatedRating.setProfileRating(profile);
+            updatedRating.setRatingSourceUsername(currentUser.getEmail());
+            updatedRating.setRatingType(ratingType);
+            profileRepository.save(profile);
+            ratingRepository.save(updatedRating);
+
+            if (!ratingType.equals(Mark.DISLIKE)) {
+                Long likes = ratingRepository.countRatingType(profile.getId(), ratingType);
+                if (likes % 5 == 0) {
+
+                    jmsTemplate.convertAndSend("achieve", "You got new achievement " + "\"" +ratingType.toString() + "\"");
+
+                    MimeMessage message = emailSender.createMimeMessage();
+                    MimeMessageHelper helper = null;
+                    try {
+                        helper = new MimeMessageHelper(message, true, "utf-8");
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                    }
+                    String htmlMsg = "<h2><center>Congratulation!</center></h2>" +
+                            "<p><center>You got new achievement " + "\"" +ratingType.toString() + "\"" + "<center></p>" +
+                            "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
+
+                    message.setContent(htmlMsg, "text/html");
+                    helper.setTo(profile.getUser().getEmail());
+                    helper.setSubject("New Achievement(GRAMPUS)");
+                    emailSender.send(message);
+                }
+            }
+            return true;
+        } else return false;
     }
 }

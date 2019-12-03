@@ -24,9 +24,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 
 @Service
@@ -40,7 +40,8 @@ public class ProfileServiceImpl implements ProfileService {
     private RatingRepository ratingRepository;
 
     @Autowired
-    public ProfileServiceImpl(MessageSource messageSource, ProfileRepository profileRepository, UserRepository userRepository, RatingService ratingService, RatingRepository ratingRepository) {
+    public ProfileServiceImpl(MessageSource messageSource, ProfileRepository profileRepository, UserRepository userRepository,
+                              RatingService ratingService, RatingRepository ratingRepository) {
         this.messageSource = messageSource;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
@@ -54,28 +55,38 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public DTOProfile getDTOProfileById(Long id, String principalName) throws CustomException {
+    public Profile getProfileById(Long id) throws CustomException {
+        Profile profile = profileRepository.findProfileById(id);
+        if (profile != null) {
+            return profile;
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+    }
+
+    @Override
+    public DTOProfile getDTOProfileById(Long id, Principal principal) throws CustomException {
 
         if (id == null || id == 0) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
         }
-        User currentUser = userRepository.findByEmail(principalName);
 
         Profile profileFromDB = profileRepository.findProfileById(id);
-        if (profileFromDB != null && currentUser != null) {
+        if (profileFromDB != null) {
+            User currentUser = userRepository.findByEmail(principal.getName());
             DTOProfile dtoProfile = new DTOProfile();
             dtoProfile.setId(profileFromDB.getId());
             dtoProfile.setDislikes(profileFromDB.getDislikes());
             dtoProfile.setLikes(profileFromDB.getLikes());
-            dtoProfile.setInformation(profileFromDB.getInformation());
+            dtoProfile.setSkype(profileFromDB.getSkype());
+            dtoProfile.setPhone(profileFromDB.getPhone());
+            dtoProfile.setTelegram(profileFromDB.getTelegram());
             dtoProfile.setProfilePicture(profileFromDB.getProfilePicture());
             dtoProfile.setSkills(profileFromDB.getSkills());
+            dtoProfile.setCountry(profileFromDB.getCountry());
             dtoProfile.setEmail(profileFromDB.getUser().getEmail());
             dtoProfile.setJobTitle(profileFromDB.getUser().getJobTitle());
             dtoProfile.setFullName(profileFromDB.getUser().getFullName());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
-            if(ratingRepository.checkLike(profileFromDB.getId(), currentUser.getEmail()) != null || currentUser.getId().equals(profileFromDB.getId()))  dtoProfile.setAbleToLike(false);
-
+            if (ratingRepository.checkLike(id, currentUser.getEmail()) != null) dtoProfile.setIsAbleToLike(false);
             return dtoProfile;
         } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
@@ -88,12 +99,28 @@ public class ProfileServiceImpl implements ProfileService {
             Profile profileFromDB = profileRepository.findProfileById(currentUser.getId());
             if (profileFromDB != null){
                 boolean isProfileUpdated = false;
-                if (profile.getInformation() != null) {
-                    profileFromDB.setInformation(profile.getInformation());
+                if (profile.getSkype() != null) {
+                    profileFromDB.setSkype(profile.getSkype());
+                    isProfileUpdated = true;
+                }
+                if (profile.getPhone() != null) {
+                    profileFromDB.setPhone(profile.getPhone());
+                    isProfileUpdated = true;
+                }
+                if (profile.getTelegram() != null) {
+                    profileFromDB.setTelegram(profile.getTelegram());
                     isProfileUpdated = true;
                 }
                 if (profile.getSkills() != null) {
                     profileFromDB.setSkills(profile.getSkills());
+                    isProfileUpdated = true;
+                }
+                if (profile.getCountry() != null) {
+                    profileFromDB.setCountry(profile.getCountry());
+                    isProfileUpdated = true;
+                }
+                if (profile.getJobTitle() != null) {
+                    profileFromDB.getUser().setJobTitle(profile.getJobTitle());
                     isProfileUpdated = true;
                 }
                 if (isProfileUpdated) {
@@ -105,9 +132,14 @@ public class ProfileServiceImpl implements ProfileService {
         return false;
     }
 
-
     @Override
-    public void saveProfilePhoto(MultipartFile file, Long id) throws CustomException {
+    public void saveProfilePhoto(MultipartFile file, Long id, Principal principal) throws CustomException {
+
+        Long currentUserId = userRepository.findByEmail(principal.getName()).getId();
+
+        if (!currentUserId.equals(id)) {
+            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
+        }
 
         Profile profile = profileRepository.findOneById(id);
         if (profile != null) {
@@ -167,7 +199,4 @@ public class ProfileServiceImpl implements ProfileService {
     private Pageable pageRequest(int page, int size) {
         return PageRequest.of(page, size);
     }
-
-
-
 }
