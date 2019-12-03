@@ -56,13 +56,14 @@ public class AuthorizationController {
    }
 
    @PostMapping("/login")
-   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result) throws CustomException {
+   public ResponseEntity authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result) throws CustomException, MessagingException {
       ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
       if(errorMap != null)
          return errorMap;
 
       if (!activationService.isUserActivate(loginRequest.getUsername())) {
          throw new CustomException(messageSource.getMessage("activation.code.is.not.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_NOT_ACTIVE);
+         //return (ResponseEntity) ResponseEntity.notFound();
       }
 
       Authentication authentication = authenticationManager.authenticate(
