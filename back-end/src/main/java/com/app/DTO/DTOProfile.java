@@ -1,5 +1,6 @@
 package com.app.DTO;
 
+import com.app.enums.Mark;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,6 @@ public class DTOProfile {
     private String country;
     private String fullName;
     private Boolean isAbleToLike = true;
-    private Map<String, Object> likesNumber;
+    private Map<Mark, Object> likesNumber;
 
 }

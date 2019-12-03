@@ -157,8 +157,8 @@ public class RatingServiceImpl implements RatingService {
             ratingRepository.save(updatedRating);
 
             if (!ratingType.equals(Mark.DISLIKE)) {
-                Long likes = ratingRepository.countRatingType(profile.getId(), ratingType.toString());
-                if (likes % 1 == 0) {
+                Long likes = ratingRepository.countRatingType(profile.getId(), ratingType);
+                if (likes % 5 == 0) {
 
                     jmsTemplate.convertAndSend("achieve", "You got new achievement " + "\"" +ratingType.toString() + "\"");
 
