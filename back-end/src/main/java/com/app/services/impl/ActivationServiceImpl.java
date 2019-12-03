@@ -14,12 +14,14 @@ import com.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -35,7 +37,7 @@ public class ActivationServiceImpl implements ActivationService {
     @Autowired
     public ActivationServiceImpl(UserRepository userRepository, ActivationRepository activationRepository,
                                  ProfileRepository profileRepository, JavaMailSender emailSender,
-                                 UserService userService, MessageSource messageSource) {
+                                 UserService userService, MessageSource messageSource,JmsTemplate jmsTemplate) {
         this.userRepository = userRepository;
         this.activationRepository = activationRepository;
         this.profileRepository = profileRepository;
@@ -49,6 +51,7 @@ public class ActivationServiceImpl implements ActivationService {
         ActivationCode activationCode = activationRepository.findByUserId(id);
         if (activationCode != null && !activationCode.isActivate()) {
             activationCode.setActivate(true);
+            activationCode.setDate(new Date(System.currentTimeMillis()));
             activationRepository.save(activationCode);
             User user = userRepository.getById(id);
             profileRepository.save(new Profile(user));
