@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
@@ -44,13 +45,13 @@ public class ProfileController {
     }
 
     @GetMapping("/{profileId}")
-    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
-        return new ResponseEntity<>(profileService.getDTOProfileById(profileId), HttpStatus.OK);
+    public ResponseEntity<?> getProfileById(@PathVariable Long profileId, Principal principal) throws CustomException {
+        return new ResponseEntity<>(profileService.getDTOProfileById(profileId, principal), HttpStatus.OK);
     }
 
     @PostMapping("/{profileId}/like")
     public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
-                                              BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException {
+                                              BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
 
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
@@ -60,7 +61,7 @@ public class ProfileController {
 
     @PostMapping("/{profileId}/dislike")
     public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
-                                                 BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException {
+                                                 BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
@@ -77,13 +78,9 @@ public class ProfileController {
         return new ResponseEntity<>(profileService.updateProfile(profile, principal.getName()), HttpStatus.OK);
     }
 
-    @PostMapping("/photo")
-    public void uploadPhoto(@RequestParam("file") MultipartFile file, @RequestParam Long id) throws IOException {
-        try {
-            profileService.saveProfilePhoto(file, id);
-        } catch (CustomException e) {
-            e.getMessage();
-        }
+    @PostMapping("/{profileId}/photo")
+    public void uploadPhoto(@RequestParam("file") MultipartFile file, @PathVariable Long profileId, Principal principal) throws CustomException {
+        profileService.saveProfilePhoto(file, profileId, principal);
     }
 
     @GetMapping("/all")
