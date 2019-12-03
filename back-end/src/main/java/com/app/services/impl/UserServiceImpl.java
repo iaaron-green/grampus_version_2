@@ -1,7 +1,7 @@
 package com.app.services.impl;
 
+import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTONewUser;
-import com.app.DTO.DTOUserShortInfo;
 import com.app.entities.User;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
@@ -60,15 +60,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public List<DTOUserShortInfo> findAllByJobTitle(String jobTitle, int page, int size) {
-        List<DTOUserShortInfo> dtoUser = new ArrayList<>();
+    public List<DTOLikableProfile> findAllByJobTitle(String jobTitle, int page, int size) {
+        List<DTOLikableProfile> dtoUser = new ArrayList<>();
         Page<User> userData = userRepository.findAllUsersByJobTitle(jobTitle, pageRequest(page, size));
         userData.forEach(user -> {
-            DTOUserShortInfo s = DTOUserShortInfo.builder()
-                    .profileId(user.getId())
+            DTOLikableProfile s = DTOLikableProfile.builder()
+                    .id(user.getId())
                     .jobTitle(user.getJobTitle())
                     .fullName(user.getEmail())
-                    .picture(user.getProfile().getProfilePicture())
+                    .profilePicture(user.getProfile().getProfilePicture())
                     .build();
            dtoUser.add(s);
         });
