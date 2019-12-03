@@ -44,8 +44,8 @@ public class ProfileController {
     }
 
     @GetMapping("/{profileId}")
-    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
-        return new ResponseEntity<>(profileService.getDTOProfileById(profileId), HttpStatus.OK);
+    public ResponseEntity<?> getProfileById(@PathVariable Long profileId, Principal principal) throws CustomException {
+        return new ResponseEntity<>(profileService.getDTOProfileById(profileId, principal.getName()), HttpStatus.OK);
     }
 
     @PostMapping("/{profileId}/like")

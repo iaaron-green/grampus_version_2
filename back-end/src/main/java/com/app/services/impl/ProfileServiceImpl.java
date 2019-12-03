@@ -8,6 +8,7 @@ import com.app.entities.User;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
+import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 
 @Service
@@ -35,13 +37,15 @@ public class ProfileServiceImpl implements ProfileService {
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
     private RatingService ratingService;
+    private RatingRepository ratingRepository;
 
     @Autowired
-    public ProfileServiceImpl(MessageSource messageSource, ProfileRepository profileRepository, UserRepository userRepository, RatingService ratingService) {
+    public ProfileServiceImpl(MessageSource messageSource, ProfileRepository profileRepository, UserRepository userRepository, RatingService ratingService, RatingRepository ratingRepository) {
         this.messageSource = messageSource;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.ratingService = ratingService;
+        this.ratingRepository = ratingRepository;
     }
 
     @Override
@@ -50,22 +54,15 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile getProfileById(Long id) throws CustomException {
-        Profile profile = profileRepository.findProfileById(id);
-        if (profile != null) {
-            return profile;
-        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
-    }
-
-    @Override
-    public DTOProfile getDTOProfileById(Long id) throws CustomException {
+    public DTOProfile getDTOProfileById(Long id, String principalName) throws CustomException {
 
         if (id == null || id == 0) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
         }
+        User currentUser = userRepository.findByEmail(principalName);
 
         Profile profileFromDB = profileRepository.findProfileById(id);
-        if (profileFromDB != null) {
+        if (profileFromDB != null && currentUser != null) {
             DTOProfile dtoProfile = new DTOProfile();
             dtoProfile.setId(profileFromDB.getId());
             dtoProfile.setDislikes(profileFromDB.getDislikes());
@@ -77,6 +74,8 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setJobTitle(profileFromDB.getUser().getJobTitle());
             dtoProfile.setFullName(profileFromDB.getUser().getFullName());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
+            if(ratingRepository.checkLike(profileFromDB.getId(), currentUser.getEmail()) != null || currentUser.getId().equals(profileFromDB.getId()))  dtoProfile.setAbleToLike(false);
+
             return dtoProfile;
         } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
@@ -168,4 +167,7 @@ public class ProfileServiceImpl implements ProfileService {
     private Pageable pageRequest(int page, int size) {
         return PageRequest.of(page, size);
     }
+
+
+
 }

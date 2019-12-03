@@ -15,9 +15,7 @@ import java.util.Set;
 public interface ProfileService {
     <S extends Profile> S saveProfile(S entity);
 
-    Profile getProfileById(Long id) throws CustomException;
-
-    DTOProfile getDTOProfileById(Long id) throws CustomException;
+    DTOProfile getDTOProfileById(Long id, String principalName) throws CustomException;
 
     Boolean updateProfile(DTOProfile profile, String principalName);
 
