@@ -26,6 +26,4 @@ public class DTOProfile {
     private String fullName;
     private Boolean isAbleToLike = true;
     private Map<Mark, Object> likesNumber;
-    private boolean isAbleToLike = true;
-
 }

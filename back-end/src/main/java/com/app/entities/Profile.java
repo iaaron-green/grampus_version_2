@@ -1,14 +1,13 @@
 package com.app.entities;
 
-import com.app.enums.JobTitle;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -36,6 +35,8 @@ public class Profile {
    private String skills;
 
    private String country;
+
+   private Date likeDislikeDate;
 
    @OneToOne
    private User user;
