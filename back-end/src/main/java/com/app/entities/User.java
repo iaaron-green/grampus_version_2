@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private String fullName;
 
     private String jobTitle;
-    private Date registrationDate;
+    private Date registrationDate = new Date(System.currentTimeMillis());
 
     @OneToOne(mappedBy = "user", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
