@@ -33,7 +33,7 @@ public class Rating {
     @JsonIgnore
     private Profile profileRating;
 
-    Calendar time = Calendar.getInstance();
+    Calendar created_date = Calendar.getInstance();
 
     private String comment;
 

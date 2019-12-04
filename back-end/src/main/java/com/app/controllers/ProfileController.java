@@ -49,22 +49,22 @@ public class ProfileController {
     }
 
     @PostMapping("/{profileId}/like")
-    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
+    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike, Rating rating,
                                               BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
 
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(ratingService.addLike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.addLike(dtoLikeDislike, profileId, principal, rating), HttpStatus.OK);
     }
 
     @PostMapping("/{profileId}/dislike")
-    public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
+    public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike, Rating rating,
                                                  BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(ratingService.addDislike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.addDislike(dtoLikeDislike, profileId, principal, rating), HttpStatus.OK);
     }
 
     @PostMapping("")

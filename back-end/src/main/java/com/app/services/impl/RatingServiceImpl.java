@@ -45,24 +45,28 @@ public class RatingServiceImpl implements RatingService {
         this.emailSender = emailSender;
     }
 
-    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
+    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal, Rating rating) throws CustomException, MessagingException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
         if (!dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileLike = profile.getLikes();
             profile.setLikes(++profileLike);
+            String comment = dtoLikeDislike.getComments();
+            rating.setComment(comment);
         }
-        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType());
+        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
 
-    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
+    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal, Rating rating) throws CustomException, MessagingException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
         if (dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileDislike = profile.getDislikes();
             profile.setDislikes(++profileDislike);
+            String comment = dtoLikeDislike.getComments();
+            rating.setComment(comment);
         }
-        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType());
+        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
 
     @Override
@@ -143,13 +147,14 @@ public class RatingServiceImpl implements RatingService {
         } else return profile;
     }
 
-    private Boolean updateRatingAndProfile(Profile profile, String userEmail, Mark ratingType) throws MessagingException {
+    private Boolean updateRatingAndProfile(Profile profile, String userEmail, Mark ratingType, String dtoLikeDislike) throws MessagingException {
         User currentUser = userRepository.findByEmail(userEmail);
         if (!currentUser.getId().equals(profile.getId()) &&  ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
             Rating updatedRating = new Rating();
             updatedRating.setProfileRating(profile);
             updatedRating.setRatingSourceUsername(currentUser.getEmail());
             updatedRating.setRatingType(ratingType);
+            updatedRating.setComment(dtoLikeDislike);
             ratingRepository.save(updatedRating);
 
             if (!ratingType.equals(Mark.DISLIKE)) {
