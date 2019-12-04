@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +80,13 @@ public class ProfileController {
     @PostMapping("/{profileId}/photo")
     public void uploadPhoto(@RequestParam("file") MultipartFile file, @PathVariable Long profileId, Principal principal) throws CustomException {
         profileService.saveProfilePhoto(file, profileId, principal);
+    }
+
+    @PostMapping("/{profileId}/change-subscription")
+    public ResponseEntity<?> changeSubscription(@PathVariable Long profileId, Principal principal) throws CustomException {
+
+
+        return new ResponseEntity<>(profileService.changeSubscription(profileId, principal), HttpStatus.OK);
     }
 
     @GetMapping("/all")

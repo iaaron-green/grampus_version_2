@@ -28,4 +28,5 @@ public interface ProfileService {
 
     Page<DTOLikableProfile> getAllProfilesForLike(String userName, Integer page, Integer size);
 
+    Boolean changeSubscription(Long profileId, Principal principal) throws CustomException;
 }
