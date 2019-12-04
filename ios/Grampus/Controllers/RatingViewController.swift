@@ -12,7 +12,7 @@ import SwiftyJSON
 import SVProgressHUD
 import SDWebImage
 
-class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, SWRevealViewControllerDelegate, UITableViewDelegate, UITableViewDataSource {
+class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, SWRevealViewControllerDelegate, UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching {
     
     // MARK: - Outlets
     @IBOutlet weak var navigationBar: UINavigationBar!
@@ -29,6 +29,8 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     var json = JSON()
     var filteredJson = [JSON]()
     var page = 1
+    var isFetch = false
+    var limit = 0
     
     // MARK: - Functions
     override func loadView() {
@@ -38,7 +40,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         SVProgressHUD.show()
         
         SVProgressHUD.setMinimumDismissTimeInterval(2)
@@ -48,6 +50,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         tableView.dataSource = self
         tableView.refreshControl = myRefreshControl
         searchBar.delegate = self
+        tableView.prefetchDataSource = self
 
         navBarAppearance()
         
@@ -78,26 +81,35 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         filteredJson = [JSON]()
 
         if searchText == "" {
-            for i in 0..<json.count {
-                self.filteredJson.append(json[i])
-            }
+            fetchAllUsers(page: 0)
+//            for i in 0..<json.count {
+//                self.filteredJson.append(json[i])
+//            }
         } else {
-            for item in 0..<json.count {
-                let name = json[item]["fullName"].string
-                if (name?.lowercased().contains(searchText.lowercased()))! {
-                    self.filteredJson.append(json[item])
+            network.fetchAllUsers(page: 0, name: searchText.lowercased()) { (json) in
+                if let json = json {
+                    for i in 0..<json.count {
+                        self.filteredJson.append(json[i])
+                        self.tableView.reloadData()
+                    }
                 }
             }
+            
+//            for item in 0..<json.count {
+//                let name = json[item]["fullName"].string
+//                if (name?.lowercased().contains(searchText.lowercased()))! {
+//                    self.filteredJson.append(json[item])
+//                }
+//            }
         }
-
-        tableView.reloadData()
+        
     }
     
     func fetchAllUsers(page: Int) {
-        network.fetchAllUsers(page: page) { (json) in
+        network.fetchAllUsers(page: page, name: "") { (json) in
             if let json = json {
                 SVProgressHUD.dismiss()
-                //print(json)
+                print(json)
                 self.json = json
                 self.filteredJson = [JSON]()
                 for i in 0..<json.count {
@@ -124,6 +136,8 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         SDImageCache.shared.clearMemory()
         SDImageCache.shared.clearDisk()
         fetchAllUsers(page: 0)
+        page = 1
+        limit = 0
         sender.endRefreshing()
     }
     
@@ -255,5 +269,37 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         } else {
         }
     }
+    
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == filteredJson.count - 1 {
+            isFetch = true
+        } else {
+            isFetch = false
+        }
+    }
+    
 
+    
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        
+        limit = filteredJson.count
+        if isFetch {
+            network.fetchAllUsers(page: page, name: "") { (json) in
+                if let json = json {
+                    for i in 0..<json.count {
+                        if !self.filteredJson.contains(json[i]) {
+                            self.filteredJson.append(json[i])
+                        }
+                    }
+                    if self.limit < self.filteredJson.count {
+                        self.page += 1
+                        self.tableView.reloadData()
+                    }
+                } else {
+                    print("Error")
+                }
+            }
+        }
+    }
 }

@@ -140,7 +140,7 @@ class NetworkService {
     }
     
     
-    func fetchAllUsers(page : Int, completion: @escaping (JSON?) -> ()) {
+    func fetchAllUsers(page: Int, name: String, completion: @escaping (JSON?) -> ()) {
         
         let allProfilesURL = "\(DynamicURL.dynamicURL.rawValue)profiles/all"
         
@@ -150,7 +150,8 @@ class NetworkService {
         ]
         
         let parameters: Parameters = [
-            "page" : String(page)
+            "page" : String(page),
+            "searchParam": name
         ]
         
         manager.request(allProfilesURL, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers).validate().responseJSON { responseJSON in
@@ -277,6 +278,29 @@ class NetworkService {
                     break
                 }
             })
+    }
+    
+    func followUser(completion: @escaping (Bool) -> ()) {
+        
+        let url = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserIdProfile()!)/change-subscription"
+        
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer \(storage.getTokenString()!)"
+        ]
+        
+
+        manager.request(url, method: .post, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+
+            switch responseJSON.result {
+            case .success :
+                print(url)
+                completion(true)
+            case .failure(let error) :
+                completion(false)
+                self.handleError(error: error)
+            }
+        }
     }
     
     func handleError(error: Error) {

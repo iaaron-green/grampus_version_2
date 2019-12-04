@@ -31,6 +31,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @IBOutlet weak var countryLabel: UILabel!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var dislikeButton: UIButton!
+    @IBOutlet weak var followButton: UIButton!
     
     //Achievement cell
     @IBOutlet weak var collectionView: UICollectionView!
@@ -88,6 +89,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     var isAbleToLike = 0
     var mentor: Int?
     var staff = true
+    var isFollowing = 0
     
     var userID: String?
 
@@ -109,7 +111,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             userID = storage.getUserId()!
             fetchUser(userId: storage.getUserId()!)
             addSelfLabelGestures()
-
+            followButton.isHidden = true
         } else {
             skillsAddButton.isHidden = true
             skypeAddButton.isHidden = true
@@ -127,7 +129,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         addSkeleton()
         chartView.delegate = self
         
-                
         SVProgressHUD.setMinimumDismissTimeInterval(2)
         SVProgressHUD.setDefaultStyle(.dark)
         
@@ -532,7 +533,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
             
             if let json = json {
-                //print(json)
+                print(json)
                 self.removeSkeleton()
                 SVProgressHUD.dismiss()
                 self.fullName = json["fullName"] as? String ?? "Full name"
@@ -548,6 +549,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     self.skills = "no skills"
                 }
                 self.isAbleToLike = json["isAbleToLike"] as? Int ?? 1
+                self.isFollowing = json["isFollowing"] as? Int ?? 0
                 
                 self.profilePicture = json["profilePicture"] as? String ?? ""
                 
@@ -714,6 +716,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             dislikeButton.isHidden = true
         }
         
+        if isFollowing == 0 {
+            followButton.setImage(UIImage(named: "follow"), for: .normal)
+        } else {
+            followButton.setImage(UIImage(named: "follower"), for: .normal)
+        }
+        
         
         let savedUser = self.storage.getUserProfile()
         if savedUser != nil && storage.getProfileState() {
@@ -866,6 +874,25 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         self.present(alert, animated: true, completion: nil)
         self.tableView.reloadData()
     }
+    
+    @IBAction func followAction(_ sender: UIButton) {
+        network.followUser { (success) in
+            if success {
+                if self.isFollowing == 0 {
+                    self.isFollowing = 1
+                    SVProgressHUD.showSuccess(withStatus: "Followed!")
+                    self.followButton.setImage(UIImage(named: "follower"), for: .normal)
+                } else {
+                    self.isFollowing = 0
+                    SVProgressHUD.showSuccess(withStatus: "Unfollowed!")
+                    self.followButton.setImage(UIImage(named: "follow"), for: .normal)
+                }
+            } else {
+                SVProgressHUD.showError(withStatus: "Error!")
+            }
+        }
+    }
+    
     
     
     // MARK: - Table view data source
