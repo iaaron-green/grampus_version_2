@@ -27,5 +27,5 @@ public class DTOProfile {
     private String fullName;
     private Boolean isAbleToLike = true;
     private Map<Mark, Object> likesNumber;
-    private List<String> comments;
+    private List<DTOComment> comments;
 }
