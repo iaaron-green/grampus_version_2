@@ -54,7 +54,6 @@ public class RatingServiceImpl implements RatingService {
         if (!dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileLike = profile.getLikes();
             profile.setLikes(++profileLike);
-            profile.setLikeDislikeDate(new Date(System.currentTimeMillis()));
         }
         return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType());
     }
@@ -65,7 +64,6 @@ public class RatingServiceImpl implements RatingService {
         if (dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileDislike = profile.getDislikes();
             profile.setDislikes(++profileDislike);
-            profile.setLikeDislikeDate(new Date(System.currentTimeMillis()));
         }
         return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType());
     }

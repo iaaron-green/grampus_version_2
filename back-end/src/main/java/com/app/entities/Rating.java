@@ -5,8 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -31,5 +34,9 @@ public class Rating {
     @JoinColumn(name = "profile_id")
     @JsonIgnore
     private Profile profileRating;
+
+    private Date createdDate = new Date();
+
+    private String comment;
 
 }

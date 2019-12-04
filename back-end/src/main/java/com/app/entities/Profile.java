@@ -36,7 +36,6 @@ public class Profile {
 
    private String country;
 
-   private Date likeDislikeDate;
 
    @OneToOne
    private User user;
