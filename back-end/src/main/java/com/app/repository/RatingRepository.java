@@ -35,4 +35,9 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             nativeQuery = true)
     String checkLike(Long profileId, String currentUserEmail);
 
+    @Query(
+            value = "SELECT comment FROM ratings WHERE comment is not null and profile_id = ?  ",
+            nativeQuery = true)
+    List<String> findAllCommentByProfileId(Long id);
+
 }

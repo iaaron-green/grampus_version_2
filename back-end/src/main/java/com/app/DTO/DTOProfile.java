@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -26,4 +27,5 @@ public class DTOProfile {
     private String fullName;
     private Boolean isAbleToLike = true;
     private Map<Mark, Object> likesNumber;
+    private List<String> comments;
 }

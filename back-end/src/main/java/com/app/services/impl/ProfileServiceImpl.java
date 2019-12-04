@@ -4,6 +4,7 @@ import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOProfile;
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
+import com.app.entities.Rating;
 import com.app.entities.User;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
@@ -70,6 +71,7 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         Profile profileFromDB = profileRepository.findProfileById(id);
+        List<String> ratingInfo = ratingRepository.findAllCommentByProfileId(id);
         if (profileFromDB != null) {
             User currentUser = userRepository.findByEmail(principal.getName());
             DTOProfile dtoProfile = new DTOProfile();
@@ -86,6 +88,7 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setJobTitle(profileFromDB.getUser().getJobTitle());
             dtoProfile.setFullName(profileFromDB.getUser().getFullName());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
+            dtoProfile.setComments(ratingInfo);
             if (ratingRepository.checkLike(id, currentUser.getEmail()) != null) dtoProfile.setIsAbleToLike(false);
             return dtoProfile;
         } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
