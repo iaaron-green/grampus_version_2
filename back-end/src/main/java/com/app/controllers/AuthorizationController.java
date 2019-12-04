@@ -63,7 +63,6 @@ public class AuthorizationController {
 
       if (!activationService.isUserActivate(loginRequest.getUsername())) {
          throw new CustomException(messageSource.getMessage("activation.code.is.not.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_NOT_ACTIVE);
-         //return (ResponseEntity) ResponseEntity.notFound();
       }
 
       Authentication authentication = authenticationManager.authenticate(

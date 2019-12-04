@@ -185,6 +185,25 @@ public class ProfileServiceImpl implements ProfileService {
         return dtoLikableProfiles;
     }
 
+    @Override
+    public Boolean changeSubscription(Long profileId, Principal principal) throws CustomException {
+        User currentUser = userRepository.findByEmail(principal.getName());
+        Profile profile = profileRepository.findOneById(profileId);
+        if(currentUser.getId().equals(profileId)){
+            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
+        }
+
+        Set<Profile> subscribers = profile.getSubscribers();
+        if(subscribers.contains(currentUser.getProfile())){
+            subscribers.remove(currentUser.getProfile());
+        } else {
+            subscribers.add(currentUser.getProfile());
+
+        }
+        profileRepository.save(profile);
+        return true;
+    }
+
     private Page<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Page<DTOLikableProfile> dtoLikableProfiles) {
 
         dtoLikableProfiles.forEach(profile -> {
@@ -199,4 +218,7 @@ public class ProfileServiceImpl implements ProfileService {
     private Pageable pageRequest(int page, int size) {
         return PageRequest.of(page, size);
     }
+
+
+
 }

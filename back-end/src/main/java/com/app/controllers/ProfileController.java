@@ -82,6 +82,13 @@ public class ProfileController {
         profileService.saveProfilePhoto(file, profileId, principal);
     }
 
+    @PostMapping("/{profileId}/change-subscription")
+    public ResponseEntity<?> changeSubscription(@PathVariable Long profileId, Principal principal) throws CustomException {
+
+
+        return new ResponseEntity<>(profileService.changeSubscription(profileId, principal), HttpStatus.OK);
+    }
+
     @GetMapping("/all")
     public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName,
                                                       Principal principal,
