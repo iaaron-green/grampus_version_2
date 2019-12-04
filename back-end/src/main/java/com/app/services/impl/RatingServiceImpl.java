@@ -2,6 +2,7 @@ package com.app.services.impl;
 
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
+import com.app.configtoken.Constants;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.entities.User;
@@ -11,17 +12,16 @@ import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
+import com.app.services.ActivationService;
 import com.app.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,15 +34,17 @@ public class RatingServiceImpl implements RatingService {
     private UserRepository userRepository;
     private MessageSource messageSource;
     private JavaMailSender emailSender;
+    private ActivationService activationService;
 
     @Autowired
     public RatingServiceImpl(RatingRepository ratingRepository, ProfileRepository profileRepository, UserRepository userRepository,
-                             MessageSource messageSource, JavaMailSender emailSender) {
+                             MessageSource messageSource, JavaMailSender emailSender, ActivationService activationService) {
         this.ratingRepository = ratingRepository;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.messageSource = messageSource;
         this.emailSender = emailSender;
+        this.activationService = activationService;
     }
 
     public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
@@ -107,6 +109,7 @@ public class RatingServiceImpl implements RatingService {
         }
         return achievementData;
     }
+
     @Override
     public List<DTOLikableProfile> addDTOInfoAchievement() {
 
@@ -116,7 +119,7 @@ public class RatingServiceImpl implements RatingService {
         Set<Long> dtoUserShortInfoId = userRepository.getAllId();
         List<DTOLikableProfile> dtoProfiles = userRepository.findProfileByRatingType(marks, dtoUserShortInfoId);
 
-        if (!CollectionUtils.isEmpty(dtoProfiles)){
+        if (!CollectionUtils.isEmpty(dtoProfiles)) {
             dtoProfiles.stream().sorted(Comparator.comparing(DTOLikableProfile::getId)).collect(Collectors.toList());
         }
 
@@ -145,7 +148,7 @@ public class RatingServiceImpl implements RatingService {
 
     private Boolean updateRatingAndProfile(Profile profile, String userEmail, Mark ratingType) throws MessagingException {
         User currentUser = userRepository.findByEmail(userEmail);
-        if (!currentUser.getId().equals(profile.getId()) &&  ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
+        if (!currentUser.getId().equals(profile.getId()) && ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
             Rating updatedRating = new Rating();
             updatedRating.setProfileRating(profile);
             updatedRating.setRatingSourceUsername(currentUser.getEmail());
@@ -156,22 +159,8 @@ public class RatingServiceImpl implements RatingService {
                 Long likes = ratingRepository.countRatingType(profile.getId(), ratingType.toString());
                 if (likes % 5 == 0) {
 
-                    MimeMessage message = emailSender.createMimeMessage();
-                    MimeMessageHelper helper = null;
-                    try {
-                        helper = new MimeMessageHelper(message, true, "utf-8");
-                    } catch (MessagingException e) {
-                        e.printStackTrace();
-                    }
-                    String htmlMsg = "<h2><center>Congratulation!</center></h2>" +
-                            "<p><center>You got new achievement " + "\"" +ratingType.toString() + "\"" + "<center></p>" +
-                            "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
-
-                    message.setContent(htmlMsg, "text/html");
-                    helper.setTo(profile.getUser().getEmail());
-                    helper.setSubject("New Achievement(GRAMPUS)");
-                    emailSender.send(message);
-
+                    activationService.sendMail(userEmail, Constants.ACHIEVE_NOTIFIC_MAIL_SUBJECT, Constants.ACHIEVE_NOTIFIC_MAIL_ARTICLE,
+                            Constants.ACHIEVE_NOTIFIC_MAIL_MESSAGE + " \"" + ratingType + " \"");
                 }
             }
             return true;

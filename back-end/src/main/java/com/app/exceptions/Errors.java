@@ -14,6 +14,7 @@ public class Errors {
 
     public static final int FTP_CONNECTION_ERROR = getError(CRITICAL, COMMON, 0); // 40500
     public static final int AUTHORIZATION_ERROR = getError(HIGH, COMMON, 0); // 30500
+    public static final int USER_NOT_ACTIVATED = getError(MIDDLE, USER, 1); // 20501
     public static final int USER_NOT_EXIST = getError(MIDDLE, USER, 0); // 20600
     public static final int USER_ALREADY_EXIST = getError(MIDDLE, USER, 1); // 20601
     public static final int USER_ALREADY_EXIST_ENTER_ACTIVATION_CODE = getError(MIDDLE, USER, 1); // 20601

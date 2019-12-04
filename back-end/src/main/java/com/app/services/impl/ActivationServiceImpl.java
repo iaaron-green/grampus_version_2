@@ -1,20 +1,19 @@
 package com.app.services.impl;
 
-import com.app.DTO.DTONewUser;
+import com.app.configtoken.Constants;
 import com.app.entities.ActivationCode;
 import com.app.entities.Profile;
 import com.app.entities.User;
+import com.app.enums.Mark;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
 import com.app.repository.ActivationRepository;
 import com.app.repository.ProfileRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
-import com.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
-import java.util.UUID;
 
 @Service
 public class ActivationServiceImpl implements ActivationService {
@@ -31,18 +29,16 @@ public class ActivationServiceImpl implements ActivationService {
     private ActivationRepository activationRepository;
     private ProfileRepository profileRepository;
     private JavaMailSender emailSender;
-    private UserService userService;
     private MessageSource messageSource;
 
     @Autowired
     public ActivationServiceImpl(UserRepository userRepository, ActivationRepository activationRepository,
                                  ProfileRepository profileRepository, JavaMailSender emailSender,
-                                 UserService userService, MessageSource messageSource,JmsTemplate jmsTemplate) {
+                                 MessageSource messageSource) {
         this.userRepository = userRepository;
         this.activationRepository = activationRepository;
         this.profileRepository = profileRepository;
         this.emailSender = emailSender;
-        this.userService = userService;
         this.messageSource = messageSource;
     }
 
@@ -68,35 +64,18 @@ public class ActivationServiceImpl implements ActivationService {
             return true;
         }
         else {
-            assert user != null;
-            MimeMessage message = emailSender.createMimeMessage();
-            MimeMessageHelper helper = null;
-            try {
-                helper = new MimeMessageHelper(message, true, "utf-8");
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
-            message.setContent(generateHtml(user.getId()), "text/html");
-            helper.setTo(user.getEmail());
-            helper.setSubject("Profile registration(GRAMPUS)");
-            this.emailSender.send(message);
+            if (user == null) throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
 
-            throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
+            sendMail(user.getEmail(), Constants.REG_MAIL_SUBJECT, Constants.REG_MAIL_ARTICLE, Constants.REG_MAIL_MESSAGE + user.getId());
+            throw new CustomException(messageSource.getMessage("user.not.activated", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_ACTIVATED);
         }
     }
 
-    @Override
-    public String generateHtml(Long id) {
-        return "<h3>Grampus</h3>"
-                + "<img src='https://i.ibb.co/yNsKQ53/image.png'>" +
-                "<p>You're profile is register! Thank you.<p>" +
-                "To activate you're profile visit next link: http://localhost:8081/api/users/activate/" + id;
-    }
+    public void sendMail(String userEmail, String subject, String article, String messageText) throws  MessagingException {
 
-    @Override
-    public DTONewUser sendMail(DTONewUser user) throws CustomException, MessagingException {
-
-        DTONewUser newUser = userService.saveUser(user);
+        String content = "<h3>" + article + "</h3>" +
+                "<p style='margin-bottom:15px'>" + messageText + "</p>" +
+                "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
 
         MimeMessage message = emailSender.createMimeMessage();
 
@@ -107,16 +86,12 @@ public class ActivationServiceImpl implements ActivationService {
             e.printStackTrace();
         }
 
-        activationRepository.save(new ActivationCode(user.getUserId(), String.valueOf(UUID.randomUUID())));
+        message.setContent(content, "text/html");
 
-        message.setContent(generateHtml(newUser.getUserId()), "text/html");
+        helper.setTo(userEmail);
 
-        helper.setTo(user.getEmail());
-
-        helper.setSubject("Profile registration(GRAMPUS)");
+        helper.setSubject(subject);
 
         emailSender.send(message);
-
-        return newUser;
     }
 }
