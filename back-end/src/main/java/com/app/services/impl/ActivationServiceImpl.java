@@ -65,8 +65,6 @@ public class ActivationServiceImpl implements ActivationService {
         User user = userRepository.findByEmail(login);
 
         if (user != null && activationRepository.findByUserId(user.getId()).isActivate()) {
-            User newUser = userRepository.findByEmail(user.getUsername());
-            Profile newProfile = profileRepository.save(new Profile(newUser));
             return true;
         }
         else {
@@ -117,7 +115,7 @@ public class ActivationServiceImpl implements ActivationService {
 
         helper.setSubject("Profile registration(GRAMPUS)");
 
-        this.emailSender.send(message);
+        emailSender.send(message);
 
         return newUser;
     }

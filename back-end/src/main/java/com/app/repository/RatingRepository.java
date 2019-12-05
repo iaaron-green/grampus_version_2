@@ -21,8 +21,9 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             nativeQuery = true)
     List<Rating> findAllRatingById();
 
-    @Query("SELECT COUNT(r.ratingType) FROM Rating r WHERE r.id = :id AND r.ratingType = :ratingType")
-    Long countRatingType(@Param("id")Long id, @Param("ratingType") Mark ratingType);
+    @Query(value = "SELECT COUNT(rating_type) FROM " + Constants.DATABASE + ".ratings WHERE profile_id = ? AND rating_type = ?",
+            nativeQuery = true)
+    Long countRatingType(Long id, String ratingType);
 
 
     @Query("SELECT NEW com.app.DTO.DTOLikableProfile(r.profileRating.user.id, r.profileRating.user.fullName, r.profileRating.user.jobTitle, r.profileRating.profilePicture) " +
@@ -33,5 +34,10 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             value = "SELECT rating_type FROM " + Constants.DATABASE + ".ratings WHERE profile_id = ? AND rating_source_username = ?",
             nativeQuery = true)
     String checkLike(Long profileId, String currentUserEmail);
+
+    @Query(
+            value = "SELECT comment, rating_source_username FROM ratings WHERE comment is not null and profile_id = ?  ",
+            nativeQuery = true)
+    List<String> findAllCommentByProfileId(Long id);
 
 }

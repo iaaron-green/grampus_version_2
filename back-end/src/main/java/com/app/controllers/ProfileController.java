@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -83,15 +82,26 @@ public class ProfileController {
         profileService.saveProfilePhoto(file, profileId, principal);
     }
 
+    @PostMapping("/{profileId}/change-subscription")
+    public ResponseEntity<?> changeSubscription(@PathVariable Long profileId, Principal principal) throws CustomException {
+
+
+        return new ResponseEntity<>(profileService.changeSubscription(profileId, principal), HttpStatus.OK);
+    }
+
     @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName,
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "searchParam", defaultValue = "") String searchParam,
                                                       Principal principal,
                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                      @RequestParam(value = "size", defaultValue = "5") Integer size) {
-        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName(), page, size).getContent().stream()
-                .filter(DTOLikableProfile ->
-                        Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
-                profileService.getAllProfilesForLike(principal.getName(), page, size).getContent();
+                                                      @RequestParam(value = "size", defaultValue = "10") Integer size) {
+
+
+//        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName(), page, size).getContent().stream()
+//                .filter(DTOLikableProfile ->
+//                        Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
+//                profileService.getAllProfilesForLike(principal.getName(), page, size).getContent();
+
+       return profileService.getAllProfilesForLike(principal, searchParam, page, size);
     }
 
     @GetMapping("/achieve")
