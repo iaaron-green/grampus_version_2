@@ -7,6 +7,7 @@ import com.app.entities.User;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
 import com.app.services.ActivationService;
+import com.app.services.UserService;
 import com.app.validators.JWTLoginSuccessResponse;
 import com.app.validators.LoginRequest;
 import com.app.validators.UserValidator;
@@ -39,11 +40,12 @@ public class AuthorizationController {
    private AuthenticationManager authenticationManager;
    private ActivationService activationService;
    private MessageSource messageSource;
+   private UserService userService;
 
    @Autowired
    public AuthorizationController(ValidationErrorService validationErrorService,
                                   ActivationService activationService,
-                                  UserValidator userValidator,
+                                  UserValidator userValidator, UserService userService,
                                   JwtTokenProvider tokenProvider,
                                   AuthenticationManager authenticationManager,
                                   MessageSource messageSource) {
@@ -53,6 +55,7 @@ public class AuthorizationController {
       this.tokenProvider = tokenProvider;
       this.authenticationManager = authenticationManager;
       this.messageSource = messageSource;
+      this.userService = userService;
    }
 
    @PostMapping("/login")
@@ -84,9 +87,7 @@ public class AuthorizationController {
 
       ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
       if(errorMap != null) return errorMap;
-      DTONewUser newUser = activationService.sendMail(user);
-
-      return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+      return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
    }
 
    @GetMapping("/activate/{id}")

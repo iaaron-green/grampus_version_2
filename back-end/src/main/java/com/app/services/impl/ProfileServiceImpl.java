@@ -87,6 +87,7 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setFullName(profileFromDB.getUser().getFullName());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
             if (ratingRepository.checkLike(id, currentUser.getEmail()) != null) dtoProfile.setIsAbleToLike(false);
+            if (profileFromDB.getSubscribers().contains(currentUser.getProfile())) dtoProfile.setIsFollowing(true);
             return dtoProfile;
         } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
@@ -206,7 +207,6 @@ public class ProfileServiceImpl implements ProfileService {
             subscribers.remove(currentUser.getProfile());
         } else {
             subscribers.add(currentUser.getProfile());
-
         }
         profileRepository.save(profile);
         return true;
