@@ -31,27 +31,6 @@ final class ImageService {
         }
     }
     
-//    func downloadImage(withURL url: URL, completion: @escaping (_ image: UIImage?) -> ()) {
-//
-//        let dataTask = URLSession.shared.dataTask(with: url) { (data, response, error) in
-//
-//            var downloadedImage: UIImage?
-//            if let data = data {
-//                downloadedImage = UIImage(data: data)
-//            }
-//
-//            if downloadedImage != nil {
-//                self.cache.setObject(downloadedImage!, forKey: url.absoluteString as NSString)
-//            }
-//
-//            DispatchQueue.main.async {
-//                completion(downloadedImage)
-//            }
-//        }
-//        dataTask.resume()
-//    }
-    
-    
     func getImage(withURL urlString: String, completion: @escaping (_ image: UIImage?) -> ()) {
         guard let url = URL(string: urlString) else {completion(nil)
             return

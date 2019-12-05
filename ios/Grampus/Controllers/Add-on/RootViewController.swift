@@ -103,4 +103,14 @@ class RootViewController: UIViewController, UITextFieldDelegate {
         }
         return true
     }
+    
+    func newsTitleValifstion(title: UITextField) -> Bool {
+        if let title = title.text {
+            if title.trimmingCharacters(in: .whitespaces).isEmpty {
+                SVProgressHUD.showError(withStatus: "Please enter title!")
+                return false
+            }
+        }
+        return true
+    }
 }

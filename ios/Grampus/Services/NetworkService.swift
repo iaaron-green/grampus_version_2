@@ -303,6 +303,76 @@ class NetworkService {
         }
     }
     
+    func uploadNews(selectedImage: UIImage?, topic: String, body: String, completion: @escaping (Bool) -> ()){
+            
+            let userID = storage.getUserId()!
+            
+            let imageURL = "\(DynamicURL.dynamicURL.rawValue)profiles/news"
+            
+            let headers : HTTPHeaders = [
+                "Content-Type": "application/json; charset=utf-8",
+                "Authorization": "Bearer \(storage.getTokenString()!)"
+            ]
+            
+            let parameters: Parameters = [
+            "title" : topic,
+            "content" : body,
+            "userID" : userID
+            ]
+            
+            manager.upload(multipartFormData: { (multipart: MultipartFormData) in
+                if selectedImage != nil {
+                    if let imageData = selectedImage!.jpegData(compressionQuality: 0.8) {
+                        multipart.append(imageData, withName: "file", fileName: "file.png", mimeType: "image/png")
+                    }
+                }
+                for (key,value) in parameters {
+                     multipart.append((value as! String).data(using: .utf8)!, withName: key)
+                }
+                
+            },usingThreshold: UInt64.init(),
+               to: imageURL,
+               method: .post,
+               headers: headers,
+               encodingCompletion: { (result) in
+                switch result {
+                case .success(let upload, _, _):
+                    upload.uploadProgress(closure: { (progress) in
+                    })
+                    completion(true)
+                    break
+                case .failure(let error):
+                    self.handleError(error: error)
+                    completion(false)
+                        break
+                    }
+                })
+        }
+    
+    func fetchNews(completion: @escaping (JSON?) -> ()) {
+        
+        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)profiles/news"
+        
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer \(storage.getTokenString()!)"
+        ]
+        
+        manager.request(newsURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+            switch responseJSON.result {
+            case .success :
+                
+                if let result = responseJSON.result.value {
+                    completion(JSON(result))
+                }
+                
+            case .failure(let error) :
+                self.handleError(error: error)
+                completion(nil)
+            }
+        }
+    }
+    
     func handleError(error: Error) {
         if let error = error as? AFError {
             switch error {

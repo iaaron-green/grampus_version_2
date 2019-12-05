@@ -96,7 +96,6 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
         dismiss(animated: true, completion: nil)
         dislikeLottie.stop()
         delegate?.removeBlurredBackgroundView()
-        //SVProgressHUD.showSuccess(withStatus: "Sucess!")
         
         
     }
