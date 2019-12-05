@@ -45,26 +45,23 @@ public class RatingServiceImpl implements RatingService {
         this.emailSender = emailSender;
     }
 
-    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal, Rating rating) throws CustomException, MessagingException {
+    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
         if (!dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileLike = profile.getLikes();
             profile.setLikes(++profileLike);
-            String comment = dtoLikeDislike.getComments();
-            rating.setComment(comment);
         }
         return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
 
-    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal, Rating rating) throws CustomException, MessagingException {
+    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
         if (dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileDislike = profile.getDislikes();
             profile.setDislikes(++profileDislike);
             String comment = dtoLikeDislike.getComments();
-            rating.setComment(comment);
         }
         return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
