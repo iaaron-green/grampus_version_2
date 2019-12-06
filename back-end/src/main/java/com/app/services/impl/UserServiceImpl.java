@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public List<DTOLikableProfile> findAllByJobTitle(String jobTitle, int page, int size) {
         List<DTOLikableProfile> dtoUser = new ArrayList<>();
         Page<User> userData = userRepository.findAllUsersByJobTitle(jobTitle, pageRequest(page, size));

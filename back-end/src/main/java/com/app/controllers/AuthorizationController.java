@@ -3,7 +3,6 @@ package com.app.controllers;
 
 import com.app.DTO.DTONewUser;
 import com.app.configtoken.JwtTokenProvider;
-import com.app.entities.User;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
 import com.app.services.ActivationService;
@@ -16,6 +15,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,7 +63,6 @@ public class AuthorizationController {
 
       if (!activationService.isUserActivate(loginRequest.getUsername())) {
          throw new CustomException(messageSource.getMessage("activation.code.is.not.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_NOT_ACTIVE);
-         //return (ResponseEntity) ResponseEntity.notFound();
       }
 
       Authentication authentication = authenticationManager.authenticate(

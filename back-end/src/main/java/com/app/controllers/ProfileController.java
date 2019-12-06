@@ -2,10 +2,14 @@ package com.app.controllers;
 
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
+import com.app.DTO.DTONewNews;
+import com.app.entities.News;
 import com.app.DTO.DTOProfile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
 import com.app.exceptions.CustomException;
+import com.app.repository.NewsRepository;
+import com.app.services.NewsService;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
 import com.app.services.UserService;
@@ -19,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -35,13 +38,16 @@ public class ProfileController {
     private ValidationErrorService validationErrorService;
     private RatingService ratingService;
     private UserService userService;
+    private NewsService newsService;
 
     @Autowired
-    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService, RatingService ratingService, UserService userService) {
+    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService,
+                             RatingService ratingService, UserService userService, NewsService newsService) {
         this.profileService = profileService;
         this.validationErrorService = validationErrorService;
         this.ratingService = ratingService;
         this.userService = userService;
+        this.newsService = newsService;
     }
 
     @GetMapping("/{profileId}")
@@ -117,9 +123,23 @@ public class ProfileController {
         return userService.findAllByJobTitle(jobTitle, page, size);
     }
 
-
     @GetMapping("/catalogueDTO")
     public List<DTOLikableProfile> getAllDTOInfo() {
         return ratingService.addDTOInfoAchievement();
+    }
+
+    @GetMapping("/news")
+    public List<DTONewNews> getAllDTONews(Principal principal) throws CustomException {
+
+        return newsService.getAllNews(principal);
+    }
+
+    @PostMapping("/news")
+    public void saveNews(@RequestParam("title") String title,
+                         @RequestParam("content") String content,
+                         @RequestParam(value = "file", required = false) MultipartFile file,
+                         Principal principal
+                        )  throws CustomException {
+        newsService.saveDTONews(title,content, file, principal);
     }
 }
