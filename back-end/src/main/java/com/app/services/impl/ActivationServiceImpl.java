@@ -78,31 +78,21 @@ public class ActivationServiceImpl implements ActivationService {
 
     public void sendMail(String userEmail, String subject, String article, String messageText) throws MessagingException {
 
-        Thread sendingMail = new Thread(() -> {
-
-            String content = "<h3>" + article + "</h3>" +
-                    "<p style='margin-bottom:15px'>" + messageText + "</p>" +
-                    "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
-
-            MimeMessage message = emailSender.createMimeMessage();
-
-            MimeMessageHelper helper = null;
+        new Thread(() -> {
             try {
-                helper = new MimeMessageHelper(message, true, "utf-8");
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
+                String content = "<h3>" + article + "</h3>" +
+                        "<p style='margin-bottom:15px'>" + messageText + "</p>" +
+                        "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
 
-            try {
+                MimeMessage message = emailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
                 message.setContent(content, "text/html");
                 helper.setTo(userEmail);
                 helper.setSubject(subject);
+                emailSender.send(message);
             } catch (MessagingException e) {
                 e.printStackTrace();
             }
-            emailSender.send(message);
-        });
-
-        sendingMail.start();
+        }).start();
     }
 }

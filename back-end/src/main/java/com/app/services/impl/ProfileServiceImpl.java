@@ -6,6 +6,7 @@ import com.app.configtoken.Constants;
 import com.app.entities.Profile;
 import com.app.entities.User;
 import com.app.enums.Mark;
+import com.app.enums.RatingSortParam;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
@@ -22,11 +23,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -179,26 +181,35 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.findAll();
     }
 
-    public List<DTOLikableProfile> getAllProfilesForLike(String userName, String searchParam, Integer page, Integer size, Boolean followersParam) throws CustomException {
+    @Override
+    public List<DTOLikableProfile> getAllProfilesForLike(String userName, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException {
 
         User user = userRepository.findByEmail(userName);
         if (user == null) {
             throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
         }
-
         List<DTOLikableProfile> resultList;
         Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
         Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(user.getId());
 
-        if (followersParam) {
-            Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions = ratingRepository.findSubscriptionsByParam(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
+        if (!StringUtils.isEmpty(sortParam)) {
+
+            Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
+            if (StringUtils.isEmpty(ratingType)) dtoLikableProfilesWithSubscriptions = ratingRepository.findSubscriptionsByParamWithoutDislike(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
+             else dtoLikableProfilesWithSubscriptions = ratingRepository.findSubscriptionsByParamAndRatingType(subscriptions, ratingType, searchParam, pageRequest(page, size));
+
             resultList = fillDTOLikableProfile(profilesIdWithLike, null, dtoLikableProfilesWithSubscriptions);
         } else {
-            Page<DTOLikableProfile> dtoLikableProfiles = ratingRepository.findAllByParam(Mark.DISLIKE, searchParam, pageRequest(page, size));
+
+            Page<DTOLikableProfile> dtoLikableProfiles;
+            if (StringUtils.isEmpty(ratingType)) dtoLikableProfiles = ratingRepository.findAllByParamWithoutDislike(Mark.DISLIKE, searchParam, pageRequest(page, size));
+            else  dtoLikableProfiles = ratingRepository.findAllByParamAndRatingType(ratingType, searchParam, pageRequest(page, size));
+
             resultList = fillDTOLikableProfile(profilesIdWithLike, subscriptions, dtoLikableProfiles);
         }
         return resultList.stream().sorted(Comparator.comparingLong(DTOLikableProfile::getTotalLikes).reversed()).collect(Collectors.toList());
     }
+
 
     @Override
     public Boolean changeSubscription(Long profileId, Principal principal) throws CustomException {

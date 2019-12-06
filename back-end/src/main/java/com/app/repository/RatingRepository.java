@@ -45,13 +45,22 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     Long countProfileDislikes(@Param("id")Long id, @Param("ratingType") Mark ratingType);
 
     @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture, count(r.ratingType)) " +
-            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id WHERE r.ratingType NOT LIKE :ratingType OR r.ratingType IS NULL AND u.fullName LIKE :searchParam% OR u.jobTitle LIKE :searchParam%" +
-            " GROUP BY u.id")
-    Page<DTOLikableProfile> findAllByParam(@Param("ratingType") Mark ratingType, @Param("searchParam") String searchParam, Pageable p);
-
-
-    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture, count(r.ratingType)) " +
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id AND r.profileRating.user.id IN :userIds WHERE r.ratingType NOT LIKE :ratingType OR r.ratingType IS NULL AND u.fullName LIKE :searchParam% OR u.jobTitle LIKE :searchParam%" +
             " GROUP BY u.id")
-    Page<DTOLikableProfile> findSubscriptionsByParam(@Param("userIds") Set<Long> userIds, @Param("ratingType") Mark ratingType, @Param("searchParam") String searchParam, Pageable p);
+    Page<DTOLikableProfile> findSubscriptionsByParamWithoutDislike(@Param("userIds") Set<Long> userIds, @Param("ratingType") Mark ratingType, @Param("searchParam") String searchParam, Pageable p);
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture, count(r.ratingType)) " +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id AND r.profileRating.user.id IN :userIds WHERE r.ratingType LIKE :ratingType AND u.fullName LIKE :searchParam% OR u.jobTitle LIKE :searchParam%" +
+            " GROUP BY u.id")
+    Page<DTOLikableProfile> findSubscriptionsByParamAndRatingType(@Param("userIds") Set<Long> userIds, @Param("ratingType") Mark ratingType, @Param("searchParam") String searchParam, Pageable p);
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture, count(r.ratingType)) " +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id WHERE r.ratingType NOT LIKE :ratingType OR r.ratingType IS NULL AND u.fullName LIKE :searchParam% OR u.jobTitle LIKE :searchParam%" +
+            " GROUP BY u.id")
+    Page<DTOLikableProfile> findAllByParamWithoutDislike(@Param("ratingType") Mark ratingType, @Param("searchParam") String searchParam, Pageable p);
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture, count(r.ratingType)) " +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id WHERE r.ratingType LIKE :ratingType AND u.fullName LIKE :searchParam% OR u.jobTitle LIKE :searchParam%" +
+            " GROUP BY u.id")
+    Page<DTOLikableProfile> findAllByParamAndRatingType(@Param("ratingType") Mark ratingType, @Param("searchParam") String searchParam, Pageable p);
 }

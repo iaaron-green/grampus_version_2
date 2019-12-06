@@ -5,6 +5,7 @@ import com.app.DTO.DTOLikeDislike;
 import com.app.DTO.DTOProfile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
+import com.app.enums.RatingSortParam;
 import com.app.exceptions.CustomException;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
@@ -46,23 +47,14 @@ public class ProfileController {
         return new ResponseEntity<>(profileService.getDTOProfileById(profileId, principal), HttpStatus.OK);
     }
 
-    @PostMapping("/{profileId}/like")
-    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
-                                              BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
 
-        ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
-        if (errorMap != null) return errorMap;
-
-        return new ResponseEntity<>(ratingService.updateRatingAndProfile(dtoLikeDislike, profileId, principal), HttpStatus.OK);
-    }
-
-    @PostMapping("/{profileId}/dislike")
+    @PostMapping("/{profileId}/addRating")
     public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
                                                  BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(ratingService.updateRatingAndProfile(dtoLikeDislike, profileId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.addRatingType(dtoLikeDislike, profileId, principal), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -91,9 +83,10 @@ public class ProfileController {
     public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName,
                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                       @RequestParam(value = "size", defaultValue = "10") Integer size,
-                                                      @RequestParam(value = "followersParam", defaultValue = "false") Boolean followersParam,
+                                                      @RequestParam(value = "sortParam", defaultValue = "") RatingSortParam sortParam,
+                                                      @RequestParam(value = "ratingType", defaultValue = "") Mark ratingType,
                                                       Principal principal) throws CustomException {
-        return  profileService.getAllProfilesForLike(principal.getName(), fullName, page, size, followersParam);
+        return  profileService.getAllProfilesForLike(principal.getName(), fullName, page, size, sortParam, ratingType);
     }
 
     @GetMapping("/achieve")

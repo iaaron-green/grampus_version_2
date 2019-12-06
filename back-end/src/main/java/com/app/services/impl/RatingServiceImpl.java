@@ -123,12 +123,11 @@ public class RatingServiceImpl implements RatingService {
         } else return profile;
     }
 
-    public Boolean updateRatingAndProfile(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws MessagingException, CustomException {
+    public Boolean addRatingType(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws MessagingException, CustomException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
         User currentUser = userRepository.findByEmail(principal.getName());
-        if (!currentUser.getId().equals(profile.getId()) && ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null
-                && Arrays.asList(Mark.values()).contains(dtoLikeDislike.getRatingType())) {
+        if (!currentUser.getId().equals(profile.getId()) && ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
 
             Rating dbRating = ratingRepository.countRatingType(profileId);
             if (dbRating == null) {

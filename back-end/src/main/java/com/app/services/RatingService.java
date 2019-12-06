@@ -19,7 +19,7 @@ public interface RatingService {
 
     List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException;
 
-    Boolean updateRatingAndProfile(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws MessagingException, CustomException;
+    Boolean addRatingType(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws MessagingException, CustomException;
 
     Map<Mark, Object> getAndCountLikesByProfileId(Long id) throws CustomException;
 
