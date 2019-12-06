@@ -13,18 +13,15 @@ import java.util.Map;
 
 public interface RatingService {
 
-    Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException;
-
     List<Rating> getAllAchieves() throws CustomException;
 
     Map<Long, Map<Mark, Long>> addInfoAchievement() throws CustomException;
 
     List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException;
 
-    Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException;
+    Boolean addRatingType(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws MessagingException, CustomException;
 
     Map<Mark, Object> getAndCountLikesByProfileId(Long id) throws CustomException;
 
-    //    List<DTOLikableProfile> findAllByAchievement(Mark mark);
     List<DTOLikableProfile> addDTOInfoAchievement();
 }

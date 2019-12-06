@@ -17,7 +17,6 @@ import com.app.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -33,39 +32,16 @@ public class RatingServiceImpl implements RatingService {
     private ProfileRepository profileRepository;
     private UserRepository userRepository;
     private MessageSource messageSource;
-    private JavaMailSender emailSender;
     private ActivationService activationService;
 
     @Autowired
     public RatingServiceImpl(RatingRepository ratingRepository, ProfileRepository profileRepository, UserRepository userRepository,
-                             MessageSource messageSource, JavaMailSender emailSender, ActivationService activationService) {
+                             MessageSource messageSource, ActivationService activationService) {
         this.ratingRepository = ratingRepository;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.messageSource = messageSource;
-        this.emailSender = emailSender;
         this.activationService = activationService;
-    }
-
-    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
-
-        Profile profile = checkProfile(profileId, dtoLikeDislike);
-        if (!dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
-            Long profileLike = profile.getLikes();
-            profile.setLikes(++profileLike);
-        }
-        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
-    }
-
-    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
-
-        Profile profile = checkProfile(profileId, dtoLikeDislike);
-        if (dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
-            Long profileDislike = profile.getDislikes();
-            profile.setDislikes(++profileDislike);
-            String comment = dtoLikeDislike.getComments();
-        }
-        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
 
     @Override
@@ -147,22 +123,27 @@ public class RatingServiceImpl implements RatingService {
         } else return profile;
     }
 
-    private Boolean updateRatingAndProfile(Profile profile, String userEmail, Mark ratingType, String dtoLikeDislike) throws MessagingException {
-        User currentUser = userRepository.findByEmail(userEmail);
+    public Boolean addRatingType(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws MessagingException, CustomException {
+
+        Profile profile = checkProfile(profileId, dtoLikeDislike);
+        User currentUser = userRepository.findByEmail(principal.getName());
         if (!currentUser.getId().equals(profile.getId()) && ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
-            Rating updatedRating = new Rating();
-            updatedRating.setProfileRating(profile);
-            updatedRating.setRatingSourceUsername(currentUser.getEmail());
-            updatedRating.setRatingType(ratingType);
-            updatedRating.setComment(dtoLikeDislike);
-            ratingRepository.save(updatedRating);
 
-            if (!ratingType.equals(Mark.DISLIKE)) {
-                Long likes = ratingRepository.countRatingType(profile.getId(), ratingType.toString());
+            Rating dbRating = ratingRepository.countRatingType(profileId);
+            if (dbRating == null) {
+                dbRating = new Rating();
+            }
+            dbRating.setProfileRating(profile);
+            dbRating.setRatingSourceUsername(currentUser.getEmail());
+            dbRating.setRatingType(dtoLikeDislike.getRatingType());
+
+            ratingRepository.save(dbRating);
+
+            if (!dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
+                Long likes = ratingRepository.countRatingType(profile.getId(), dtoLikeDislike.getRatingType().toString());
                 if (likes % 5 == 0) {
-
-                    activationService.sendMail(userEmail, Constants.ACHIEVE_NOTIFIC_MAIL_SUBJECT, Constants.ACHIEVE_NOTIFIC_MAIL_ARTICLE,
-                            Constants.ACHIEVE_NOTIFIC_MAIL_MESSAGE + " \"" + ratingType + " \"");
+                    activationService.sendMail(currentUser.getEmail(), Constants.ACHIEVE_NOTIFIC_MAIL_SUBJECT, Constants.ACHIEVE_NOTIFIC_MAIL_ARTICLE,
+                            Constants.ACHIEVE_NOTIFIC_MAIL_MESSAGE + " \"" + dtoLikeDislike.getRatingType() + " \"");
                 }
             }
             return true;

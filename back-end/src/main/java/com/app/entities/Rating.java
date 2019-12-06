@@ -25,6 +25,7 @@ public class Rating {
 
     private String ratingSourceUsername;
 
+
     @Enumerated(EnumType.STRING)
     private Mark ratingType;
 

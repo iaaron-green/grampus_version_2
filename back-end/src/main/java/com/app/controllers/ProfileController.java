@@ -5,6 +5,7 @@ import com.app.DTO.DTOLikeDislike;
 import com.app.DTO.DTOProfile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
+import com.app.enums.RatingSortParam;
 import com.app.exceptions.CustomException;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
@@ -22,8 +23,6 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -48,23 +47,14 @@ public class ProfileController {
         return new ResponseEntity<>(profileService.getDTOProfileById(profileId, principal), HttpStatus.OK);
     }
 
-    @PostMapping("/{profileId}/like")
-    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
-                                              BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
 
-        ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
-        if (errorMap != null) return errorMap;
-
-        return new ResponseEntity<>(ratingService.addLike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
-    }
-
-    @PostMapping("/{profileId}/dislike")
+    @PostMapping("/{profileId}/addRating")
     public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
                                                  BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(ratingService.addDislike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.addRatingType(dtoLikeDislike, profileId, principal), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -82,7 +72,7 @@ public class ProfileController {
         profileService.saveProfilePhoto(file, profileId, principal);
     }
 
-    @PostMapping("/{profileId}/change-subscription")
+    @GetMapping("/{profileId}/change-subscription")
     public ResponseEntity<?> changeSubscription(@PathVariable Long profileId, Principal principal) throws CustomException {
 
 
@@ -90,18 +80,13 @@ public class ProfileController {
     }
 
     @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "searchParam", defaultValue = "") String searchParam,
-                                                      Principal principal,
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName,
                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                      @RequestParam(value = "size", defaultValue = "10") Integer size) {
-
-
-//        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName(), page, size).getContent().stream()
-//                .filter(DTOLikableProfile ->
-//                        Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
-//                profileService.getAllProfilesForLike(principal.getName(), page, size).getContent();
-
-       return profileService.getAllProfilesForLike(principal, searchParam, page, size);
+                                                      @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                      @RequestParam(value = "sortParam", defaultValue = "") RatingSortParam sortParam,
+                                                      @RequestParam(value = "ratingType", defaultValue = "") Mark ratingType,
+                                                      Principal principal) throws CustomException {
+        return  profileService.getAllProfilesForLike(principal.getName(), fullName, page, size, sortParam, ratingType);
     }
 
     @GetMapping("/achieve")
