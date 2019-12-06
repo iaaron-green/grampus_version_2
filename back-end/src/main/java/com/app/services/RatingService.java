@@ -23,6 +23,5 @@ public interface RatingService {
 
     Map<Mark, Object> getAndCountLikesByProfileId(Long id) throws CustomException;
 
-    //    List<DTOLikableProfile> findAllByAchievement(Mark mark);
     List<DTOLikableProfile> addDTOInfoAchievement();
 }

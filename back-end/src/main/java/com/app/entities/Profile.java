@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +36,7 @@ public class Profile {
    private String skills;
 
    private String country;
+
 
    @OneToOne
    private User user;
