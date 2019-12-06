@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Calendar;
 
 @Getter
 @Setter
@@ -31,5 +32,9 @@ public class Rating {
     @JoinColumn(name = "profile_id")
     @JsonIgnore
     private Profile profileRating;
+
+    private Calendar created_date = Calendar.getInstance();
+
+    private String comment;
 
 }

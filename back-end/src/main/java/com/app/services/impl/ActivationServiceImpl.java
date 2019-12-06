@@ -115,7 +115,7 @@ public class ActivationServiceImpl implements ActivationService {
 
         helper.setSubject("Profile registration(GRAMPUS)");
 
-        this.emailSender.send(message);
+        emailSender.send(message);
 
         return newUser;
     }

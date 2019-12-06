@@ -15,7 +15,6 @@ import com.app.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -35,37 +34,39 @@ public class RatingServiceImpl implements RatingService {
     private UserRepository userRepository;
     private MessageSource messageSource;
     private JavaMailSender emailSender;
-    private JmsTemplate jmsTemplate;
 
     @Autowired
     public RatingServiceImpl(RatingRepository ratingRepository, ProfileRepository profileRepository, UserRepository userRepository,
-                             MessageSource messageSource, JavaMailSender emailSender, JmsTemplate jmsTemplate) {
+                             MessageSource messageSource, JavaMailSender emailSender) {
         this.ratingRepository = ratingRepository;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.messageSource = messageSource;
         this.emailSender = emailSender;
-        this.jmsTemplate = jmsTemplate;
     }
 
-    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
+    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal, Rating rating) throws CustomException, MessagingException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
         if (!dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileLike = profile.getLikes();
             profile.setLikes(++profileLike);
+            String comment = dtoLikeDislike.getComments();
+            rating.setComment(comment);
         }
-        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType());
+        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
 
-    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
+    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal, Rating rating) throws CustomException, MessagingException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
         if (dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileDislike = profile.getDislikes();
             profile.setDislikes(++profileDislike);
+            String comment = dtoLikeDislike.getComments();
+            rating.setComment(comment);
         }
-        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType());
+        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
 
     @Override
@@ -74,7 +75,7 @@ public class RatingServiceImpl implements RatingService {
         Map<Mark, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
 
-        listOfMarks.forEach(mark -> mapOfLikes.put(mark, ratingRepository.countRatingType(id, mark)));
+        listOfMarks.forEach(mark -> mapOfLikes.put(mark, ratingRepository.countRatingType(id, mark.toString())));
 
         return mapOfLikes;
 
@@ -94,7 +95,7 @@ public class RatingServiceImpl implements RatingService {
 
         userId.forEach(user -> {
             Map<Mark, Long> achievements = new HashMap<>();
-            positiveRating.forEach(mark -> achievements.put(mark, ratingRepository.countRatingType(user, mark)));
+            positiveRating.forEach(mark -> achievements.put(mark, ratingRepository.countRatingType(user, mark.toString())));
             userIdAndAchievments.put(user, achievements);
         });
 
@@ -146,21 +147,19 @@ public class RatingServiceImpl implements RatingService {
         } else return profile;
     }
 
-    private Boolean updateRatingAndProfile(Profile profile, String userEmail, Mark ratingType) throws MessagingException {
+    private Boolean updateRatingAndProfile(Profile profile, String userEmail, Mark ratingType, String dtoLikeDislike) throws MessagingException {
         User currentUser = userRepository.findByEmail(userEmail);
-        if (!currentUser.getId().equals(profile.getId()) && ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
+        if (!currentUser.getId().equals(profile.getId()) &&  ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
             Rating updatedRating = new Rating();
             updatedRating.setProfileRating(profile);
             updatedRating.setRatingSourceUsername(currentUser.getEmail());
             updatedRating.setRatingType(ratingType);
-            profileRepository.save(profile);
+            updatedRating.setComment(dtoLikeDislike);
             ratingRepository.save(updatedRating);
 
             if (!ratingType.equals(Mark.DISLIKE)) {
-                Long likes = ratingRepository.countRatingType(profile.getId(), ratingType);
+                Long likes = ratingRepository.countRatingType(profile.getId(), ratingType.toString());
                 if (likes % 5 == 0) {
-
-                    jmsTemplate.convertAndSend("achieve", "You got new achievement " + "\"" +ratingType.toString() + "\"");
 
                     MimeMessage message = emailSender.createMimeMessage();
                     MimeMessageHelper helper = null;
@@ -177,6 +176,7 @@ public class RatingServiceImpl implements RatingService {
                     helper.setTo(profile.getUser().getEmail());
                     helper.setSubject("New Achievement(GRAMPUS)");
                     emailSender.send(message);
+
                 }
             }
             return true;

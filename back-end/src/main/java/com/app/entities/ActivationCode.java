@@ -1,5 +1,6 @@
 package com.app.entities;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
 public class ActivationCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
