@@ -63,4 +63,8 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id WHERE r.ratingType LIKE :ratingType AND u.fullName LIKE :searchParam% OR u.jobTitle LIKE :searchParam%" +
             " GROUP BY u.id")
     Page<DTOLikableProfile> findAllByParamAndRatingType(@Param("ratingType") Mark ratingType, @Param("searchParam") String searchParam, Pageable p);
+
+    @Query(value = "SELECT * FROM ratings WHERE comment is not NULL and profile_id = ?",
+            nativeQuery = true)
+    List<Rating> findAllCommentByProfileId(Long id);
 }
