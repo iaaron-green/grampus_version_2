@@ -19,7 +19,13 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     @IBOutlet weak var addButton: UIBarButtonItem!
     
     let network = NetworkService()
+    let imageService = ImageService()
     var newsArray = [JSON]()
+    let myRefreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(pullToRefresh(sender:)), for: .valueChanged)
+        return refreshControl
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,11 +33,14 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         
         tableView.register(UINib(nibName: "NewsTableViewCell", bundle: nil), forCellReuseIdentifier: "newsTableCell")
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 100
+        tableView.estimatedRowHeight = 500
+        
         
         tableView.separatorStyle = .none
         tableView.backgroundColor = .clear
-        view.backgroundColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+        view.backgroundColor = #colorLiteral(red: 0.1125021651, green: 0.1299118698, blue: 0.1408866942, alpha: 1)
+        tableView.refreshControl = myRefreshControl
+
 
         
         if revealViewController() != nil {
@@ -43,9 +52,21 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
 
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+          return .lightContent
+    }
+    
+    @objc func pullToRefresh(sender: UIRefreshControl) {
+        fetchNews()
+        sender.endRefreshing()
+        
+    }
+    
     func fetchNews() {
         network.fetchNews { (news) in
             if let news = news {
+                self.newsArray = [JSON]()
+//                print(news)
                 SVProgressHUD.dismiss()
                 for i in 0..<news.count {
                     self.newsArray.append(news[i])
@@ -66,6 +87,9 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         return newsArray.count
     }
     
+    var cachedImages = [UIImage]()
+
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "newsTableCell", for: indexPath) as! NewsTableViewCell
         
@@ -82,7 +106,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
             dateCell = self.newsArray[indexPath.row]["date"].string ?? ""
             titleCell = self.newsArray[indexPath.row]["title"].string ?? ""
             bodyCell = self.newsArray[indexPath.row]["content"].string ?? ""
-            imageCell = self.newsArray[indexPath.row]["picture"].string ?? ""
+            imageCell = self.newsArray[indexPath.row]["picture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
             
 
             let urlProfile = URL(string: userPictureCell)
@@ -93,34 +117,54 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
             cell.titleLabel.text = titleCell
             cell.bodyLabel.text = bodyCell
             
-            var cellFrame = cell.frame.size
-            cellFrame.height =  cellFrame.height - 15
-            cellFrame.width =  cellFrame.width - 15
-
-//            cell.newsImageView.sd_setImage(with: urlNews, placeholderImage: nil, options: [], completed: { (image, error, cache, url) in
-//                if let image = image {
-//                    cell.newsImageHeight.constant = self.getAspectRatioAccordingToiPhones(cellImageFrame: cellFrame,downloadedImage: image)
-//                } else {
-//                    cell.newsImageHeight.constant = 0
-//                }
-//            })
+//            if let url = urlNews {
+//                    self.imageService.getImage(withURL: imageCell) { (image) in
+//                        if let image = image {
+//                            cell.setCustomImage(image: image)
+//                            DispatchQueue.main.async(execute: {
+//                                self.tableView.beginUpdates()
+////                                self.tableView.reloadRows(
+////                                    at: [indexPath],
+////                                    with: .fade)
+//                                self.tableView.endUpdates()
+//                            })
+//                        }
+//                    }
+//            }
             
-            cell.newsImageView.sd_setImage(with: urlNews)
+            cell.newsImageView.sd_setImage(with: urlNews, placeholderImage: nil, options: [], completed: { (image, error, cache, url) in
+                if let image = image {
+                    cell.setCustomImage(image: image)
+                    //                        DispatchQueue.main.async(execute: {
+                    
+                    self.tableView.beginUpdates()
+                    //                            self.tableView.reloadRows(
+                    //                                at: [indexPath],
+                    //                                with: .fade)
+                    self.tableView.endUpdates()
+                    //                        })
+                }
+                
+            })
+
+            
+
+
+
+
+
+
+            
+            
+//            cell.newsImageView.sd_setImage(with: urlNews)
         }
-        
         return cell
-    }
-    func getAspectRatioAccordingToiPhones(cellImageFrame: CGSize, downloadedImage: UIImage) -> CGFloat {
-        let widthOffset = downloadedImage.size.width - cellImageFrame.width
-        let widthOffsetPercentage = (widthOffset*100)/downloadedImage.size.width
-        let heightOffset = (widthOffsetPercentage * downloadedImage.size.height)/100
-        let effectiveHeight = downloadedImage.size.height - heightOffset
-        return effectiveHeight
     }
     
 //    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        212
+//        800
 //    }
+    
 
     
 }

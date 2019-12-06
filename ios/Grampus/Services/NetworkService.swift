@@ -307,7 +307,7 @@ class NetworkService {
             
             let userID = storage.getUserId()!
             
-            let imageURL = "\(DynamicURL.dynamicURL.rawValue)profiles/news"
+            let imageURL = "\(DynamicURL.dynamicURL.rawValue)news"
             
             let headers : HTTPHeaders = [
                 "Content-Type": "application/json; charset=utf-8",
@@ -351,7 +351,7 @@ class NetworkService {
     
     func fetchNews(completion: @escaping (JSON?) -> ()) {
         
-        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)profiles/news"
+        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news"
         
         let headers: HTTPHeaders = [
             "Content-Type": "application/json; charset=utf-8",

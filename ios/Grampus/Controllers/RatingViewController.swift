@@ -109,7 +109,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         network.fetchAllUsers(page: page, name: "") { (json) in
             if let json = json {
                 SVProgressHUD.dismiss()
-                print(json)
+//                print(json)
                 self.json = json
                 self.filteredJson = [JSON]()
                 for i in 0..<json.count {
