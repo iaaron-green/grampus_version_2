@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.Date;
 
 @Service
 public class ActivationServiceImpl implements ActivationService {
@@ -50,7 +49,6 @@ public class ActivationServiceImpl implements ActivationService {
         ActivationCode activationCode = activationRepository.findByUserId(id);
         if (activationCode != null && !activationCode.isActivate()) {
             activationCode.setActivate(true);
-            activationCode.setDate(new Date(System.currentTimeMillis()));
             activationRepository.save(activationCode);
             User user = userRepository.getById(id);
             Profile profile = profileRepository.save(new Profile(user));
