@@ -39,7 +39,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     String checkLike(Long profileId, String currentUserEmail);
 
     @Query("SELECT COUNT(r.ratingType) FROM Rating r WHERE r.profileRating.user.id = :id AND r.ratingType NOT LIKE :ratingType")
-    Long countProfileLikes(Long id, @Param("ratingType") Mark ratingType);
+    Long countProfileLikes(@Param("id")Long id, @Param("ratingType") Mark ratingType);
 
     @Query("SELECT COUNT(r.ratingType) FROM Rating r WHERE r.profileRating.user.id = :id AND r.ratingType LIKE :ratingType")
     Long countProfileDislikes(@Param("id")Long id, @Param("ratingType") Mark ratingType);
