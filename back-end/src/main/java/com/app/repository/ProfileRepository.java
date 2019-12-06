@@ -23,4 +23,9 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
             value = "SELECT profile_id FROM ratings WHERE rating_source_username = ?",
             nativeQuery = true)
     Set<Long> getProfilesIdWithCurrentUserLike(String userEmail);
+
+    @Query(
+            value = "SELECT profile_id FROM user_subscriptions WHERE user_id = ?",
+            nativeQuery = true)
+    Set<Long> getUserSubscriptionsByUserId(Long id);
 }

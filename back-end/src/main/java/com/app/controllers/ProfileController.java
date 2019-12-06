@@ -22,8 +22,6 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -55,7 +53,7 @@ public class ProfileController {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(ratingService.addLike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.updateRatingAndProfile(dtoLikeDislike, profileId, principal), HttpStatus.OK);
     }
 
     @PostMapping("/{profileId}/dislike")
@@ -64,7 +62,7 @@ public class ProfileController {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(ratingService.addDislike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.updateRatingAndProfile(dtoLikeDislike, profileId, principal), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -82,7 +80,7 @@ public class ProfileController {
         profileService.saveProfilePhoto(file, profileId, principal);
     }
 
-    @PostMapping("/{profileId}/change-subscription")
+    @GetMapping("/{profileId}/change-subscription")
     public ResponseEntity<?> changeSubscription(@PathVariable Long profileId, Principal principal) throws CustomException {
 
 
@@ -91,13 +89,11 @@ public class ProfileController {
 
     @GetMapping("/all")
     public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName,
-                                                      Principal principal,
                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                      @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        return fullName.length() > 0 ? profileService.getAllProfilesForLike(principal.getName(), page, size).getContent().stream()
-                .filter(DTOLikableProfile ->
-                        Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
-                profileService.getAllProfilesForLike(principal.getName(), page, size).getContent();
+                                                      @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                      @RequestParam(value = "followersParam", defaultValue = "false") Boolean followersParam,
+                                                      Principal principal) throws CustomException {
+        return  profileService.getAllProfilesForLike(principal.getName(), fullName, page, size, followersParam);
     }
 
     @GetMapping("/achieve")

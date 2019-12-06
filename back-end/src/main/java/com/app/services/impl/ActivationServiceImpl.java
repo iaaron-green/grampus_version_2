@@ -3,12 +3,13 @@ package com.app.services.impl;
 import com.app.configtoken.Constants;
 import com.app.entities.ActivationCode;
 import com.app.entities.Profile;
+import com.app.entities.Rating;
 import com.app.entities.User;
-import com.app.enums.Mark;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
 import com.app.repository.ActivationRepository;
 import com.app.repository.ProfileRepository;
+import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +31,18 @@ public class ActivationServiceImpl implements ActivationService {
     private ProfileRepository profileRepository;
     private JavaMailSender emailSender;
     private MessageSource messageSource;
+    private RatingRepository ratingRepository;
 
     @Autowired
     public ActivationServiceImpl(UserRepository userRepository, ActivationRepository activationRepository,
                                  ProfileRepository profileRepository, JavaMailSender emailSender,
-                                 MessageSource messageSource) {
+                                 MessageSource messageSource, RatingRepository ratingRepository) {
         this.userRepository = userRepository;
         this.activationRepository = activationRepository;
         this.profileRepository = profileRepository;
         this.emailSender = emailSender;
         this.messageSource = messageSource;
+        this.ratingRepository = ratingRepository;
     }
 
     @Override
@@ -50,7 +53,10 @@ public class ActivationServiceImpl implements ActivationService {
             activationCode.setDate(new Date(System.currentTimeMillis()));
             activationRepository.save(activationCode);
             User user = userRepository.getById(id);
-            profileRepository.save(new Profile(user));
+            Profile profile = profileRepository.save(new Profile(user));
+            Rating updatedRating = new Rating();
+            updatedRating.setProfileRating(profile);
+            ratingRepository.save(updatedRating);
         }
         else
             throw new CustomException(messageSource.getMessage("activation.code.is.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_ACTIVE);
@@ -87,11 +93,8 @@ public class ActivationServiceImpl implements ActivationService {
         }
 
         message.setContent(content, "text/html");
-
         helper.setTo(userEmail);
-
         helper.setSubject(subject);
-
         emailSender.send(message);
     }
 }

@@ -5,6 +5,7 @@ import com.app.DTO.DTOProfile;
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
 import com.app.entities.User;
+import com.app.enums.Mark;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
@@ -25,8 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -59,7 +63,8 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = profileRepository.findProfileById(id);
         if (profile != null) {
             return profile;
-        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        } else
+            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -74,8 +79,8 @@ public class ProfileServiceImpl implements ProfileService {
             User currentUser = userRepository.findByEmail(principal.getName());
             DTOProfile dtoProfile = new DTOProfile();
             dtoProfile.setId(profileFromDB.getId());
-            dtoProfile.setDislikes(profileFromDB.getDislikes());
-            dtoProfile.setLikes(profileFromDB.getLikes());
+            dtoProfile.setDislikes(ratingRepository.countProfileDislikes(id, Mark.DISLIKE));
+            dtoProfile.setLikes(ratingRepository.countProfileLikes(id, Mark.DISLIKE));
             dtoProfile.setSkype(profileFromDB.getSkype());
             dtoProfile.setPhone(profileFromDB.getPhone());
             dtoProfile.setTelegram(profileFromDB.getTelegram());
@@ -89,7 +94,8 @@ public class ProfileServiceImpl implements ProfileService {
             if (ratingRepository.checkLike(id, currentUser.getEmail()) != null) dtoProfile.setIsAbleToLike(false);
             if (profileFromDB.getSubscribers().contains(currentUser.getProfile())) dtoProfile.setIsFollowing(true);
             return dtoProfile;
-        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        } else
+            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -98,7 +104,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         if (currentUser != null) {
             Profile profileFromDB = profileRepository.findProfileById(currentUser.getId());
-            if (profileFromDB != null){
+            if (profileFromDB != null) {
                 boolean isProfileUpdated = false;
                 if (profile.getSkype() != null) {
                     profileFromDB.setSkype(profile.getSkype());
@@ -162,40 +168,48 @@ public class ProfileServiceImpl implements ProfileService {
                 }
                 profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
                 saveProfile(profile);
-            } else throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
-        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+            } else
+                throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
+        } else
+            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
-    public List<Profile> getAllProfiles()  {
+    public List<Profile> getAllProfiles() {
 
         return profileRepository.findAll();
     }
 
-    public Page<DTOLikableProfile> getAllProfilesForLike(String userName, Integer page, Integer size)  {
+    public List<DTOLikableProfile> getAllProfilesForLike(String userName, String searchParam, Integer page, Integer size, Boolean followersParam) throws CustomException {
 
         User user = userRepository.findByEmail(userName);
-        Set<Long> profilesIdWithLike;
-        Page<DTOLikableProfile> dtoLikableProfiles = null;
-        if (user != null) {
-            profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
-            dtoLikableProfiles = userRepository.getLikeableProfiles(user.getId(), pageRequest(page, size));
-            if (!CollectionUtils.isEmpty(profilesIdWithLike)){
-                return fillDTOLikableProfile(profilesIdWithLike, dtoLikableProfiles);
-            }
+        if (user == null) {
+            throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
         }
-        return dtoLikableProfiles;
+
+        List<DTOLikableProfile> resultList;
+        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
+        Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(user.getId());
+
+        if (followersParam) {
+            Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions = ratingRepository.findSubscriptionsByParam(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
+            resultList = fillDTOLikableProfile(profilesIdWithLike, null, dtoLikableProfilesWithSubscriptions);
+        } else {
+            Page<DTOLikableProfile> dtoLikableProfiles = ratingRepository.findAllByParam(Mark.DISLIKE, searchParam, pageRequest(page, size));
+            resultList = fillDTOLikableProfile(profilesIdWithLike, subscriptions, dtoLikableProfiles);
+        }
+        return resultList.stream().sorted(Comparator.comparingLong(DTOLikableProfile::getTotalLikes).reversed()).collect(Collectors.toList());
     }
 
     @Override
     public Boolean changeSubscription(Long profileId, Principal principal) throws CustomException {
         User currentUser = userRepository.findByEmail(principal.getName());
         Profile profile = profileRepository.findOneById(profileId);
-        if(currentUser.getId().equals(profileId)){
+        if (currentUser.getId().equals(profileId)) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
         }
 
         Set<Profile> subscribers = profile.getSubscribers();
-        if(subscribers.contains(currentUser.getProfile())){
+        if (subscribers.contains(currentUser.getProfile())) {
             subscribers.remove(currentUser.getProfile());
         } else {
             subscribers.add(currentUser.getProfile());
@@ -204,21 +218,25 @@ public class ProfileServiceImpl implements ProfileService {
         return true;
     }
 
-    private Page<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Page<DTOLikableProfile> dtoLikableProfiles) {
+    private List<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<Long> subscriptions, Page<DTOLikableProfile> dtoLikableProfiles) {
 
+        boolean isProfileIdsWithLikeNotEmpty = !CollectionUtils.isEmpty(profilesIdWithLike);
+        boolean isSubscriptionIsNotEmpty = !CollectionUtils.isEmpty(subscriptions);
         dtoLikableProfiles.forEach(profile -> {
-            if (profilesIdWithLike.contains(profile.getId())) {
-                profile.setIsAbleToLike(false);
+            if (isProfileIdsWithLikeNotEmpty && !profilesIdWithLike.contains(profile.getId())) {
+                profile.setIsAbleToLike(true);
             }
-            else profile.setIsAbleToLike(true);
+            if (isSubscriptionIsNotEmpty && subscriptions.contains(profile.getId())) {
+                profile.setIsFollowing(true);
+            }
         });
-        return dtoLikableProfiles;
+
+        return dtoLikableProfiles.getContent();
     }
 
     private Pageable pageRequest(int page, int size) {
         return PageRequest.of(page, size);
     }
-
 
 
 }
