@@ -71,7 +71,6 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         Profile profileFromDB = profileRepository.findProfileById(id);
-        List<String> ratingInfo = ratingRepository.findAllCommentByProfileId(id);
         if (profileFromDB != null) {
             User currentUser = userRepository.findByEmail(principal.getName());
             DTOProfile dtoProfile = new DTOProfile();
@@ -88,7 +87,7 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setJobTitle(profileFromDB.getUser().getJobTitle());
             dtoProfile.setFullName(profileFromDB.getUser().getFullName());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
-//            dtoProfile.setComments(ratingInfo);
+            dtoProfile.setComments(ratingService.getAllComments(id));
             if (ratingRepository.checkLike(id, currentUser.getEmail()) != null) dtoProfile.setIsAbleToLike(false);
             return dtoProfile;
         } else

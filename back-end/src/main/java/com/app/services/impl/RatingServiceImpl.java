@@ -1,5 +1,6 @@
 package com.app.services.impl;
 
+import com.app.DTO.DTOComment;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
 import com.app.entities.Profile;
@@ -45,26 +46,22 @@ public class RatingServiceImpl implements RatingService {
         this.emailSender = emailSender;
     }
 
-    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal, Rating rating) throws CustomException, MessagingException {
+    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
         if (!dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileLike = profile.getLikes();
             profile.setLikes(++profileLike);
-            String comment = dtoLikeDislike.getComments();
-            rating.setComment(comment);
         }
         return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
 
-    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal, Rating rating) throws CustomException, MessagingException {
+    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
         if (dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileDislike = profile.getDislikes();
             profile.setDislikes(++profileDislike);
-            String comment = dtoLikeDislike.getComments();
-            rating.setComment(comment);
         }
         return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
@@ -111,6 +108,7 @@ public class RatingServiceImpl implements RatingService {
         }
         return achievementData;
     }
+
     @Override
     public List<DTOLikableProfile> addDTOInfoAchievement() {
 
@@ -120,7 +118,7 @@ public class RatingServiceImpl implements RatingService {
         Set<Long> dtoUserShortInfoId = userRepository.getAllId();
         List<DTOLikableProfile> dtoProfiles = userRepository.findProfileByRatingType(marks, dtoUserShortInfoId);
 
-        if (!CollectionUtils.isEmpty(dtoProfiles)){
+        if (!CollectionUtils.isEmpty(dtoProfiles)) {
             dtoProfiles.stream().sorted(Comparator.comparing(DTOLikableProfile::getId)).collect(Collectors.toList());
         }
 
@@ -128,6 +126,19 @@ public class RatingServiceImpl implements RatingService {
 
         userIdAndAchievments.addAll(dtoProfiles);
         return userIdAndAchievments;
+    }
+
+    public List<DTOComment> getAllComments(Long id){
+        List<DTOComment> comments = new ArrayList<>();
+        List<Rating> ratingComment = ratingRepository.findAllCommentByProfileId(id);
+        ratingComment.forEach(user ->{
+            DTOComment dtoComment = new DTOComment();
+            dtoComment.setRatingType(user.getRatingType());
+            dtoComment.setComments(user.getComment());
+            dtoComment.setCreated_date(user.getCreated_date());
+            comments.add(dtoComment);
+        });
+        return comments;
     }
 
     private Profile checkProfile(Long profileId, DTOLikeDislike dtoLikeDislike) throws CustomException {

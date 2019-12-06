@@ -30,14 +30,14 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "FROM  Rating r WHERE r.ratingType = :ratingType")
     Set<DTOLikableProfile> findProfileByRatingType(@Param("ratingType") Mark ratingType);
 
-    @Query (
+    @Query(
             value = "SELECT rating_type FROM " + Constants.DATABASE + ".ratings WHERE profile_id = ? AND rating_source_username = ?",
             nativeQuery = true)
     String checkLike(Long profileId, String currentUserEmail);
 
     @Query(
-            value = "SELECT comment, rating_source_username FROM ratings WHERE comment is not null and profile_id = ?  ",
+            value = "SELECT * FROM ratings WHERE comment is not NULL and profile_id = ?",
             nativeQuery = true)
-    List<String> findAllCommentByProfileId(Long id);
+    List<Rating> findAllCommentByProfileId(Long id);
 
 }

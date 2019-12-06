@@ -22,8 +22,6 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -49,22 +47,22 @@ public class ProfileController {
     }
 
     @PostMapping("/{profileId}/like")
-    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike, Rating rating,
+    public ResponseEntity<?> addLikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
                                               BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
 
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(ratingService.addLike(dtoLikeDislike, profileId, principal, rating), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.addLike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
     }
 
     @PostMapping("/{profileId}/dislike")
-    public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike, Rating rating,
+    public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
                                                  BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(ratingService.addDislike(dtoLikeDislike, profileId, principal, rating), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.addDislike(dtoLikeDislike, profileId, principal), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -101,7 +99,7 @@ public class ProfileController {
 //                        Pattern.compile(fullName.toLowerCase()).matcher(DTOLikableProfile.getFullName().toLowerCase()).find()).collect(Collectors.toList()) :
 //                profileService.getAllProfilesForLike(principal.getName(), page, size).getContent();
 
-       return profileService.getAllProfilesForLike(principal, searchParam, page, size);
+        return profileService.getAllProfilesForLike(principal, searchParam, page, size).getContent();
     }
 
     @GetMapping("/achieve")
@@ -122,8 +120,8 @@ public class ProfileController {
 
     @GetMapping(value = "/userJobTitle/{jobTitle}")
     public List<DTOLikableProfile> getUserByJob(@PathVariable String jobTitle,
-                                               @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                               @RequestParam(value = "size", defaultValue = "2") Integer size) {
+                                                @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                @RequestParam(value = "size", defaultValue = "2") Integer size) {
         return userService.findAllByJobTitle(jobTitle, page, size);
     }
 
@@ -132,4 +130,5 @@ public class ProfileController {
     public List<DTOLikableProfile> getAllDTOInfo() {
         return ratingService.addDTOInfoAchievement();
     }
+
 }
