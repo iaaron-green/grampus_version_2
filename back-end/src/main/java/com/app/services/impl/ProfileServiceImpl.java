@@ -59,8 +59,7 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = profileRepository.findProfileById(id);
         if (profile != null) {
             return profile;
-        } else
-            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -90,8 +89,7 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setComments(ratingService.getAllComments(id));
             if (ratingRepository.checkLike(id, currentUser.getEmail()) != null) dtoProfile.setIsAbleToLike(false);
             return dtoProfile;
-        } else
-            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     @Override
@@ -100,7 +98,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         if (currentUser != null) {
             Profile profileFromDB = profileRepository.findProfileById(currentUser.getId());
-            if (profileFromDB != null) {
+            if (profileFromDB != null){
                 boolean isProfileUpdated = false;
                 if (profile.getSkype() != null) {
                     profileFromDB.setSkype(profile.getSkype());
@@ -164,13 +162,11 @@ public class ProfileServiceImpl implements ProfileService {
                 }
                 profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
                 saveProfile(profile);
-            } else
-                throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
-        } else
-            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+            } else throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
+        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
-    public List<Profile> getAllProfiles() {
+    public List<Profile> getAllProfiles()  {
 
         return profileRepository.findAll();
     }
@@ -202,12 +198,12 @@ public class ProfileServiceImpl implements ProfileService {
     public Boolean changeSubscription(Long profileId, Principal principal) throws CustomException {
         User currentUser = userRepository.findByEmail(principal.getName());
         Profile profile = profileRepository.findOneById(profileId);
-        if (currentUser.getId().equals(profileId)) {
+        if(currentUser.getId().equals(profileId)){
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
         }
 
         Set<Profile> subscribers = profile.getSubscribers();
-        if (subscribers.contains(currentUser.getProfile())) {
+        if(subscribers.contains(currentUser.getProfile())){
             subscribers.remove(currentUser.getProfile());
         } else {
             subscribers.add(currentUser.getProfile());
@@ -222,7 +218,8 @@ public class ProfileServiceImpl implements ProfileService {
         dtoLikableProfiles.forEach(profile -> {
             if (profilesIdWithLike.contains(profile.getId())) {
                 profile.setIsAbleToLike(false);
-            } else profile.setIsAbleToLike(true);
+            }
+            else profile.setIsAbleToLike(true);
         });
         return dtoLikableProfiles;
     }
@@ -230,6 +227,7 @@ public class ProfileServiceImpl implements ProfileService {
     private Pageable pageRequest(int page, int size) {
         return PageRequest.of(page, size);
     }
+
 
 
 }
