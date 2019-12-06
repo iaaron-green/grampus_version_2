@@ -57,8 +57,7 @@ public class ActivationServiceImpl implements ActivationService {
             Rating updatedRating = new Rating();
             updatedRating.setProfileRating(profile);
             ratingRepository.save(updatedRating);
-        }
-        else
+        } else
             throw new CustomException(messageSource.getMessage("activation.code.is.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_ACTIVE);
     }
 
@@ -68,33 +67,42 @@ public class ActivationServiceImpl implements ActivationService {
 
         if (user != null && activationRepository.findByUserId(user.getId()).isActivate()) {
             return true;
-        }
-        else {
-            if (user == null) throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
+        } else {
+            if (user == null)
+                throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
 
             sendMail(user.getEmail(), Constants.REG_MAIL_SUBJECT, Constants.REG_MAIL_ARTICLE, Constants.REG_MAIL_MESSAGE + user.getId());
             throw new CustomException(messageSource.getMessage("user.not.activated", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_ACTIVATED);
         }
     }
 
-    public void sendMail(String userEmail, String subject, String article, String messageText) throws  MessagingException {
+    public void sendMail(String userEmail, String subject, String article, String messageText) throws MessagingException {
 
-        String content = "<h3>" + article + "</h3>" +
-                "<p style='margin-bottom:15px'>" + messageText + "</p>" +
-                "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
+        Thread sendingMail = new Thread(() -> {
 
-        MimeMessage message = emailSender.createMimeMessage();
+            String content = "<h3>" + article + "</h3>" +
+                    "<p style='margin-bottom:15px'>" + messageText + "</p>" +
+                    "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
 
-        MimeMessageHelper helper = null;
-        try {
-            helper = new MimeMessageHelper(message, true, "utf-8");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+            MimeMessage message = emailSender.createMimeMessage();
 
-        message.setContent(content, "text/html");
-        helper.setTo(userEmail);
-        helper.setSubject(subject);
-        emailSender.send(message);
+            MimeMessageHelper helper = null;
+            try {
+                helper = new MimeMessageHelper(message, true, "utf-8");
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                message.setContent(content, "text/html");
+                helper.setTo(userEmail);
+                helper.setSubject(subject);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+            emailSender.send(message);
+        });
+
+        sendingMail.start();
     }
 }
