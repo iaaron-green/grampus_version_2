@@ -2,13 +2,10 @@ package com.app.controllers;
 
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
-import com.app.DTO.DTONewNews;
-import com.app.entities.News;
 import com.app.DTO.DTOProfile;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
 import com.app.exceptions.CustomException;
-import com.app.repository.NewsRepository;
 import com.app.services.NewsService;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
@@ -26,8 +23,6 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -38,7 +33,6 @@ public class ProfileController {
     private ValidationErrorService validationErrorService;
     private RatingService ratingService;
     private UserService userService;
-    private NewsService newsService;
 
     @Autowired
     public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService,
@@ -47,7 +41,6 @@ public class ProfileController {
         this.validationErrorService = validationErrorService;
         this.ratingService = ratingService;
         this.userService = userService;
-        this.newsService = newsService;
     }
 
     @GetMapping("/{profileId}")
@@ -139,18 +132,4 @@ public class ProfileController {
         return ratingService.addDTOInfoAchievement();
     }
 
-    @GetMapping("/news")
-    public List<DTONewNews> getAllDTONews(Principal principal) throws CustomException {
-
-        return newsService.getAllNews(principal);
-    }
-
-    @PostMapping("/news")
-    public void saveNews(@RequestParam("title") String title,
-                         @RequestParam("content") String content,
-                         @RequestParam(value = "file", required = false) MultipartFile file,
-                         Principal principal
-                        )  throws CustomException {
-        newsService.saveDTONews(title,content, file, principal);
-    }
 }

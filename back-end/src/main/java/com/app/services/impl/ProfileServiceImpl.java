@@ -10,8 +10,10 @@ import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
+import com.app.services.NewsService;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
+import com.app.services.UserService;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
@@ -143,26 +146,12 @@ public class ProfileServiceImpl implements ProfileService {
 
         Profile profile = profileRepository.findOneById(id);
         if (profile != null) {
-            if (file != null) {
-                String contentType = file.getContentType();
-                String profilePictureType = contentType.substring(contentType.indexOf("/") + 1);
-                String pictureFullName = "img/" + profile.getId() + "." + profilePictureType;
-                FTPClient client = new FTPClient();
-                try {
-                    client.connect(Constants.FTP_SERVER, Constants.FTP_PORT);
-                    client.login("grampus", "password");
-                    client.setFileType(FTPClient.BINARY_FILE_TYPE);
-                    if (client.storeFile(pictureFullName, file.getInputStream())) {
-                        client.logout();
-                        client.disconnect();
-                    }
-                } catch (IOException e) {
-                    throw new CustomException(messageSource.getMessage("ftp.connection.error", null, LocaleContextHolder.getLocale()), Errors.FTP_CONNECTION_ERROR);
-                }
-                profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
+                String pictureFullName = saveImgInFtp(file, "img/" + profile.getId());
+                if(pictureFullName != null)
+                    profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
                 saveProfile(profile);
-            } else throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
-        } else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+            }
+        else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     public List<Profile> getAllProfiles()  {
@@ -211,6 +200,29 @@ public class ProfileServiceImpl implements ProfileService {
         profileRepository.save(profile);
         return true;
     }
+    @Override
+    public String saveImgInFtp(MultipartFile file, String directory) throws CustomException {
+        String pictureFullName = null;
+
+        if (file != null) {
+            String contentType = file.getContentType();
+            String profilePictureType = contentType.substring(contentType.indexOf("/") + 1);
+            pictureFullName = directory + "." + profilePictureType;
+            FTPClient client = new FTPClient();
+            try {
+                client.connect(Constants.FTP_SERVER, Constants.FTP_PORT);
+                client.login("grampus", "password");
+                client.setFileType(FTPClient.BINARY_FILE_TYPE);
+                if (client.storeFile(pictureFullName, file.getInputStream())) {
+                    client.logout();
+                    client.disconnect();
+                }
+            } catch (IOException e) {
+                throw new CustomException(messageSource.getMessage("ftp.connection.error", null, LocaleContextHolder.getLocale()), Errors.FTP_CONNECTION_ERROR);
+            }
+        }
+        return pictureFullName;
+    }
 
     private Page<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Page<DTOLikableProfile> dtoLikableProfiles) {
 
@@ -226,7 +238,5 @@ public class ProfileServiceImpl implements ProfileService {
     private Pageable pageRequest(int page, int size) {
         return PageRequest.of(page, size);
     }
-
-
 
 }

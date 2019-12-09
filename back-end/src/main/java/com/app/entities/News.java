@@ -5,7 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,11 +18,17 @@ public class News {
     private Long id;
 
     @NotNull
+    @Column(length = 100)
     private String title;
+    @Column(length = 1000)
     private String content;
     private String picture;
-    private Date date;
+    private String date;
     private Long profileID;
+    private long countOfLikes;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "news")
+    private List<Comment> comment = new ArrayList<>();
 
     public News() {};
 

@@ -1,7 +1,6 @@
 package com.app.services;
 
-import com.app.DTO.DTONewNews;
-import com.app.entities.News;
+import com.app.DTO.DTONews;
 import com.app.exceptions.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,5 +13,9 @@ public interface NewsService {
 
     void saveDTONews(String title, String content, MultipartFile file, Principal principal) throws CustomException;
 
-    List<DTONewNews> getAllNews(Principal principal) throws CustomException;
+    List<DTONews> getAllNews(Principal principal) throws CustomException;
+
+    DTONews saveLike(Long idNews) throws CustomException;
+
+    Boolean saveComment(Long id, String comment) throws CustomException;
 }

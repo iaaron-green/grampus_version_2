@@ -8,4 +8,5 @@ import java.util.List;
 
 @Repository
 public interface NewsRepository extends CrudRepository<News, Long> {
+    News findOneById(Long id);
 }

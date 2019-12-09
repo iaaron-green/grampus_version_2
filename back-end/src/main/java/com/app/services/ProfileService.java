@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.security.Principal;
 import java.util.List;
 import java.util.Set;
@@ -29,4 +30,7 @@ public interface ProfileService {
     Page<DTOLikableProfile> getAllProfilesForLike(Principal principal, String searchParam, Integer page, Integer size);
 
     Boolean changeSubscription(Long profileId, Principal principal) throws CustomException;
+
+    String saveImgInFtp(MultipartFile file, String directory) throws CustomException;
+
 }
