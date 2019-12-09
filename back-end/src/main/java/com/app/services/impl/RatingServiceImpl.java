@@ -1,5 +1,6 @@
 package com.app.services.impl;
 
+import com.app.DTO.DTOComment;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
 import com.app.configtoken.Constants;
@@ -148,5 +149,17 @@ public class RatingServiceImpl implements RatingService {
             }
             return true;
         } else return false;
+    }
+    public List<DTOComment> getAllComments(Long id){
+        List<DTOComment> comments = new ArrayList<>();
+        List<Rating> ratingComment = ratingRepository.findAllCommentByProfileId(id);
+        ratingComment.forEach(user ->{
+            DTOComment dtoComment = new DTOComment();
+            dtoComment.setRatingType(user.getRatingType());
+            dtoComment.setComments(user.getComment());
+            dtoComment.setCreated_date(user.getCreated_date());
+            comments.add(dtoComment);
+        });
+        return comments;
     }
 }
