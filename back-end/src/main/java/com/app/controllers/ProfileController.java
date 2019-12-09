@@ -80,13 +80,13 @@ public class ProfileController {
     }
 
     @GetMapping("/all")
-    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "fullName", defaultValue = "") String fullName,
+    public Iterable<DTOLikableProfile> getAllProfiles(@RequestParam(value = "searchParam", defaultValue = "") String searchParam,
                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                       @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                       @RequestParam(value = "sortParam", defaultValue = "") RatingSortParam sortParam,
                                                       @RequestParam(value = "ratingType", defaultValue = "") Mark ratingType,
                                                       Principal principal) throws CustomException {
-        return  profileService.getAllProfilesForLike(principal.getName(), fullName, page, size, sortParam, ratingType);
+        return  profileService.getAllProfilesForLike(principal.getName(), searchParam, page, size, sortParam, ratingType);
     }
 
     @GetMapping("/achieve")

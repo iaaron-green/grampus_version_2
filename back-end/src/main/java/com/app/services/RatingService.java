@@ -1,5 +1,6 @@
 package com.app.services;
 
+import com.app.DTO.DTOComment;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
 import com.app.entities.Rating;
@@ -24,4 +25,6 @@ public interface RatingService {
     Map<Mark, Object> getAndCountLikesByProfileId(Long id) throws CustomException;
 
     List<DTOLikableProfile> addDTOInfoAchievement();
+
+    List<DTOComment> getAllComments(Long id);
 }
