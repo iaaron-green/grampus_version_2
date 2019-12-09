@@ -10,6 +10,6 @@ public class MyWebApplicationInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) throws ServletException {
 
         servletContext.setInitParameter(
-                "spring.profiles.active", "test");
+                "spring.profiles.active", "dev");
     }
 }
