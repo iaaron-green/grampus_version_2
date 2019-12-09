@@ -113,6 +113,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             addSelfLabelGestures()
             followButton.isHidden = true
         } else {
+            if storage.getUserId()! == storage.getSelectedUserIdProfile()! {
+                followButton.isHidden = true
+            }
             skillsAddButton.isHidden = true
             skypeAddButton.isHidden = true
             telephoneAddButton.isHidden = true
@@ -250,7 +253,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     }
     
     @objc func pullToRefresh(sender: UIRefreshControl) {
-        SDImageCache.shared.clearMemory()
+//        SDImageCache.shared.clearMemory()
         SDImageCache.shared.clearDisk()
         fetchUser(userId: userID!)
         sender.endRefreshing()
@@ -533,6 +536,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
             
             if let json = json {
+                print(json)
                 self.removeSkeleton()
                 SVProgressHUD.dismiss()
                 self.fullName = json["fullName"] as? String ?? "Full name"
@@ -738,7 +742,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 
                 
                 DispatchQueue.main.async {
-
+                    
                     let url = URL(string: self.profilePicture!)
                     self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
                 }

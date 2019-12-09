@@ -45,12 +45,12 @@ class NewsTableViewCell: UITableViewCell {
         selectionStyle = .none
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        newsImageView.sd_cancelCurrentImageLoad()
-        newsImageView.image = nil
-        
-    }
+//    override func prepareForReuse() {
+//        super.prepareForReuse()
+//        newsImageView.sd_cancelCurrentImageLoad()
+//        newsImageView.image = nil
+//        print("reuse")
+//    }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
@@ -63,7 +63,7 @@ class NewsTableViewCell: UITableViewCell {
         
         let aspect = image.size.width / image.size.height
         
-        let constraint = NSLayoutConstraint(item: newsImageView, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: newsImageView, attribute: NSLayoutConstraint.Attribute.height, multiplier: aspect, constant: 0.0)
+        let constraint = NSLayoutConstraint(item: newsImageView!, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: newsImageView, attribute: NSLayoutConstraint.Attribute.height, multiplier: aspect, constant: 0.0)
         constraint.priority = UILayoutPriority(rawValue: 999)
         
         aspectConstraint = constraint

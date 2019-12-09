@@ -15,9 +15,9 @@ enum SegueIdentifier: String {
 
 enum DynamicURL: String {
     //case dynamicURL = "https://grampus.herokuapp.com/api/" //web
-    //case dynamicURL = "http://10.11.1.155:8081/api/" //host
+    case dynamicURL = "http://10.11.1.155:8081/api/" //host
     //case dynamicURL = "http://10.11.1.200:8081/api/" //vadim
-    case dynamicURL = "http://10.11.1.25:8081/api/" //igor
+    //case dynamicURL = "http://10.11.1.25:8081/api/" //igor
 }
 
 enum UserDefKeys: String {

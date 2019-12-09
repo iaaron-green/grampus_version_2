@@ -16,6 +16,11 @@ class RatingTableViewCell: UITableViewCell {
     @IBOutlet weak var professionLabelCell: UILabel!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var dislikeButton: UIButton!
+    @IBOutlet weak var isFollowerImageView: UIImageView!
+    @IBOutlet weak var likeCount: UILabel!
+    @IBOutlet weak var dislikeCount: UILabel!
+    
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()

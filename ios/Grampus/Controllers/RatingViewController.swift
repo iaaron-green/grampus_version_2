@@ -28,6 +28,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     let imageService = ImageService()
     var json = JSON()
     var filteredJson = [JSON]()
+    var UrlsToPrefetch = [URL]()
     var page = 1
     var isFetch = false
     var limit = 0
@@ -109,7 +110,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         network.fetchAllUsers(page: page, name: "") { (json) in
             if let json = json {
                 SVProgressHUD.dismiss()
-//                print(json)
+                print(json)
                 self.json = json
                 self.filteredJson = [JSON]()
                 for i in 0..<json.count {
@@ -133,7 +134,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     }
     
     @objc override func pullToRefresh(sender: UIRefreshControl) {
-        SDImageCache.shared.clearMemory()
+//        SDImageCache.shared.clearMemory()
         SDImageCache.shared.clearDisk()
         fetchAllUsers(page: 0)
         page = 1
@@ -226,20 +227,39 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         var userNameToDisplay = ""
         var jobTitleToDisplay = ""
         var likeDislikeButtonState: Bool?
+        var isFollowerState: Bool?
         var profilePictureString = ""
+        var totalLikes: Int?
+        var totalDislikes: Int?
         
         DispatchQueue.main.async {
 
             userNameToDisplay = self.filteredJson[indexPath.row]["fullName"].string ?? ""
             jobTitleToDisplay = self.filteredJson[indexPath.row]["jobTitle"].string ?? ""
-            profilePictureString = self.filteredJson[indexPath.row]["profilePicture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
+            profilePictureString = self.filteredJson[indexPath.row]["profilePicture"].string ?? ""
+//            ?.replacingOccurrences(of: "\\", with: "")
             likeDislikeButtonState = self.filteredJson[indexPath.row]["isAbleToLike"].bool ?? false
+            isFollowerState = self.filteredJson[indexPath.row]["isFollowing"].bool ?? false
+            totalLikes = self.filteredJson[indexPath.row]["totalLikes"].int ?? 0
+            totalDislikes = self.filteredJson[indexPath.row]["totalDislikes"].int ?? 0
+            cell.nameLabelCell.text = userNameToDisplay
+            cell.professionLabelCell.text = jobTitleToDisplay
+            cell.likeCount.text = String(describing: totalLikes!)
+            cell.dislikeCount.text = String(describing: totalDislikes!)
                 
-                cell.nameLabelCell.text = userNameToDisplay
-                cell.professionLabelCell.text = jobTitleToDisplay
-                
-                let url = URL(string: profilePictureString)
+            if let url = URL(string: profilePictureString) {
+                self.UrlsToPrefetch.append(url)
                 cell.imageViewCell.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
+            } else {
+                cell.imageViewCell.image = UIImage(named: "red cross")!
+            }
+            
+            
+            if !isFollowerState! {
+                cell.isFollowerImageView.isHidden = true
+            } else {
+                cell.isFollowerImageView.isHidden = false
+            }
 
                 if likeDislikeButtonState! {
                     cell.likeButton.isEnabled = true
@@ -264,6 +284,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         
         if let id = self.filteredJson[indexPath.row]["id"].int {
             storage.saveSelectedUserIdProfile(id: id)
+            print(id)
             storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)
         } else {
@@ -282,7 +303,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
 
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        
+
         limit = filteredJson.count
         if isFetch {
             network.fetchAllUsers(page: page, name: "") { (json) in
@@ -290,6 +311,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
                     for i in 0..<json.count {
                         if !self.filteredJson.contains(json[i]) {
                             self.filteredJson.append(json[i])
+                            SDWebImagePrefetcher.shared.prefetchURLs(self.UrlsToPrefetch)
                         }
                     }
                     if self.limit < self.filteredJson.count {

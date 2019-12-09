@@ -23,17 +23,18 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     var newsArray = [JSON]()
     let myRefreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
+        refreshControl.tintColor = .white
         refreshControl.addTarget(self, action: #selector(pullToRefresh(sender:)), for: .valueChanged)
         return refreshControl
     }()
-    
+                
     override func viewDidLoad() {
         super.viewDidLoad()
         fetchNews()
-        
         tableView.register(UINib(nibName: "NewsTableViewCell", bundle: nil), forCellReuseIdentifier: "newsTableCell")
-        tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 500
+        tableView.rowHeight = UITableView.automaticDimension
+
         
         
         tableView.separatorStyle = .none
@@ -51,6 +52,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         }
 
     }
+
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
           return .lightContent
@@ -101,6 +103,8 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         var imageCell = ""
         
         DispatchQueue.main.async {
+            
+            
             nameCell = self.newsArray[indexPath.row]["nameProfile"].string ?? ""
             userPictureCell = self.newsArray[indexPath.row]["imgProfile"].string ?? ""
             dateCell = self.newsArray[indexPath.row]["date"].string ?? ""
@@ -116,55 +120,25 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
             cell.dateLabel.text = dateCell
             cell.titleLabel.text = titleCell
             cell.bodyLabel.text = bodyCell
-            
-//            if let url = urlNews {
-//                    self.imageService.getImage(withURL: imageCell) { (image) in
-//                        if let image = image {
-//                            cell.setCustomImage(image: image)
-//                            DispatchQueue.main.async(execute: {
-//                                self.tableView.beginUpdates()
-////                                self.tableView.reloadRows(
-////                                    at: [indexPath],
-////                                    with: .fade)
-//                                self.tableView.endUpdates()
-//                            })
-//                        }
-//                    }
-//            }
-            
-            cell.newsImageView.sd_setImage(with: urlNews, placeholderImage: nil, options: [], completed: { (image, error, cache, url) in
+            cell.newsImageView.sd_setImage(with: urlNews, placeholderImage: nil, options: [], completed: { [weak cell] (image, error, cache, url) in
                 if let image = image {
-                    cell.setCustomImage(image: image)
-                    //                        DispatchQueue.main.async(execute: {
-                    
-                    self.tableView.beginUpdates()
-                    //                            self.tableView.reloadRows(
-                    //                                at: [indexPath],
-                    //                                with: .fade)
-                    self.tableView.endUpdates()
-                    //                        })
+                    cell?.setCustomImage(image: image)
+                }
+                else {
+                    cell?.setCustomImage(image: UIImage(named: "2")!)
                 }
                 
+                self.tableView.beginUpdates()
+                print("UPDATES")
+                self.tableView.endUpdates()
+//                self.tableView.reloadRows(
+//                    at: [indexPath],
+//                    with: .fade)
+                
+                
             })
-
-            
-
-
-
-
-
-
-            
-            
-//            cell.newsImageView.sd_setImage(with: urlNews)
         }
+        
         return cell
     }
-    
-//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        800
-//    }
-    
-
-    
 }

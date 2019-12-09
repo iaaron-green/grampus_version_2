@@ -185,12 +185,15 @@ class NetworkService {
         ]
         
         var apiUrl = ""
-        if likeState {
-            
-            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/like"
-        } else {
-            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/dislike"
-        }
+//        if likeState {
+//
+//            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/like"
+//        } else {
+//            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/dislike"
+//        }
+        
+        apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/addRating"
+
 
         manager.request(apiUrl, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
 
@@ -290,13 +293,15 @@ class NetworkService {
         ]
         
 
-        manager.request(url, method: .post, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        manager.request(url, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
 
             switch responseJSON.result {
             case .success :
                 print(url)
                 completion(true)
             case .failure(let error) :
+                print(url)
+
                 completion(false)
                 self.handleError(error: error)
             }
