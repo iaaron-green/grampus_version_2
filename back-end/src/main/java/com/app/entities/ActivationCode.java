@@ -8,8 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDate;
-import java.util.Date;
+import java.util.Calendar;
 
 @Entity
 @Getter
@@ -22,7 +21,7 @@ public class ActivationCode {
     private boolean activate;
     private Long userId;
     private String code;
-    private Date date;
+    private Calendar date = Calendar.getInstance();
 
 
     public ActivationCode() {
