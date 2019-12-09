@@ -1,8 +1,8 @@
 package com.app.schedulers;
 
-import com.app.entities.User;
+import java.util.Set;
 
 public interface ShedulerPlanning {
 
-    Iterable<User> findByRegistrationDate();
+    Set<String> findNotActivatedByRegistrationDate();
 }

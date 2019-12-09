@@ -1,6 +1,7 @@
 package com.app.repository;
 
 import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTONewUser;
 import com.app.entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,5 +43,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
            "FROM  User u, Profile p WHERE u.id NOT LIKE :id AND u.fullName LIKE :searchParam% OR u.jobTitle LIKE :searchParam%")
    Page<DTOLikableProfile> findByMask(@Param("id") Long id, @Param("searchParam") String searchParam, Pageable p);
 
-
+   @Query(
+           value = "SELECT u.email FROM users u WHERE DATEDIFF(u.registration_date ,CURRENT_DATE) = ? " +
+                   "AND u.id IN(SELECT activation_code.user_id FROM activation_code WHERE activate = 0)",
+           nativeQuery = true)
+   Set<String> getByRegistrationDate(int dateShift);
 }
