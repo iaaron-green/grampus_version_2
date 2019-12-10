@@ -2,7 +2,7 @@ package com.app.services.impl;
 
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTONewUser;
-import com.app.configtoken.Constants;
+import com.app.config.Constants;
 import com.app.entities.ActivationCode;
 import com.app.entities.User;
 import com.app.exceptions.CustomException;

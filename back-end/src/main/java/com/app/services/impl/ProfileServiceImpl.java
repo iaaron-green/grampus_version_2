@@ -2,7 +2,7 @@ package com.app.services.impl;
 
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOProfile;
-import com.app.configtoken.Constants;
+import com.app.config.Constants;
 import com.app.entities.Profile;
 import com.app.entities.User;
 import com.app.enums.Mark;
@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;

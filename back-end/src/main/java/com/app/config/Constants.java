@@ -1,4 +1,4 @@
-package com.app.configtoken;
+package com.app.config;
 
 import java.util.*;
 

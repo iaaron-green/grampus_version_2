@@ -1,5 +1,6 @@
-package com.app.configtoken;
+package com.app.config;
 
+import com.app.config.Constants;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;

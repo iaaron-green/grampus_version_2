@@ -1,4 +1,4 @@
-package com.app.configtoken;
+package com.app.config.JWTconfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

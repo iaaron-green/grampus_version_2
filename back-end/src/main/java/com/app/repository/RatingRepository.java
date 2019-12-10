@@ -1,7 +1,7 @@
 package com.app.repository;
 
 import com.app.DTO.DTOLikableProfile;
-import com.app.configtoken.Constants;
+import com.app.config.Constants;
 import com.app.entities.Rating;
 import com.app.enums.Mark;
 import org.springframework.data.domain.Page;

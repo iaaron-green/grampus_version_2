@@ -3,7 +3,7 @@ package com.app.services.impl;
 import com.app.DTO.DTOComment;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
-import com.app.configtoken.Constants;
+import com.app.config.Constants;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
 import com.app.entities.User;

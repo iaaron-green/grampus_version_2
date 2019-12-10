@@ -1,6 +1,6 @@
-package com.app.configmail;
+package com.app.config.configmail;
 
-import com.app.configtoken.Constants;
+import com.app.config.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;

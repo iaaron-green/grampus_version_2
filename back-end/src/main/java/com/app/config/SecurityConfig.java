@@ -1,5 +1,8 @@
-package com.app.configtoken;
+package com.app.config;
 
+import com.app.config.JWTconfig.JwtAuthenticationEntryPoint;
+import com.app.config.JWTconfig.JwtAuthenticationFilter;
+import com.app.config.JWTconfig.JwtTokenProvider;
 import com.app.services.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -16,9 +19,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.app.configtoken.Constants.H2_URL;
-import static com.app.configtoken.Constants.SIGN_UP_URLS;
-import static com.app.configtoken.Constants.TEST_URLS;
+import static com.app.config.Constants.H2_URL;
+import static com.app.config.Constants.SIGN_UP_URLS;
+import static com.app.config.Constants.TEST_URLS;
 
 @Configuration
 @EnableWebSecurity

@@ -1,4 +1,4 @@
-package com.app.configtoken;
+package com.app.config.JWTconfig;
 
 import com.app.entities.User;
 import com.app.services.impl.CustomUserDetailsService;
@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
-import static com.app.configtoken.Constants.HEADER_STRING;
-import static com.app.configtoken.Constants.TOKEN_PREFIX;
+import static com.app.config.Constants.HEADER_STRING;
+import static com.app.config.Constants.TOKEN_PREFIX;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 

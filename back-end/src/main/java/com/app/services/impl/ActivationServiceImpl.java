@@ -1,6 +1,6 @@
 package com.app.services.impl;
 
-import com.app.configtoken.Constants;
+import com.app.config.Constants;
 import com.app.entities.ActivationCode;
 import com.app.entities.Profile;
 import com.app.entities.Rating;

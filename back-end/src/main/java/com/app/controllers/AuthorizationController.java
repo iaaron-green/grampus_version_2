@@ -2,8 +2,7 @@ package com.app.controllers;
 
 
 import com.app.DTO.DTONewUser;
-import com.app.configtoken.JwtTokenProvider;
-import com.app.entities.User;
+import com.app.config.JWTconfig.JwtTokenProvider;
 import com.app.exceptions.CustomException;
 import com.app.exceptions.Errors;
 import com.app.services.ActivationService;
@@ -27,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 
-import static com.app.configtoken.Constants.TOKEN_PREFIX;
+import static com.app.config.Constants.TOKEN_PREFIX;
 
 @RestController
 @CrossOrigin
