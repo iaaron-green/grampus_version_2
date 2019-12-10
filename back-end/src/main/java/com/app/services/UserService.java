@@ -11,5 +11,7 @@ import java.util.List;
 public interface UserService {
 
     DTONewUser saveUser(DTONewUser newUser) throws CustomException, MessagingException;
+
     List<DTOLikableProfile> findAllByJobTitle(String jobTitle, int page, int size);
+
 }

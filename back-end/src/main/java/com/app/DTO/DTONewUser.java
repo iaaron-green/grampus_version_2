@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Getter
@@ -13,6 +14,7 @@ public class DTONewUser {
 
     private Long userId;
     @NotBlank()
+    @Email
     private String email;
     @NotBlank(message = "Password is required")
     private String password;
