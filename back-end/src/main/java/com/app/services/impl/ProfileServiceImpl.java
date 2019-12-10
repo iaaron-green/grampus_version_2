@@ -151,29 +151,30 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         Profile profile = profileRepository.findOneById(id);
-        if (profile != null) {
-            if (file != null) {
-                String contentType = file.getContentType();
-                String profilePictureType = contentType.substring(contentType.indexOf("/") + 1);
-                String pictureFullName = "img/" + profile.getId() + "." + profilePictureType;
-                FTPClient client = new FTPClient();
-                try {
-                    client.connect(Constants.FTP_SERVER, Constants.FTP_PORT);
-                    client.login("grampus", "password");
-                    client.setFileType(FTPClient.BINARY_FILE_TYPE);
-                    if (client.storeFile(pictureFullName, file.getInputStream())) {
-                        client.logout();
-                        client.disconnect();
-                    }
-                } catch (IOException e) {
-                    throw new CustomException(messageSource.getMessage("ftp.connection.error", null, LocaleContextHolder.getLocale()), Errors.FTP_CONNECTION_ERROR);
-                }
-                profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
-                saveProfile(profile);
-            } else
-                throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
-        } else
+        if (profile == null) {
             throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        }
+
+        if (file != null) {
+            String contentType = file.getContentType();
+            String profilePictureType = contentType.substring(contentType.indexOf("/") + 1);
+            String pictureFullName = "img/" + profile.getId() + "." + profilePictureType;
+            FTPClient client = new FTPClient();
+            try {
+                client.connect(Constants.FTP_SERVER, Constants.FTP_PORT);
+                client.login("grampus", "password");
+                client.setFileType(FTPClient.BINARY_FILE_TYPE);
+                if (client.storeFile(pictureFullName, file.getInputStream())) {
+                    client.logout();
+                    client.disconnect();
+                }
+            } catch (IOException e) {
+                throw new CustomException(messageSource.getMessage("ftp.connection.error", null, LocaleContextHolder.getLocale()), Errors.FTP_CONNECTION_ERROR);
+            }
+            profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
+            saveProfile(profile);
+        } else
+            throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
     }
 
     public List<Profile> getAllProfiles() {
@@ -221,10 +222,10 @@ public class ProfileServiceImpl implements ProfileService {
 
     private List<DTOLikableProfile> getAllRatingProfilesWithoutSearchParam(Integer page, Integer size, RatingSortParam sortParam,
                                                                            Mark ratingType, Set<Long> profilesIdWithLike, Set<Long> subscriptions) {
-        if (!StringUtils.isEmpty(sortParam)) {
+        if (sortParam != null) {
 
             Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
-            if (StringUtils.isEmpty(ratingType))
+            if (ratingType == null)
                 dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParamAndWithoutDislike(subscriptions, Mark.DISLIKE, pageRequest(page, size));
             else
                 dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParamAndByRatingType(subscriptions, ratingType, pageRequest(page, size));
@@ -233,7 +234,7 @@ public class ProfileServiceImpl implements ProfileService {
         } else {
 
             Page<DTOLikableProfile> dtoLikableProfiles;
-            if (StringUtils.isEmpty(ratingType))
+            if (ratingType == null)
                 dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParamAndWithoutDislike(Mark.DISLIKE, pageRequest(page, size));
             else
                 dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParamAndByRatingType(ratingType, pageRequest(page, size));
@@ -244,10 +245,10 @@ public class ProfileServiceImpl implements ProfileService {
 
     private List<DTOLikableProfile> getAllRatingProfilesWithSearchParam(String searchParam, Integer page, Integer size, RatingSortParam sortParam,
                                                                         Mark ratingType, Set<Long> profilesIdWithLike, Set<Long> subscriptions) {
-        if (!StringUtils.isEmpty(sortParam)) {
+        if (sortParam != null) {
 
             Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
-            if (StringUtils.isEmpty(ratingType))
+            if (ratingType == null)
                 dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParamAndWithoutDislike(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
             else
                 dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParamAndRatingType(subscriptions, ratingType, searchParam, pageRequest(page, size));
@@ -256,7 +257,7 @@ public class ProfileServiceImpl implements ProfileService {
         } else {
 
             Page<DTOLikableProfile> dtoLikableProfiles;
-            if (StringUtils.isEmpty(ratingType))
+            if (ratingType == null)
                 dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParamAndWithoutDislike(Mark.DISLIKE, searchParam, pageRequest(page, size));
             else
                 dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParamAndRatingType(ratingType, searchParam, pageRequest(page, size));
