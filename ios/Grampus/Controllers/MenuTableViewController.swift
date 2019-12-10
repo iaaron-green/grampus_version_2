@@ -37,9 +37,6 @@ class MenuTableViewController: UITableViewController {
             
         fetchUserInformation(userId: storage.getUserId()!)
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(updateImage), name: NSNotification.Name(rawValue: "imageChanged"), object: nil)
-        
-        
         NotificationCenter.default.addObserver(self, selector: #selector(loadUser), name: NSNotification.Name(rawValue: "updateUserInfo"), object: nil)
         
         
@@ -51,16 +48,7 @@ class MenuTableViewController: UITableViewController {
         self.clearsSelectionOnViewWillAppear = true
         
         tableView.reloadData()
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-    
-    
-    
-//    @objc func updateImage(notification: NSNotification) {
-//        if let image = notification.userInfo?["image"] as? UIImage {
-//            imageView.image = image
-//        }
-//    }
     
     @objc func loadUser(notification: NSNotification) {
         if let user = self.storage.getUserProfile() {
@@ -98,7 +86,6 @@ class MenuTableViewController: UITableViewController {
                     
                     DispatchQueue.main.async {
                         let url = URL(string: self.profilePicture!)
-                        
                         self.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross")) { (image, error, cache, url) in
                             var imageData: Data?
                             if let image = image {
@@ -137,7 +124,7 @@ class MenuTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 7
+        return 6
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -145,7 +132,7 @@ class MenuTableViewController: UITableViewController {
         if indexPath.row == 1 {
             storage.saveProfileState(state: true)
         }
-        if indexPath.row == 6 {
+        if indexPath.row == 5 {
             storage.saveLoggedState(state: false)
             storage.saveUserToken(token: "")
         }

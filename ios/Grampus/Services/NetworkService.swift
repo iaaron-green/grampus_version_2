@@ -186,12 +186,6 @@ class NetworkService {
         ]
         
         var apiUrl = ""
-//        if likeState {
-//
-//            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/like"
-//        } else {
-//            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/dislike"
-//        }
         
         apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/addRating"
 
@@ -253,18 +247,9 @@ class NetworkService {
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-//        let userID = storage.getUserId()
-//        let parameters: Parameters = [
-//        "id" : userID!
-//        ]
-        
         manager.upload(multipartFormData: { (multipart: MultipartFormData) in
             let imageData = selectedImage!.jpegData(compressionQuality: 0.8)
             multipart.append(imageData!, withName: "file", fileName: "file.png", mimeType: "image/png")
-//            for (key,value) in parameters {
-//                 multipart.append((value as! String).data(using: .utf8)!, withName: key)
-//            }
-            
         },usingThreshold: UInt64.init(),
            to: imageURL,
            method: .post,

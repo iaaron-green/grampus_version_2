@@ -98,15 +98,8 @@ class SignInViewController: RootViewController {
         signInButton.layer.shadowOffset = CGSize(width: 3, height: 3)
         signInButton.layer.shadowRadius = 5
         signInButton.layer.shadowOpacity = 0.5
-        
-//        signUpButton.layer.shadowColor = UIColor.darkGray.cgColor
-//        signUpButton.layer.shadowOffset = CGSize(width: 3, height: 3)
-//        signUpButton.layer.shadowRadius = 5
-//        signUpButton.layer.shadowOpacity = 0.5
-        
         signInButton.layer.cornerRadius = 5
         backView.layer.cornerRadius = 7
-//        signUpButton.layer.cornerRadius = 5
         
     }
     

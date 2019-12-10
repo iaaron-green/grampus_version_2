@@ -55,7 +55,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         navBarAppearance()
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "load"), object: nil)
-
         
         if revealViewController() != nil {
             menuBarButton.target = self.revealViewController()
@@ -83,9 +82,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
 
         if searchText == "" {
             fetchAllUsers(page: 0, ratingType: "")
-//            for i in 0..<json.count {
-//                self.filteredJson.append(json[i])
-//            }
         } else {
             network.fetchAllUsers(page: 0, name: searchText.lowercased(), ratingType: "") { (json) in
                 if let json = json {
@@ -98,13 +94,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
                     }
                 }
             }
-            
-//            for item in 0..<json.count {
-//                let name = json[item]["fullName"].string
-//                if (name?.lowercased().contains(searchText.lowercased()))! {
-//                    self.filteredJson.append(json[item])
-//                }
-//            }
         }
         
     }
@@ -137,7 +126,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     }
     
     @objc override func pullToRefresh(sender: UIRefreshControl) {
-//        SDImageCache.shared.clearMemory()
         SDImageCache.shared.clearDisk()
         fetchAllUsers(page: 0, ratingType: "")
         page = 1
@@ -297,7 +285,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         var userNameToDisplay = ""
         var jobTitleToDisplay = ""
         var likeDislikeButtonState: Bool?
-        var isFollowerState: Bool?
         var profilePictureString = ""
         var totalLikes: Int?
         var totalDislikes: Int?
@@ -307,11 +294,9 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
             userNameToDisplay = self.filteredJson[indexPath.row]["fullName"].string ?? ""
             jobTitleToDisplay = self.filteredJson[indexPath.row]["jobTitle"].string ?? ""
             profilePictureString = self.filteredJson[indexPath.row]["profilePicture"].string ?? ""
-//            ?.replacingOccurrences(of: "\\", with: "")
             likeDislikeButtonState = self.filteredJson[indexPath.row]["isAbleToLike"].bool ?? false
-            isFollowerState = self.filteredJson[indexPath.row]["isFollowing"].bool ?? false
             totalLikes = self.filteredJson[indexPath.row]["totalLikes"].int ?? 0
-            totalDislikes = self.filteredJson[indexPath.row]["totalDislikes"].int ?? 0
+            totalDislikes = self.filteredJson[indexPath.row]["totalDisLikes"].int ?? 0
             cell.nameLabelCell.text = userNameToDisplay
             cell.professionLabelCell.text = jobTitleToDisplay
             cell.likeCount.text = String(describing: totalLikes!)
@@ -322,13 +307,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
                 cell.imageViewCell.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
             } else {
                 cell.imageViewCell.image = UIImage(named: "red cross")!
-            }
-            
-            
-            if !isFollowerState! {
-                cell.isFollowerImageView.isHidden = true
-            } else {
-                cell.isFollowerImageView.isHidden = false
             }
 
                 if likeDislikeButtonState! {
@@ -354,7 +332,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         
         if let id = self.filteredJson[indexPath.row]["id"].int {
             storage.saveSelectedUserIdProfile(id: id)
-            print(id)
+//            print(id)
             storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)
         } else {

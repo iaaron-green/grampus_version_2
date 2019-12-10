@@ -31,7 +31,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @IBOutlet weak var countryLabel: UILabel!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var dislikeButton: UIButton!
-    @IBOutlet weak var followButton: UIButton!
     
     
     //Achievement cell
@@ -109,13 +108,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             userID = storage.getUserId()!
             fetchUser(userId: storage.getUserId()!)
             addSelfLabelGestures()
-            followButton.isHidden = true
-            likeButton.isHidden = true
-            dislikeButton.isHidden = true
         } else {
-            if storage.getUserId()! == storage.getSelectedUserIdProfile()! {
-                followButton.isHidden = true
-            }
             skillsAddButton.isHidden = true
             skypeAddButton.isHidden = true
             telephoneAddButton.isHidden = true
@@ -134,7 +127,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
         SVProgressHUD.setMinimumDismissTimeInterval(2)
         SVProgressHUD.setDefaultStyle(.dark)
-        
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadProfile(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
 
@@ -250,7 +242,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     }
     
     @objc func pullToRefresh(sender: UIRefreshControl) {
-//        SDImageCache.shared.clearMemory()
         SDImageCache.shared.clearDisk()
         fetchUser(userId: userID!)
         sender.endRefreshing()
@@ -392,7 +383,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
             self.openCamera()
         }))
-//        alert.addAction(UIAlertAction.init(title: "Cancel", style: .destructive, handler: nil))
         self.present(alert, animated: true) {
             self.tapRecognizer(alert: alert)
         }
@@ -537,7 +527,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
             
             if let json = json {
-                print(json)
+//                print(json)
                 self.removeSkeleton()
                 SVProgressHUD.dismiss()
                 self.fullName = json["fullName"] as? String ?? "Full name"
@@ -552,9 +542,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 if self.skills == "" || self.skills == nil {
                     self.skills = "no skills"
                 }
-                self.isAbleToLike = json["isAbleToLike"] as? Int ?? 1
-                self.isFollowing = json["isFollowing"] as? Int ?? 0
-                
+                self.isAbleToLike = json["isAbleToLike"] as? Int ?? 1                
                 self.profilePicture = json["profilePicture"] as? String ?? ""
                 
                 let achieves = json["likesNumber"] as? [String: Int]
@@ -720,13 +708,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             dislikeButton.isHidden = true
         }
         
-        if isFollowing == 0 {
-            followButton.setImage(UIImage(named: "follow"), for: .normal)
-        } else {
-            followButton.setImage(UIImage(named: "follower"), for: .normal)
-        }
-        
-        
         let savedUser = self.storage.getUserProfile()
         if savedUser != nil && storage.getProfileState() {
             profileFullNameLabel.text = savedUser?.name
@@ -738,17 +719,12 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     profileImageView.image = UIImage(named: "red cross")
                 }
             } else {
-                
                 profileFullNameLabel.text = fullName
                 emailLabel.text = email
-                
-                
                 DispatchQueue.main.async {
-                    
                     let url = URL(string: self.profilePicture!)
                     self.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
                 }
-                
             }
         }
 
@@ -879,25 +855,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         self.present(alert, animated: true, completion: nil)
         self.tableView.reloadData()
     }
-    
-    @IBAction func followAction(_ sender: UIButton) {
-        network.followUser { (success) in
-            if success {
-                if self.isFollowing == 0 {
-                    self.isFollowing = 1
-                    SVProgressHUD.showSuccess(withStatus: "Followed!")
-                    self.followButton.setImage(UIImage(named: "follower"), for: .normal)
-                } else {
-                    self.isFollowing = 0
-                    SVProgressHUD.showSuccess(withStatus: "Unfollowed!")
-                    self.followButton.setImage(UIImage(named: "follow"), for: .normal)
-                }
-            } else {
-                SVProgressHUD.showError(withStatus: "Error!")
-            }
-        }
-    }
-    
     
     
     // MARK: - Table view data source

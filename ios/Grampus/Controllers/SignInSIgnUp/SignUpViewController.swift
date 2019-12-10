@@ -98,11 +98,6 @@ class SignUpViewController: RootViewController {
                     SVProgressHUD.showSuccess(withStatus: "Registration success. Thank you. We have sent you an email to \(self.emailTextField.text!)")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                         self.dismiss(animated: true, completion: nil)
-                        //Directing to profile page
-                        //                    self.network.signIn(username: self.emailTextField.text!, password: self.passwordTextField.text!) { (true) in
-                        //                        self.performSegue(withIdentifier: "goToProfile", sender: self)
-                        //                    }
-                        
                     }
                 } else if (error?.contains("400"))! {
                     SVProgressHUD.showError(withStatus: "This email address already exists, please enter another email address")
