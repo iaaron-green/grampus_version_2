@@ -1,63 +1,79 @@
 package com.app.services.impl;
 
+import com.app.DTO.DTOLikableProfile;
+import com.app.DTO.DTOLikeDislike;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
+import com.app.entities.User;
 import com.app.enums.Mark;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.RatingService;
-import com.app.DTO.DTOAchievement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RatingServiceImpl implements RatingService {
 
-    @Autowired
-    RatingRepository ratingRepository;
-    @Autowired
-    ProfileRepository profileRepository;
-    @Autowired
-    UserRepository userRepository;
+    private RatingRepository ratingRepository;
+    private ProfileRepository profileRepository;
+    private UserRepository userRepository;
+    private MessageSource messageSource;
+    private JavaMailSender emailSender;
 
-    public Rating addLike(Long profileId, Rating updatedRating, String userName){
-
-        Profile profile = profileRepository.findOneById(profileId);
-        updatedRating.setProfileRating(profile);
-
-        if (!userName.equals(profile.getUser().getEmail())) {
-            Long profileLike = profile.getLikes();
-            profile.setLikes(++profileLike);
-            updatedRating.setRatingSourceUsername(userName);
-            profileRepository.save(profile);
-        }
-        return ratingRepository.save(updatedRating);
+    @Autowired
+    public RatingServiceImpl(RatingRepository ratingRepository, ProfileRepository profileRepository, UserRepository userRepository,
+                             MessageSource messageSource, JavaMailSender emailSender) {
+        this.ratingRepository = ratingRepository;
+        this.profileRepository = profileRepository;
+        this.userRepository = userRepository;
+        this.messageSource = messageSource;
+        this.emailSender = emailSender;
     }
 
-    public Rating addDislike(Long profileId, Rating updatedRating, String userName){
+    public Boolean addLike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
 
-        Profile profile = profileRepository.findOneById(profileId);
-        updatedRating.setProfileRating(profile);
+        Profile profile = checkProfile(profileId, dtoLikeDislike);
+        if (!dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
+            Long profileLike = profile.getLikes();
+            profile.setLikes(++profileLike);
 
-        if (!userName.equals(profile.getUser().getEmail())) {
+        }
+        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
+    }
+
+    public Boolean addDislike(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws CustomException, MessagingException {
+
+        Profile profile = checkProfile(profileId, dtoLikeDislike);
+        if (dtoLikeDislike.getRatingType().equals(Mark.DISLIKE)) {
             Long profileDislike = profile.getDislikes();
             profile.setDislikes(++profileDislike);
-            updatedRating.setRatingSourceUsername(userName);
-            profileRepository.save(profile);
+
         }
-        return ratingRepository.save(updatedRating);
+        return updateRatingAndProfile(profile, principal.getName(), dtoLikeDislike.getRatingType(), dtoLikeDislike.getComments());
     }
 
     @Override
-    public Map<String, Object> getAndCountLikesByProfileId(Long id) {
+    public Map<Mark, Object> getAndCountLikesByProfileId(Long id) {
 
-        Map<String, Object> mapOfLikes = new HashMap<>();
+        Map<Mark, Object> mapOfLikes = new HashMap<>();
         List<Mark> listOfMarks = Arrays.asList(Mark.values());
 
-        listOfMarks.forEach(mark -> mapOfLikes.put(mark.toString().toLowerCase(), ratingRepository.countRatingType(id, mark.toString().toLowerCase())));
+        listOfMarks.forEach(mark -> mapOfLikes.put(mark, ratingRepository.countRatingType(id, mark.toString())));
 
         return mapOfLikes;
 
@@ -68,37 +84,100 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Map<Long, Map<String, Long>> addInfoAchievement() {
+    public Map<Long, Map<Mark, Long>> addInfoAchievement() {
 
-        Map<Long, Map<String, Long>> userIdAndAchievments = new HashMap<>();
+        Map<Long, Map<Mark, Long>> userIdAndAchievments = new HashMap<>();
         List<Mark> positiveRating = Arrays.asList(Mark.values());
 
         Set<Long> userId = userRepository.getAllId();
 
         userId.forEach(user -> {
-            Map<String, Long> achievements = new HashMap<>();
-            positiveRating.forEach(mark -> achievements.put(mark.toString(), ratingRepository.countRatingType(user, mark.toString())));
+            Map<Mark, Long> achievements = new HashMap<>();
+            positiveRating.forEach(mark -> achievements.put(mark, ratingRepository.countRatingType(user, mark.toString())));
             userIdAndAchievments.put(user, achievements);
         });
-
-        String s = userIdAndAchievments.toString();
-        System.out.println(s);
 
         return userIdAndAchievments;
     }
 
     @Override
-    public List<DTOAchievement> getUserRatingByType(Mark markType) {
-        List<DTOAchievement> achievementData = new ArrayList<>();
-        Set<Long> userIds = userRepository.getAllId();
-        userIds.forEach(userId -> {
-            DTOAchievement achievement = new DTOAchievement();
-            achievement.setUserId(userId);
-            achievement.setCountLike(ratingRepository.countRatingType(userId, markType.toString()));
-            achievementData.add(achievement);
-        });
+    public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) {
+        List<DTOLikableProfile> achievementData = new ArrayList<>();
+        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType);
+        if (!CollectionUtils.isEmpty(profilesWithMark)) {
+            achievementData.addAll(profilesWithMark);
+        }
         return achievementData;
     }
+    @Override
+    public List<DTOLikableProfile> addDTOInfoAchievement() {
 
+        List<DTOLikableProfile> userIdAndAchievments = new ArrayList<>();
+        List<Mark> marks = Arrays.asList(Mark.values());
 
+        Set<Long> dtoUserShortInfoId = userRepository.getAllId();
+        List<DTOLikableProfile> dtoProfiles = userRepository.findProfileByRatingType(marks, dtoUserShortInfoId);
+
+        if (!CollectionUtils.isEmpty(dtoProfiles)){
+            dtoProfiles.stream().sorted(Comparator.comparing(DTOLikableProfile::getId)).collect(Collectors.toList());
+        }
+
+        dtoProfiles.forEach(profile -> profile.setAchieveCount(getAndCountLikesByProfileId(profile.getId())));
+
+        userIdAndAchievments.addAll(dtoProfiles);
+        return userIdAndAchievments;
+    }
+
+    private Profile checkProfile(Long profileId, DTOLikeDislike dtoLikeDislike) throws CustomException {
+
+        if (profileId == null || profileId == 0) {
+            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
+        }
+
+        Profile profile = profileRepository.findOneById(profileId);
+
+        if (profile == null) {
+            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        }
+
+        if (dtoLikeDislike == null) {
+            throw new CustomException(messageSource.getMessage("rating.type.is.empty", null, LocaleContextHolder.getLocale()), Errors.RATING_TYPE_IS_EMPTY);
+        } else return profile;
+    }
+
+    private Boolean updateRatingAndProfile(Profile profile, String userEmail, Mark ratingType, String dtoLikeDislike) throws MessagingException {
+        User currentUser = userRepository.findByEmail(userEmail);
+        if (!currentUser.getId().equals(profile.getId()) &&  ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
+            Rating updatedRating = new Rating();
+            updatedRating.setProfileRating(profile);
+            updatedRating.setRatingSourceUsername(currentUser.getEmail());
+            updatedRating.setRatingType(ratingType);
+            updatedRating.setComment(dtoLikeDislike);
+            ratingRepository.save(updatedRating);
+
+            if (!ratingType.equals(Mark.DISLIKE)) {
+                Long likes = ratingRepository.countRatingType(profile.getId(), ratingType.toString());
+                if (likes % 5 == 0) {
+
+                    MimeMessage message = emailSender.createMimeMessage();
+                    MimeMessageHelper helper = null;
+                    try {
+                        helper = new MimeMessageHelper(message, true, "utf-8");
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                    }
+                    String htmlMsg = "<h2><center>Congratulation!</center></h2>" +
+                            "<p><center>You got new achievement " + "\"" +ratingType.toString() + "\"" + "<center></p>" +
+                            "<img src='https://i.ibb.co/yNsKQ53/image.png'>";
+
+                    message.setContent(htmlMsg, "text/html");
+                    helper.setTo(profile.getUser().getEmail());
+                    helper.setSubject("New Achievement(GRAMPUS)");
+                    emailSender.send(message);
+
+                }
+            }
+            return true;
+        } else return false;
+    }
 }

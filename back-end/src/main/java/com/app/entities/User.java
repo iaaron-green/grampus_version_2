@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
+import java.util.Date;
 
 
 @Entity
@@ -35,6 +36,7 @@ public class User implements UserDetails {
     private String fullName;
 
     private String jobTitle;
+    private Date registrationDate = new Date(System.currentTimeMillis());
 
     @OneToOne(mappedBy = "user", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore

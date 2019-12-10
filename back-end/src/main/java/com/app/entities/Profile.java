@@ -8,10 +8,11 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "user")
+@EqualsAndHashCode(of = { "id" })
 @Entity
 @Table(name = "profiles")
 @ToString
@@ -25,9 +26,15 @@ public class Profile {
 
    private Long dislikes;
 
-   private String information;
+   private String skype;
+
+   private String phone;
+
+   private String telegram;
 
    private String skills;
+
+   private String country;
 
    @OneToOne
    private User user;
@@ -35,6 +42,22 @@ public class Profile {
    @OneToMany(cascade = CascadeType.ALL,
            fetch = FetchType.LAZY, mappedBy = "profileRating")
    private List<Rating> ratings = new ArrayList<>();
+
+   @ManyToMany
+   @JoinTable(
+           name = "user_subscriptions",
+           joinColumns = @JoinColumn(name = "user_id"),
+           inverseJoinColumns = @JoinColumn(name = "profile_id")
+   )
+   private Set<Profile> subscriptions;
+
+   @ManyToMany
+   @JoinTable(
+           name = "user_subscriptions",
+           joinColumns = @JoinColumn(name = "profile_id"),
+           inverseJoinColumns = @JoinColumn(name = "user_id")
+   )
+   private Set<Profile> subscribers;
 
    public Profile() {
    }
@@ -44,7 +67,6 @@ public class Profile {
       this.likes = 0L;
       this.dislikes = 0L;
       this.user = user;
-      this.user.setJobTitle(JobTitle.getById((int) (Math.random() * (10 - 1))+1));
    }
 
 }

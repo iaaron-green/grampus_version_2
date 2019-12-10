@@ -1,6 +1,5 @@
 package com.app.repository;
 
-import com.app.DTO.DTOLikableProfile;
 import com.app.entities.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,9 +19,9 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     Profile findProfileById(Long id);
 
-
     @Query(
             value = "SELECT profile_id FROM ratings WHERE rating_source_username = ?",
             nativeQuery = true)
     Set<Long> getProfilesIdWithCurrentUserLike(String userEmail);
+
 }

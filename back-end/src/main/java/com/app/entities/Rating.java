@@ -1,11 +1,13 @@
 package com.app.entities;
 
+import com.app.enums.Mark;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Calendar;
 
 @Getter
 @Setter
@@ -23,11 +25,16 @@ public class Rating {
 
     private String ratingSourceUsername;
 
-    private String ratingType;
+    @Enumerated(EnumType.STRING)
+    private Mark ratingType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     @JsonIgnore
     private Profile profileRating;
+
+    private Calendar created_date = Calendar.getInstance();
+
+    private String comment;
 
 }

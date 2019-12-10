@@ -1,9 +1,9 @@
 package com.app.services;
 
 
+import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTONewUser;
-import com.app.DTO.DTOUserShortInfo;
-import com.app.util.CustomException;
+import com.app.exceptions.CustomException;
 
 import java.util.List;
 
@@ -11,6 +11,5 @@ public interface UserService {
 
     DTONewUser saveUser(DTONewUser newUser) throws CustomException;
 
-    List<DTOUserShortInfo> findAllByJobTitle(String jobTitle);
-
+    List<DTOLikableProfile> findAllByJobTitle(String jobTitle, int page, int size);
 }
