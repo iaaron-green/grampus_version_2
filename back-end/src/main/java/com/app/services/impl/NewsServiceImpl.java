@@ -7,12 +7,19 @@ import com.app.entities.News;
 import com.app.entities.Profile;
 import com.app.entities.User;
 import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import com.app.repository.CommentRepository;
 import com.app.repository.NewsRepository;
 import com.app.repository.UserRepository;
 import com.app.services.NewsService;
 import com.app.services.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,61 +41,80 @@ public class NewsServiceImpl implements NewsService {
     private CommentRepository commentRepository;
 
     @Autowired
-    ProfileService profileService;
+    private MessageSource messageSource;
+
+    @Autowired
+    private ProfileService profileService;
 
     @Override
     public void saveDTONews(String title, String content, MultipartFile file, Principal principal) throws CustomException {
+        if(title.length() > 100 && content.length() < 1000)
+            throw new CustomException(messageSource.getMessage("title.type.is.not.in.size", null, LocaleContextHolder.getLocale()), Errors.TITLE_IS_EMPTY);
         News newNews = new News();
         newNews.setTitle(title);
         newNews.setContent(content);
 
         String pictureFullName = profileService.saveImgInFtp(file, "news_img/" + UUID.randomUUID());
-        if(pictureFullName != null)
+        if(pictureFullName != null) {
             newNews.setPicture(Constants.FTP_IMG_LINK + pictureFullName);
+        }
 
         SimpleDateFormat df = new SimpleDateFormat("HH:mm dd.MM.yyy");
         newNews.setDate(df.format(new Date().getTime()));
 
         newNews.setProfileID(userRepository.findByEmail(principal.getName()).getId());
         newNews.setCountOfLikes(0);
+        newNews.setComment(null);
         newsRepository.save(newNews);
     }
 
     @Override
-    public List<DTONews> getAllNews(Principal principal) throws CustomException {
-        Iterable<News> allNews = newsRepository.findAll();
+    public List<DTONews> getAllNews(Principal principal, Integer page, Integer size) throws CustomException {
+
+        Page<News> allNews = newsRepository.findAllBy(pageRequest(page, size));
         List<DTONews> updatedNews = new ArrayList<>();
-        for (News s : allNews) {
-            User user = userRepository.getById(s.getProfileID());
-            if (user.getJobTitle() != null && (user.getJobTitle().equals("HR") || user.getJobTitle().equals("PM"))
-                    || s.getProfileID().equals(userRepository.findByEmail(principal.getName()).getId())) {
-                updatedNews.add(getDtoNews(s));
-            }
-        }
+                allNews.forEach(news -> {
+                    User user = userRepository.getById(news.getProfileID());
+                    if (user.getJobTitle() != null && (user.getJobTitle().equals("HR") || user.getJobTitle().equals("PM"))
+                            || news.getProfileID().equals(userRepository.findByEmail(principal.getName()).getId())) {
+                        DTONews dtonews = new DTONews();
+                        try {
+                            dtonews = DTONews.builder()
+                                    .id(user.getId())
+                                    .title(news.getTitle())
+                                    .content(news.getContent())
+                                    .picture(news.getPicture())
+                                    .imgProfile(profileService.getProfileById(news.getProfileID()).getProfilePicture())
+                                    .nameProfile(userRepository.getById(news.getProfileID()).getFullName())
+                                    .date(news.getDate())
+                                    .countOfLikes(news.getCountOfLikes())
+                                    .comment(Comment.builder()
+                                            .comment_date("")
+                                            .fullname("")
+                                            .
+                                            .build() )
+                                    .build();
+                        } catch (CustomException e) {
+                            e.printStackTrace();
+                        }
+                        updatedNews.add(dtonews);
+                    }
+                });
         return updatedNews;
     }
 
     @Override
-    public DTONews saveLike(Long id) throws CustomException {
+    public void saveComment(Long id, String textComment, Principal principal) throws CustomException {
         News s = newsRepository.findOneById(id);
-        s.setCountOfLikes(s.getCountOfLikes() + 1);
-        newsRepository.save(s);
+        if(s == null)
+            throw new CustomException(messageSource.getMessage("news.not.exist", null, LocaleContextHolder.getLocale()), Errors.NEWS_NOT_EXIST);
 
-        return getDtoNews(s);
-    }
+        User user = userRepository.findByEmail(principal.getName());
+        Profile profile = user.getProfile();
 
-    @Override
-    public Boolean saveComment(Long id, String comment) throws CustomException {
-        News s = newsRepository.findOneById(id);
-        Profile profile = profileService.getProfileById(id);
-        User user = userRepository.getById(id);
-        List<Comment> arr = s.getComment();
-        Comment newComment = new Comment(user.getFullName(),profile.getProfilePicture(), comment);
-
-        newComment.setNews(s);
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm dd.MM.yyy");
+        Comment newComment = new Comment(user.getFullName(), profile.getProfilePicture(), textComment, df.format(new Date().getTime()));
         commentRepository.save(newComment);
-
-        return true;
     }
 
     private DTONews getDtoNews(News s) throws CustomException {
@@ -96,6 +122,10 @@ public class NewsServiceImpl implements NewsService {
                 profileService.getProfileById(s.getProfileID()).getProfilePicture(),
                 userRepository.getById(s.getProfileID()).getFullName(),
                 s.getDate(), s.getCountOfLikes(), s.getComment());
+    }
+
+    private Pageable pageRequest(int page, int size) {
+        return PageRequest.of(page, size);
     }
 }
 

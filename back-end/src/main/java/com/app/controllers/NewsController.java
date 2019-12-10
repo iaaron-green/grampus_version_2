@@ -20,9 +20,11 @@ public class NewsController {
     NewsService newsService;
 
     @GetMapping("")
-    public ResponseEntity<?>getAllDTONews(Principal principal) throws CustomException {
+    public ResponseEntity<?>getAllDTONews(@RequestParam(value = "page", defaultValue = "0") Integer page,
+                                          @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                          Principal principal) throws CustomException {
 
-        return new ResponseEntity<>(newsService.getAllNews(principal), HttpStatus.OK);
+        return new ResponseEntity<>(newsService.getAllNews(principal, page, size), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -30,20 +32,16 @@ public class NewsController {
                                       @RequestParam("content") String content,
                                       @RequestParam(value = "file", required = false) MultipartFile file,
                                       Principal principal)  throws CustomException {
-        if(title.length() > 100 && content.length() < 1000)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         newsService.saveDTONews(title,content,file, principal);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/like")
-    public ResponseEntity<?> addlike(@RequestParam("id") Long id) throws CustomException {
-        return new ResponseEntity<>(newsService.saveLike(id),HttpStatus.OK) ;
-    }
 
     @PostMapping("/comment")
     public ResponseEntity<?> addComment(@RequestParam("id") Long id,
-                                        @RequestParam("comment") String comment) throws CustomException {
-        return new ResponseEntity<>(newsService.saveComment(id, comment),HttpStatus.OK) ;
+                                        @RequestParam("comment") String comment,
+                                        Principal principal) throws CustomException {
+        newsService.saveComment(id, comment, principal);
+        return new ResponseEntity<>(HttpStatus.OK) ;
     }
 }

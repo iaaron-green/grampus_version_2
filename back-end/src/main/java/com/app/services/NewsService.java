@@ -13,9 +13,7 @@ public interface NewsService {
 
     void saveDTONews(String title, String content, MultipartFile file, Principal principal) throws CustomException;
 
-    List<DTONews> getAllNews(Principal principal) throws CustomException;
+    List<DTONews> getAllNews(Principal principal, Integer page, Integer size) throws CustomException;
 
-    DTONews saveLike(Long idNews) throws CustomException;
-
-    Boolean saveComment(Long id, String comment) throws CustomException;
+    void saveComment(Long id, String comment, Principal principal) throws CustomException;
 }

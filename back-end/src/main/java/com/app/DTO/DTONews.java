@@ -1,6 +1,7 @@
 package com.app.DTO;
 
 import com.app.entities.Comment;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
 public class DTONews {
     private Long id;
     private String title;
