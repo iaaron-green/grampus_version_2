@@ -60,7 +60,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     Page<DTOLikableProfile> findAllProfilesWithoutSearchParamAndWithoutDislike(@Param("ratingType") Mark ratingType, Pageable p);
 
     @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture, count(r.ratingType)) " +
-            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id AND u.fullName LIKE :searchParam% WHERE r.ratingType LIKE :ratingType OR r.ratingType IS NULL" +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id WHERE r.ratingType LIKE :ratingType OR r.ratingType IS NULL" +
             " GROUP BY u.id")
     Page<DTOLikableProfile> findAllProfilesWithoutSearchParamAndByRatingType(@Param("ratingType") Mark ratingType, Pageable p);
 
