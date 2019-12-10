@@ -194,9 +194,9 @@ public class ProfileServiceImpl implements ProfileService {
         Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(user.getId());
 
         if (StringUtils.isEmpty(searchParam)) {
-            resultList = getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, subscriptions);
+            resultList = getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
         } else {
-            resultList = getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, subscriptions);
+            resultList = getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
         }
 
         return resultList.stream().sorted(Comparator.comparingLong(DTOLikableProfile::getTotalLikes).reversed()).collect(Collectors.toList());
@@ -220,8 +220,8 @@ public class ProfileServiceImpl implements ProfileService {
         return true;
     }
 
-    private List<DTOLikableProfile> getAllRatingProfilesWithoutSearchParam(Integer page, Integer size, RatingSortParam sortParam,
-                                                                           Mark ratingType, Set<Long> profilesIdWithLike, Set<Long> subscriptions) {
+    private List<DTOLikableProfile> getAllRatingProfilesWithoutSearchParam(Integer page, Integer size, RatingSortParam sortParam, Mark ratingType,
+                                                                           Set<Long> profilesIdWithLike, Set<Long> subscriptions, Long currentUserId) {
         if (sortParam != null) {
 
             Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
@@ -230,7 +230,7 @@ public class ProfileServiceImpl implements ProfileService {
             else
                 dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParamAndByRatingType(subscriptions, ratingType, pageRequest(page, size));
 
-            return fillDTOLikableProfile(profilesIdWithLike, null, dtoLikableProfilesWithSubscriptions);
+            return fillDTOLikableProfile(profilesIdWithLike, null, dtoLikableProfilesWithSubscriptions, currentUserId);
         } else {
 
             Page<DTOLikableProfile> dtoLikableProfiles;
@@ -239,12 +239,12 @@ public class ProfileServiceImpl implements ProfileService {
             else
                 dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParamAndByRatingType(ratingType, pageRequest(page, size));
 
-            return fillDTOLikableProfile(profilesIdWithLike, subscriptions, dtoLikableProfiles);
+            return fillDTOLikableProfile(profilesIdWithLike, subscriptions, dtoLikableProfiles, currentUserId);
         }
     }
 
-    private List<DTOLikableProfile> getAllRatingProfilesWithSearchParam(String searchParam, Integer page, Integer size, RatingSortParam sortParam,
-                                                                        Mark ratingType, Set<Long> profilesIdWithLike, Set<Long> subscriptions) {
+    private List<DTOLikableProfile> getAllRatingProfilesWithSearchParam(String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType,
+                                                                        Set<Long> profilesIdWithLike, Set<Long> subscriptions, Long currentUserId) {
         if (sortParam != null) {
 
             Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
@@ -253,7 +253,7 @@ public class ProfileServiceImpl implements ProfileService {
             else
                 dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParamAndRatingType(subscriptions, ratingType, searchParam, pageRequest(page, size));
 
-            return fillDTOLikableProfile(profilesIdWithLike, null, dtoLikableProfilesWithSubscriptions);
+            return fillDTOLikableProfile(profilesIdWithLike, null, dtoLikableProfilesWithSubscriptions, currentUserId);
         } else {
 
             Page<DTOLikableProfile> dtoLikableProfiles;
@@ -262,16 +262,16 @@ public class ProfileServiceImpl implements ProfileService {
             else
                 dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParamAndRatingType(ratingType, searchParam, pageRequest(page, size));
 
-            return fillDTOLikableProfile(profilesIdWithLike, subscriptions, dtoLikableProfiles);
+            return fillDTOLikableProfile(profilesIdWithLike, subscriptions, dtoLikableProfiles, currentUserId);
         }
     }
 
-    private List<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<Long> subscriptions, Page<DTOLikableProfile> dtoLikableProfiles) {
+    private List<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<Long> subscriptions, Page<DTOLikableProfile> dtoLikableProfiles, Long currentUserId) {
 
         boolean isProfileIdsWithLikeEmpty = CollectionUtils.isEmpty(profilesIdWithLike);
         boolean isSubscriptionIsNotEmpty = !CollectionUtils.isEmpty(subscriptions);
         dtoLikableProfiles.forEach(profile -> {
-            if (isProfileIdsWithLikeEmpty || !profilesIdWithLike.contains(profile.getId())) {
+            if (!profile.getId().equals(currentUserId) && (isProfileIdsWithLikeEmpty || !profilesIdWithLike.contains(profile.getId()))) {
                 profile.setIsAbleToLike(true);
             }
             if (isSubscriptionIsNotEmpty && subscriptions.contains(profile.getId())) {
