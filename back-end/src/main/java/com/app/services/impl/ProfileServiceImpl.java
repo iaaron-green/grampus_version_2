@@ -93,7 +93,7 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setFullName(profileFromDB.getUser().getFullName());
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
             dtoProfile.setComments(ratingService.getAllComments(id));
-            if (ratingRepository.checkLike(id, currentUser.getEmail()) == null) dtoProfile.setIsAbleToLike(true);
+            if (ratingRepository.checkLike(id, currentUser.getEmail()) == null && !currentUser.getId().equals(id)) dtoProfile.setIsAbleToLike(true);
             if (profileFromDB.getSubscribers().contains(currentUser.getProfile())) dtoProfile.setIsFollowing(true);
             return dtoProfile;
         } else
