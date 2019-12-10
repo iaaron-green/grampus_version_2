@@ -1,7 +1,7 @@
 package com.app.services.impl;
 
-import com.app.configtoken.Constants;
-import com.app.configtoken.JwtTokenProvider;
+import com.app.config.Constants;
+import com.app.config.JWTconfig.JwtTokenProvider;
 import com.app.entities.ActivationCode;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static com.app.configtoken.Constants.TOKEN_PREFIX;
+import static com.app.config.Constants.TOKEN_PREFIX;
 
 @Service
 public class ActivationServiceImpl implements ActivationService {
