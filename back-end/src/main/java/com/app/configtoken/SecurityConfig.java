@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import static com.app.configtoken.Constants.H2_URL;
 import static com.app.configtoken.Constants.SIGN_UP_URLS;
+import static com.app.configtoken.Constants.TEST_URLS;
 
 @Configuration
 @EnableWebSecurity
@@ -84,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                       "/**/*.css",
                       "/**/*.js"
               ).permitAll()
-              .antMatchers(SIGN_UP_URLS).permitAll()
+              .antMatchers(SIGN_UP_URLS, TEST_URLS).permitAll()
               .antMatchers(H2_URL).permitAll()
               .anyRequest().authenticated();
 

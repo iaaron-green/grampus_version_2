@@ -161,7 +161,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/main/resources/config</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
