@@ -12,7 +12,6 @@ import com.app.services.RatingService;
 import com.app.services.UserService;
 import com.app.validators.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -45,7 +44,7 @@ public class ProfileController {
 
     @GetMapping("/{profileId}")
     public ResponseEntity<?> getProfileById(@PathVariable Long profileId, Principal principal) throws CustomException {
-        return new ResponseEntity<>(profileService.getDTOProfileById(profileId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(profileService.getDTOProfileById(profileId, principal.getName()), HttpStatus.OK);
     }
 
 

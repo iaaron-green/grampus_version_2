@@ -137,6 +137,7 @@ public class RatingServiceImpl implements RatingService {
             dbRating.setProfileRating(profile);
             dbRating.setRatingSourceUsername(currentUser.getEmail());
             dbRating.setRatingType(dtoLikeDislike.getRatingType());
+            dbRating.setComment(dtoLikeDislike.getComments());
 
             ratingRepository.save(dbRating);
 

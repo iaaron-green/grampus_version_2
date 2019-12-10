@@ -18,7 +18,7 @@ public interface ProfileService {
 
     Profile getProfileById(Long id) throws CustomException;
 
-    DTOProfile getDTOProfileById(Long id, Principal principal) throws CustomException;
+    DTOProfile getDTOProfileById(Long id, String loggedUserName) throws CustomException;
 
     Boolean updateProfile(DTOProfile profile, String principalName);
 

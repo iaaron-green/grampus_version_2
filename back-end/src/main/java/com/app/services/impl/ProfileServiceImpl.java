@@ -69,7 +69,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public DTOProfile getDTOProfileById(Long id, Principal principal) throws CustomException {
+    public DTOProfile getDTOProfileById(Long id, String principalName) throws CustomException {
 
         if (id == null || id == 0) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
@@ -77,7 +77,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         Profile profileFromDB = profileRepository.findProfileById(id);
         if (profileFromDB != null) {
-            User currentUser = userRepository.findByEmail(principal.getName());
+            User currentUser = userRepository.findByEmail(principalName);
             DTOProfile dtoProfile = new DTOProfile();
             dtoProfile.setId(profileFromDB.getId());
             dtoProfile.setDislikes(ratingRepository.countProfileDislikes(id, Mark.DISLIKE));
