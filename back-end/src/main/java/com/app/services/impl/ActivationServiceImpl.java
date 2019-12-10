@@ -1,6 +1,7 @@
 package com.app.services.impl;
 
-import com.app.config.Constants;
+import com.app.configtoken.Constants;
+import com.app.configtoken.JwtTokenProvider;
 import com.app.entities.ActivationCode;
 import com.app.entities.Profile;
 import com.app.entities.Rating;
@@ -12,15 +13,22 @@ import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
 import com.app.services.ActivationService;
+import com.app.validators.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+
+import static com.app.configtoken.Constants.TOKEN_PREFIX;
 
 @Service
 public class ActivationServiceImpl implements ActivationService {
@@ -31,17 +39,23 @@ public class ActivationServiceImpl implements ActivationService {
     private JavaMailSender emailSender;
     private MessageSource messageSource;
     private RatingRepository ratingRepository;
+    private AuthenticationManager authenticationManager;
+    private JwtTokenProvider tokenProvider;
 
     @Autowired
     public ActivationServiceImpl(UserRepository userRepository, ActivationRepository activationRepository,
                                  ProfileRepository profileRepository, JavaMailSender emailSender,
-                                 MessageSource messageSource, RatingRepository ratingRepository) {
+                                 MessageSource messageSource, RatingRepository ratingRepository,
+                                 JwtTokenProvider tokenProvider,
+                                 AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.activationRepository = activationRepository;
         this.profileRepository = profileRepository;
         this.emailSender = emailSender;
         this.messageSource = messageSource;
         this.ratingRepository = ratingRepository;
+        this.tokenProvider = tokenProvider;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -60,17 +74,25 @@ public class ActivationServiceImpl implements ActivationService {
     }
 
     @Override
-    public boolean isUserActivate(String login) throws CustomException, MessagingException {
-        User user = userRepository.findByEmail(login);
+    public String isUserActivate(LoginRequest loginRequest) throws CustomException, MessagingException {
+        User user = userRepository.findByEmail(loginRequest.getUsername());
 
-        if (user != null && activationRepository.findByUserId(user.getId()).isActivate()) {
-            return true;
-        } else {
-            if (user == null)
-                throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
+        if (user == null)
+            throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
 
+        if (!activationRepository.findByUserId(user.getId()).isActivate()) {
             sendMail(user.getEmail(), Constants.REG_MAIL_SUBJECT, Constants.REG_MAIL_ARTICLE, Constants.REG_MAIL_MESSAGE + user.getId());
-            throw new CustomException(messageSource.getMessage("user.not.activated", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_ACTIVATED);
+            throw new CustomException(messageSource.getMessage("user.not.activated", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_NOT_ACTIVE);
+        } else {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
+                    )
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return TOKEN_PREFIX +  tokenProvider.provideToken(authentication);
         }
     }
 

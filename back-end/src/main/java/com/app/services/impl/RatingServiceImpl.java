@@ -98,7 +98,7 @@ public class RatingServiceImpl implements RatingService {
         List<DTOLikableProfile> dtoProfiles = userRepository.findProfileByRatingType(marks, dtoUserShortInfoId);
 
         if (!CollectionUtils.isEmpty(dtoProfiles)) {
-            dtoProfiles.stream().sorted(Comparator.comparing(DTOLikableProfile::getId)).collect(Collectors.toList());
+            dtoProfiles = dtoProfiles.stream().sorted(Comparator.comparing(DTOLikableProfile::getId)).collect(Collectors.toList());
         }
 
         dtoProfiles.forEach(profile -> profile.setAchieveCount(getAndCountLikesByProfileId(profile.getId())));
