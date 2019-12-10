@@ -36,25 +36,17 @@ public class AuthorizationController {
 
    private ValidationErrorService validationErrorService;
    private UserValidator userValidator;
-   private JwtTokenProvider tokenProvider;
-   private AuthenticationManager authenticationManager;
    private ActivationService activationService;
-   private MessageSource messageSource;
    private UserService userService;
 
    @Autowired
    public AuthorizationController(ValidationErrorService validationErrorService,
                                   ActivationService activationService,
-                                  UserValidator userValidator, UserService userService,
-                                  JwtTokenProvider tokenProvider,
-                                  AuthenticationManager authenticationManager,
-                                  MessageSource messageSource) {
+                                  UserValidator userValidator, UserService userService) {
       this.validationErrorService = validationErrorService;
       this.activationService = activationService;
       this.userValidator = userValidator;
-      this.tokenProvider = tokenProvider;
-      this.authenticationManager = authenticationManager;
-      this.messageSource = messageSource;
+
       this.userService = userService;
    }
 
@@ -64,21 +56,7 @@ public class AuthorizationController {
       if(errorMap != null)
          return errorMap;
 
-      if (!activationService.isUserActivate(loginRequest.getUsername())) {
-         throw new CustomException(messageSource.getMessage("activation.code.is.not.active", null, LocaleContextHolder.getLocale()), Errors.ACTIVATION_CODE_IS_NOT_ACTIVE);
-      }
-
-      Authentication authentication = authenticationManager.authenticate(
-              new UsernamePasswordAuthenticationToken(
-                      loginRequest.getUsername(),
-                      loginRequest.getPassword()
-              )
-      );
-
-      SecurityContextHolder.getContext().setAuthentication(authentication);
-      String jwt = TOKEN_PREFIX +  tokenProvider.provideToken(authentication);
-
-      return ResponseEntity.ok(new JWTLoginSuccessResponse(true, jwt));
+      return ResponseEntity.ok(new JWTLoginSuccessResponse(true, activationService.isUserActivate(loginRequest)));
    }
 
    @PostMapping("/register")

@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -193,17 +192,17 @@ public class ProfileServiceImpl implements ProfileService {
         Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
         Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(user.getId());
 
-        if (!StringUtils.isEmpty(sortParam)) {
+        if (sortParam != null) {
 
             Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
-            if (StringUtils.isEmpty(ratingType)) dtoLikableProfilesWithSubscriptions = ratingRepository.findSubscriptionsByParamWithoutDislike(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
+            if (ratingType == null) dtoLikableProfilesWithSubscriptions = ratingRepository.findSubscriptionsByParamWithoutDislike(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
              else dtoLikableProfilesWithSubscriptions = ratingRepository.findSubscriptionsByParamAndRatingType(subscriptions, ratingType, searchParam, pageRequest(page, size));
 
             resultList = fillDTOLikableProfile(profilesIdWithLike, null, dtoLikableProfilesWithSubscriptions);
         } else {
 
             Page<DTOLikableProfile> dtoLikableProfiles;
-            if (StringUtils.isEmpty(ratingType)) dtoLikableProfiles = ratingRepository.findAllByParamWithoutDislike(Mark.DISLIKE, searchParam, pageRequest(page, size));
+            if (ratingType == null) dtoLikableProfiles = ratingRepository.findAllByParamWithoutDislike(Mark.DISLIKE, searchParam, pageRequest(page, size));
             else  dtoLikableProfiles = ratingRepository.findAllByParamAndRatingType(ratingType, searchParam, pageRequest(page, size));
 
             resultList = fillDTOLikableProfile(profilesIdWithLike, subscriptions, dtoLikableProfiles);
