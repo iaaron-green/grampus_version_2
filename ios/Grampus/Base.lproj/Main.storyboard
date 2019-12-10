@@ -184,6 +184,11 @@
                                 <items>
                                     <navigationItem title="Rating" id="To6-DX-bL7">
                                         <barButtonItem key="leftBarButtonItem" title="Item" image="menu" id="3xN-0z-N7a"/>
+                                        <barButtonItem key="rightBarButtonItem" image="sort" id="SDe-sm-RQc">
+                                            <connections>
+                                                <action selector="sortButtonPressed:" destination="CY6-yc-HzM" id="D2a-3Z-Nbi"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -345,6 +350,34 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6xC-yI-oQt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2528.985507246377" y="805.58035714285711"/>
+        </scene>
+        <!--Comments Table View Controller-->
+        <scene sceneID="ccG-fg-0Vd">
+            <objects>
+                <tableViewController id="Ojv-ib-cQc" customClass="CommentsTableViewController" customModule="Grampus" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="lkb-2O-8QR">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="GZC-DD-XBu">
+                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="GZC-DD-XBu" id="5XB-ub-GdO">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Ojv-ib-cQc" id="Ewc-mb-o7b"/>
+                            <outlet property="delegate" destination="Ojv-ib-cQc" id="hcJ-U8-URD"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="J6F-IG-DAc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1735" y="1501"/>
         </scene>
         <!--News Table Table View Controller-->
         <scene sceneID="Hy8-q7-xdA">
@@ -566,7 +599,7 @@
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="eLC-m7-KhR" userLabel="width ≥ 100"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Barack Obama" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fLC-bd-syc">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fLC-bd-syc">
                                                     <rect key="frame" x="25" y="166" width="220" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="220" id="3jq-G5-xoe"/>
@@ -576,7 +609,7 @@
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="android.studio@android.com" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Nh-qB-ICJ">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Nh-qB-ICJ">
                                                     <rect key="frame" x="25" y="194" width="220" height="18"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="18" id="NFI-hW-nU8"/>
@@ -1182,6 +1215,7 @@
                                                         <constraint firstAttribute="width" constant="15" id="8t6-ZD-FGr"/>
                                                         <constraint firstAttribute="height" constant="15" id="QT8-JH-ZQ7"/>
                                                     </constraints>
+                                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <inset key="contentEdgeInsets" minX="-5" minY="-5" maxX="5" maxY="5"/>
                                                     <state key="normal" title="AddSkype" image="pencil"/>
                                                     <connections>
@@ -1194,6 +1228,7 @@
                                                         <constraint firstAttribute="height" constant="15" id="C4u-yx-xEa"/>
                                                         <constraint firstAttribute="width" constant="15" id="txz-cd-WCK"/>
                                                     </constraints>
+                                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <inset key="contentEdgeInsets" minX="-5" minY="-5" maxX="5" maxY="5"/>
                                                     <state key="normal" title="AddTelephone" image="pencil"/>
                                                     <connections>
@@ -1206,6 +1241,7 @@
                                                         <constraint firstAttribute="width" constant="15" id="JfI-ZM-3qK"/>
                                                         <constraint firstAttribute="height" constant="15" id="dA2-Wq-Oo6"/>
                                                     </constraints>
+                                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <inset key="contentEdgeInsets" minX="-5" minY="-5" maxX="5" maxY="5"/>
                                                     <state key="normal" title="AddTelegram" image="pencil"/>
                                                     <connections>
@@ -1565,6 +1601,7 @@
         <image name="pie-chart-2" width="256" height="256"/>
         <image name="profile" width="512" height="512"/>
         <image name="rating" width="512" height="512"/>
+        <image name="sort" width="24" height="24"/>
         <image name="super_worker" width="128" height="128"/>
     </resources>
     <inferredMetricsTieBreakers>

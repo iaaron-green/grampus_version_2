@@ -12,6 +12,7 @@
 		3F0F9500239806290072A94E /* NewsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0F94FF239806290072A94E /* NewsTableViewController.swift */; };
 		3F3C4E1E23950E6600927B4C /* dislike_animation.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F3C4E1D23950E6500927B4C /* dislike_animation.json */; };
 		3F4324AE237AF540005D744D /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4324AD237AF540005D744D /* NetworkService.swift */; };
+		3F64FF37239FA05F0028590F /* CommentsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64FF36239FA05F0028590F /* CommentsTableViewController.swift */; };
 		3F6B9C982383F8F700C96012 /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B9C972383F8F700C96012 /* ImageService.swift */; };
 		3F7529CD237D7F380021B8AE /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7529CC237D7F380021B8AE /* StorageService.swift */; };
 		3F8373AB23990A900045773B /* AddNewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8373AA23990A900045773B /* AddNewsViewController.swift */; };
@@ -43,6 +44,7 @@
 		3F0F94FF239806290072A94E /* NewsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTableViewController.swift; sourceTree = "<group>"; };
 		3F3C4E1D23950E6500927B4C /* dislike_animation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = dislike_animation.json; sourceTree = "<group>"; };
 		3F4324AD237AF540005D744D /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		3F64FF36239FA05F0028590F /* CommentsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsTableViewController.swift; sourceTree = "<group>"; };
 		3F6B9C972383F8F700C96012 /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
 		3F7529CC237D7F380021B8AE /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		3F8373AA23990A900045773B /* AddNewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewsViewController.swift; sourceTree = "<group>"; };
@@ -93,8 +95,17 @@
 				3F8373AA23990A900045773B /* AddNewsViewController.swift */,
 				3F8373AC2399361E0045773B /* NewsTableViewCell.swift */,
 				3F8373AD2399361E0045773B /* NewsTableViewCell.xib */,
+				3F64FF38239FA0640028590F /* Comments */,
 			);
 			path = News;
+			sourceTree = "<group>";
+		};
+		3F64FF38239FA0640028590F /* Comments */ = {
+			isa = PBXGroup;
+			children = (
+				3F64FF36239FA05F0028590F /* CommentsTableViewController.swift */,
+			);
+			path = Comments;
 			sourceTree = "<group>";
 		};
 		3FA77E91238BD09B00341F3C /* Cells */ = {
@@ -112,6 +123,7 @@
 			children = (
 				76997BD52382985B00FD3F4F /* RootViewController.swift */,
 				3FE0B2292382C06B0027A12C /* InitialViewController.swift */,
+				3F3C4E1D23950E6500927B4C /* dislike_animation.json */,
 			);
 			path = "Add-on";
 			sourceTree = "<group>";
@@ -174,7 +186,6 @@
 			isa = PBXGroup;
 			children = (
 				D93B26EF2292BFEF00741E7F /* AppDelegate.swift */,
-				3F3C4E1D23950E6500927B4C /* dislike_animation.json */,
 				761E1522237EC1080088CBF8 /* Services */,
 				D965BC9B22949ACF001B71C3 /* Controllers */,
 				761E1523237EC4490088CBF8 /* AchievementsModel.swift */,
@@ -333,6 +344,7 @@
 				D960170D229572E80011C9E9 /* RatingTableViewCell.swift in Sources */,
 				D93B26F02292BFEF00741E7F /* AppDelegate.swift in Sources */,
 				3F8373AE2399361E0045773B /* NewsTableViewCell.swift in Sources */,
+				3F64FF37239FA05F0028590F /* CommentsTableViewController.swift in Sources */,
 				76997BD62382985B00FD3F4F /* RootViewController.swift in Sources */,
 				3FE0B22A2382C06B0027A12C /* InitialViewController.swift in Sources */,
 				D90CFD9F22948204002B8871 /* SWRevealViewController.m in Sources */,

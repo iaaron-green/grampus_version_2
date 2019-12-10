@@ -21,7 +21,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     @IBOutlet weak var tableView: UITableView!
     
     
-    
     // MARK: - Properties
     let network = NetworkService()
     let storage = StorageService()
@@ -36,7 +35,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     // MARK: - Functions
     override func loadView() {
         super.loadView()
-        fetchAllUsers(page: 0)
+        fetchAllUsers(page: 0, ratingType: "")
     }
     
     override func viewDidLoad() {
@@ -80,15 +79,19 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         filteredJson = [JSON]()
+        tableView.reloadData()
 
         if searchText == "" {
-            fetchAllUsers(page: 0)
+            fetchAllUsers(page: 0, ratingType: "")
 //            for i in 0..<json.count {
 //                self.filteredJson.append(json[i])
 //            }
         } else {
-            network.fetchAllUsers(page: 0, name: searchText.lowercased()) { (json) in
+            network.fetchAllUsers(page: 0, name: searchText.lowercased(), ratingType: "") { (json) in
                 if let json = json {
+                    if json.isEmpty {
+                        self.tableView.reloadData()
+                    }
                     for i in 0..<json.count {
                         self.filteredJson.append(json[i])
                         self.tableView.reloadData()
@@ -106,8 +109,8 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         
     }
     
-    func fetchAllUsers(page: Int) {
-        network.fetchAllUsers(page: page, name: "") { (json) in
+    func fetchAllUsers(page: Int, ratingType: String) {
+        network.fetchAllUsers(page: page, name: "", ratingType: ratingType) { (json) in
             if let json = json {
                 SVProgressHUD.dismiss()
                 print(json)
@@ -126,7 +129,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @objc func loadList(notification: NSNotification){
         DispatchQueue.main.async {
-            self.fetchAllUsers(page: 0)
+            self.fetchAllUsers(page: 0, ratingType: "")
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 SVProgressHUD.showSuccess(withStatus: "Sucess!")
             }
@@ -136,7 +139,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     @objc override func pullToRefresh(sender: UIRefreshControl) {
 //        SDImageCache.shared.clearMemory()
         SDImageCache.shared.clearDisk()
-        fetchAllUsers(page: 0)
+        fetchAllUsers(page: 0, ratingType: "")
         page = 1
         limit = 0
         sender.endRefreshing()
@@ -210,6 +213,73 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
             storage.saveSelectedUserId(selectedUserId: id)
         }
     }
+    
+    @IBAction func sortButtonPressed(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "Sort rating", message: "You can sort rating by likes, dislikes or rating types", preferredStyle: .actionSheet)
+        
+        let action1 = UIAlertAction(title: "Likes", style: .default) { (action) in
+            self.fetchAllUsers(page: 0, ratingType: "")
+        }
+        
+        let action2 = UIAlertAction(title: "Dislikes", style: .default) { (action) in
+            self.fetchAllUsers(page: 0, ratingType: "DISLIKE")
+        }
+        
+        let action3 = UIAlertAction(title: "Rating types", style: .default) { (action) in
+            let ratingTypesSortAlert = UIAlertController(title: "Sort by rating types", message: nil, preferredStyle: .actionSheet)
+            let bestlooker = UIAlertAction(title: "Bestlooker", style: .default, handler: { (action) in
+                self.fetchAllUsers(page: 0, ratingType: "BEST_LOOKER")
+            })
+            let deadliner = UIAlertAction(title: "Deadliner", style: .default, handler: { (action) in
+                self.fetchAllUsers(page: 0, ratingType: "DEADLINER")
+            })
+            let smartMind = UIAlertAction(title: "Smart mind", style: .default, handler: { (action) in
+                self.fetchAllUsers(page: 0, ratingType: "SMART_MIND")
+            })
+            let superWorker = UIAlertAction(title: "Super worker", style: .default, handler: { (action) in
+                self.fetchAllUsers(page: 0, ratingType: "SUPER_WORKER")
+            })
+            let motivator = UIAlertAction(title: "Motivator", style: .default, handler: { (action) in
+                self.fetchAllUsers(page: 0, ratingType: "MOTIVATOR")
+            })
+            let TOP1 = UIAlertAction(title: "TOP1", style: .default, handler: { (action) in
+                self.fetchAllUsers(page: 0, ratingType: "TOP1")
+            })
+            let mentor = UIAlertAction(title: "Mentor", style: .default, handler: { (action) in
+                self.fetchAllUsers(page: 0, ratingType: "MENTOR")
+            })
+            ratingTypesSortAlert.addAction(bestlooker)
+            ratingTypesSortAlert.addAction(deadliner)
+            ratingTypesSortAlert.addAction(smartMind)
+            ratingTypesSortAlert.addAction(superWorker)
+            ratingTypesSortAlert.addAction(motivator)
+            ratingTypesSortAlert.addAction(TOP1)
+            ratingTypesSortAlert.addAction(mentor)
+            self.present(ratingTypesSortAlert, animated: true) {
+                self.tapRecognizer(alert: ratingTypesSortAlert)
+            }
+            
+        }
+        
+        alert.addAction(action1)
+        alert.addAction(action2)
+        alert.addAction(action3)
+        present(alert, animated: true) {
+            self.tapRecognizer(alert: alert)
+        }
+    }
+    
+    func tapRecognizer(alert: UIAlertController) {
+        alert.view.superview?.subviews.first?.isUserInteractionEnabled = true
+        alert.view.superview?.subviews.first?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.actionSheetBackgroundTapped)))
+    }
+    
+    @objc func actionSheetBackgroundTapped() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
@@ -306,7 +376,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
 
         limit = filteredJson.count
         if isFetch {
-            network.fetchAllUsers(page: page, name: "") { (json) in
+            network.fetchAllUsers(page: page, name: "", ratingType: "") { (json) in
                 if let json = json {
                     for i in 0..<json.count {
                         if !self.filteredJson.contains(json[i]) {

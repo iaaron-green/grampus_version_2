@@ -92,7 +92,7 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
         
         let message = messageTextfield.text!
         network.addLikeOrDislike(ratingType: ratingType, likeState: likeState!, message: message)
-        print(ratingType)
+        print(ratingType, likeState, message)
         dismiss(animated: true, completion: nil)
         dislikeLottie.stop()
         delegate?.removeBlurredBackgroundView()

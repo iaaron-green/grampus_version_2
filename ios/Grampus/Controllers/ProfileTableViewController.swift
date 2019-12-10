@@ -33,6 +33,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     @IBOutlet weak var dislikeButton: UIButton!
     @IBOutlet weak var followButton: UIButton!
     
+    
     //Achievement cell
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -92,9 +93,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     var isFollowing = 0
     
     var userID: String?
-
-    
-    
     
     var entries: [PieChartDataEntry] = []
     
@@ -112,6 +110,8 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             fetchUser(userId: storage.getUserId()!)
             addSelfLabelGestures()
             followButton.isHidden = true
+            likeButton.isHidden = true
+            dislikeButton.isHidden = true
         } else {
             if storage.getUserId()! == storage.getSelectedUserIdProfile()! {
                 followButton.isHidden = true
@@ -134,6 +134,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         
         SVProgressHUD.setMinimumDismissTimeInterval(2)
         SVProgressHUD.setDefaultStyle(.dark)
+        
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadProfile(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
 
@@ -188,6 +189,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         profileDislikeLabel.showAnimatedGradientSkeleton()
         profileFullNameLabel.showAnimatedGradientSkeleton()
         profileProfessionLabel.showAnimatedGradientSkeleton()
+        countryLabel.showAnimatedGradientSkeleton()
         emailLabel.showAnimatedGradientSkeleton()
         skypeLabel.showAnimatedGradientSkeleton()
         telephoneLabel.showAnimatedGradientSkeleton()
@@ -195,9 +197,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         profileSkillsLabel.showAnimatedGradientSkeleton()
         noChartLabel.showAnimatedGradientSkeleton()
         noChartImage.showAnimatedGradientSkeleton()
-        skypeAddButton.showAnimatedGradientSkeleton()
-        telephoneAddButton.showAnimatedGradientSkeleton()
-        telegramAddButton.showAnimatedGradientSkeleton()
     }
     
     func removeSkeleton() {
@@ -206,6 +205,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         profileDislikeLabel.hideSkeleton()
         profileFullNameLabel.hideSkeleton()
         profileProfessionLabel.hideSkeleton()
+        countryLabel.hideSkeleton()
         emailLabel.hideSkeleton()
         skypeLabel.hideSkeleton()
         telephoneLabel.hideSkeleton()
@@ -213,9 +213,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         noChartLabel.hideSkeleton()
         noChartImage.hideSkeleton()
         profileSkillsLabel.hideSkeleton()
-        skypeAddButton.hideSkeleton()
-        telephoneAddButton.hideSkeleton()
-        telegramAddButton.hideSkeleton()
         navBarAppearance()
     }
     
@@ -273,7 +270,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                         self.countryLabel.text = textField?.text
                         SVProgressHUD.showSuccess(withStatus: "Success!")
                     } else {
-                        self.countryLabel.text = ""
+                        self.countryLabel.text = "Ukraine"
                     }
                     self.tableView.reloadData()
                 } else {
@@ -298,18 +295,14 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                 if success {
                     if textField?.text?.trimmingCharacters(in: .whitespaces) != "" {
                         self.profileProfessionLabel.text = textField?.text
-                        
-
                         var user = self.storage.getUserProfile()
                         user?.profession = textField!.text!
                         self.storage.def.removeObject(forKey: UserDefKeys.userProfile.rawValue)
                         self.storage.saveUserProfile(user: user!)
                         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateUserInfo"), object: nil)
-                        
-                        
                         SVProgressHUD.showSuccess(withStatus: "Success!")
                     } else {
-                        self.profileProfessionLabel.text = ""
+                        self.profileProfessionLabel.text = "Job title"
                     }
                     self.tableView.reloadData()
                 } else {
@@ -389,10 +382,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     }
     
     
-    
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
     {
-        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Choose image source", message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Gallery", style: .default, handler: { _ in
             self.openGallery()
         }))
@@ -400,11 +392,20 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
             self.openCamera()
         }))
-
-        alert.addAction(UIAlertAction.init(title: "Cancel", style: .destructive, handler: nil))
-
-        self.present(alert, animated: true, completion: nil)
+//        alert.addAction(UIAlertAction.init(title: "Cancel", style: .destructive, handler: nil))
+        self.present(alert, animated: true) {
+            self.tapRecognizer(alert: alert)
+        }
         
+    }
+    
+    func tapRecognizer(alert: UIAlertController) {
+        alert.view.superview?.subviews.first?.isUserInteractionEnabled = true
+        alert.view.superview?.subviews.first?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.actionSheetBackgroundTapped)))
+    }
+    
+    @objc func actionSheetBackgroundTapped() {
+        self.dismiss(animated: true, completion: nil)
     }
     
     func openCamera()
@@ -730,6 +731,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         if savedUser != nil && storage.getProfileState() {
             profileFullNameLabel.text = savedUser?.name
             emailLabel.text = savedUser?.email
+            profileProfessionLabel.text = savedUser?.profession ?? "Job title"
             if let imageData = savedUser?.image {
                     profileImageView.image = UIImage(data: imageData)
                 } else {

@@ -14,6 +14,7 @@ import SDWebImage
 
 class NewsTableTableViewController: UITableViewController, UINavigationControllerDelegate {
     
+    
     @IBOutlet weak var navegationBar: UINavigationBar!
     @IBOutlet weak var leftBarButton: UIBarButtonItem!
     @IBOutlet weak var addButton: UIBarButtonItem!
@@ -21,6 +22,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     let network = NetworkService()
     let imageService = ImageService()
     var newsArray = [JSON]()
+
     let myRefreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.tintColor = .white
@@ -34,14 +36,14 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         tableView.register(UINib(nibName: "NewsTableViewCell", bundle: nil), forCellReuseIdentifier: "newsTableCell")
         tableView.estimatedRowHeight = 500
         tableView.rowHeight = UITableView.automaticDimension
-
         
+
+
         
         tableView.separatorStyle = .none
         tableView.backgroundColor = .clear
         view.backgroundColor = #colorLiteral(red: 0.1125021651, green: 0.1299118698, blue: 0.1408866942, alpha: 1)
         tableView.refreshControl = myRefreshControl
-
 
         
         if revealViewController() != nil {
@@ -68,7 +70,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         network.fetchNews { (news) in
             if let news = news {
                 self.newsArray = [JSON]()
-//                print(news)
+                print(news)
                 SVProgressHUD.dismiss()
                 for i in 0..<news.count {
                     self.newsArray.append(news[i])
@@ -114,12 +116,12 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
             
 
             let urlProfile = URL(string: userPictureCell)
-            let urlNews = URL(string: imageCell)
             cell.avatarImageView.sd_setImage(with: urlProfile, placeholderImage: UIImage(named: "red cross"))
             cell.nameLabel.text = nameCell
             cell.dateLabel.text = dateCell
             cell.titleLabel.text = titleCell
             cell.bodyLabel.text = bodyCell
+            let urlNews = URL(string: imageCell)
             cell.newsImageView.sd_setImage(with: urlNews, placeholderImage: nil, options: [], completed: { [weak cell] (image, error, cache, url) in
                 if let image = image {
                     cell?.setCustomImage(image: image)
@@ -129,16 +131,16 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
                 }
                 
                 self.tableView.beginUpdates()
-                print("UPDATES")
+//                print("UPDATES")
                 self.tableView.endUpdates()
 //                self.tableView.reloadRows(
 //                    at: [indexPath],
 //                    with: .fade)
                 
-                
             })
         }
-        
+        cell.layoutIfNeeded()
         return cell
     }
+    
 }

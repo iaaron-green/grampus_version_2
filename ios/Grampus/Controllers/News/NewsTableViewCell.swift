@@ -49,7 +49,6 @@ class NewsTableViewCell: UITableViewCell {
 //        super.prepareForReuse()
 //        newsImageView.sd_cancelCurrentImageLoad()
 //        newsImageView.image = nil
-//        print("reuse")
 //    }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

@@ -140,7 +140,7 @@ class NetworkService {
     }
     
     
-    func fetchAllUsers(page: Int, name: String, completion: @escaping (JSON?) -> ()) {
+    func fetchAllUsers(page: Int, name: String, ratingType: String, completion: @escaping (JSON?) -> ()) {
         
         let allProfilesURL = "\(DynamicURL.dynamicURL.rawValue)profiles/all"
         
@@ -151,7 +151,8 @@ class NetworkService {
         
         let parameters: Parameters = [
             "page" : String(page),
-            "searchParam": name
+            "searchParam": name,
+            "ratingType": ratingType
         ]
         
         manager.request(allProfilesURL, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers).validate().responseJSON { responseJSON in
