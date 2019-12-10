@@ -19,7 +19,7 @@ class CommentsTableViewController: UITableViewController {
 
     }
 
-    // MARK: - Table view data вфв фвфв
+    // MARK: - Table view data
 
 
 
