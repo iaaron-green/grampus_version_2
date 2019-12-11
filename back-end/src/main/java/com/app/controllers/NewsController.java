@@ -24,7 +24,7 @@ public class NewsController {
                                           @RequestParam(value = "size", defaultValue = "10") Integer size,
                                           Principal principal) throws CustomException {
 
-        return new ResponseEntity<>(newsService.getAllNews(principal, page, size), HttpStatus.OK);
+        return new ResponseEntity<>(newsService.getAllNews(principal, page, size).getContent(), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -44,4 +44,11 @@ public class NewsController {
         newsService.saveComment(id, comment, principal);
         return new ResponseEntity<>(HttpStatus.OK) ;
     }
+
+    @GetMapping("/comment/{newsId}")
+    public ResponseEntity<?>getCommentsByNewsId(@PathVariable Long  newsId,
+                                                @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                @RequestParam(value = "size", defaultValue = "10") Integer size){
+        return new ResponseEntity<>(newsService.getAllCommentByNewsId(newsId, page, size).getContent(), HttpStatus.OK);
+    };
 }

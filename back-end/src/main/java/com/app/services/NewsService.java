@@ -1,5 +1,6 @@
 package com.app.services;
 
+import com.app.DTO.DTOComment;
 import com.app.DTO.DTONews;
 import com.app.exceptions.CustomException;
 import org.springframework.data.domain.Page;
@@ -19,4 +20,6 @@ public interface NewsService {
     void saveComment(Long id, String comment, Principal principal) throws CustomException;
 
     Page<DTONews> getAllNews(Principal principal, Integer page, Integer size);
+
+    Page<DTOComment> getAllCommentByNewsId(Long id, Integer page, Integer size);
 }
