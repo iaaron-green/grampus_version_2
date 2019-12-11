@@ -136,19 +136,19 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring.profiles.active>dev</spring.profiles.active>
+                <spring.profiles.active>resources.config.dev.application-dev.properties</spring.profiles.active>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <spring.profiles.active>prod</spring.profiles.active>
+                <spring.profiles.active>resources.config.prod.application-prod.properties</spring.profiles.active>
             </properties>
         </profile>
         <profile>
             <id>test</id>
             <properties>
-                <spring.profiles.active>test</spring.profiles.active>
+                <spring.profiles.active>resources.config.test.application-test.properties</spring.profiles.active>
             </properties>
         </profile>
     </profiles>
@@ -161,7 +161,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources/config</directory>
+                <directory>../../../Documents/ProjectExample/DonorProject/src/main/resources/config</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
