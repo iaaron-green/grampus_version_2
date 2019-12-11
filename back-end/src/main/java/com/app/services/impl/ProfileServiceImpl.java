@@ -189,17 +189,14 @@ public class ProfileServiceImpl implements ProfileService {
         if (user == null) {
             throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
         }
-        List<DTOLikableProfile> resultList;
         Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
         Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(user.getId());
 
         if (StringUtils.isEmpty(searchParam)) {
-            resultList = getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
+            return getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
         } else {
-            resultList = getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
+            return getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
         }
-
-        return resultList.stream().sorted(Comparator.comparingLong(DTOLikableProfile::getTotalLikes).reversed()).collect(Collectors.toList());
     }
 
     @Override
@@ -226,7 +223,9 @@ public class ProfileServiceImpl implements ProfileService {
 
             Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
             if (ratingType == null)
-                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParam(subscriptions, Mark.DISLIKE, pageRequest(page, size));
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParamAndWithoutRatingType(subscriptions, Mark.DISLIKE, pageRequest(page, size));
+            else if (ratingType.equals(Mark.DISLIKE))
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParamAndByDislikeType(subscriptions, Mark.DISLIKE, pageRequest(page, size));
             else
                 dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParamAndByRatingType(subscriptions, ratingType, Mark.DISLIKE, pageRequest(page, size));
 
@@ -235,7 +234,9 @@ public class ProfileServiceImpl implements ProfileService {
 
             Page<DTOLikableProfile> dtoLikableProfiles;
             if (ratingType == null)
-                dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParam(Mark.DISLIKE, pageRequest(page, size));
+                dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParamAndWithoutRatingType(Mark.DISLIKE, pageRequest(page, size));
+            else if (ratingType.equals(Mark.DISLIKE))
+                dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParamAndByDislikeType(Mark.DISLIKE, pageRequest(page, size));
             else
                 dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParamAndByRatingType(ratingType, Mark.DISLIKE, pageRequest(page, size));
 
@@ -249,7 +250,9 @@ public class ProfileServiceImpl implements ProfileService {
 
             Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
             if (ratingType == null)
-                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParam(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParamWithoutRatingType(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
+            else if (ratingType.equals(Mark.DISLIKE))
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParamAndByDislikeType(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
             else
                 dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParamAndRatingType(subscriptions, ratingType, Mark.DISLIKE, searchParam, pageRequest(page, size));
 
@@ -258,7 +261,9 @@ public class ProfileServiceImpl implements ProfileService {
 
             Page<DTOLikableProfile> dtoLikableProfiles;
             if (ratingType == null)
-                dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParam(Mark.DISLIKE, searchParam, pageRequest(page, size));
+                dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParamWithoutRatingType(Mark.DISLIKE, searchParam, pageRequest(page, size));
+            else if (ratingType.equals(Mark.DISLIKE))
+                dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParamAndByDislikeType(Mark.DISLIKE, searchParam, pageRequest(page, size));
             else
                 dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParamAndRatingType(ratingType, Mark.DISLIKE, searchParam, pageRequest(page, size));
 
