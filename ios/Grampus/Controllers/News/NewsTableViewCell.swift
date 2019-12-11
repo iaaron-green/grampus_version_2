@@ -17,6 +17,7 @@ class NewsTableViewCell: UITableViewCell {
     @IBOutlet weak var bodyLabel: UILabel!
     @IBOutlet weak var newsImageView: UIImageView!
     @IBOutlet weak var cardView: UIView!
+    @IBOutlet weak var commentsLabel: UILabel!
     
     
     internal var aspectConstraint : NSLayoutConstraint? {
@@ -44,6 +45,7 @@ class NewsTableViewCell: UITableViewCell {
         backgroundColor = .clear
         selectionStyle = .none
     }
+    
     
 //    override func prepareForReuse() {
 //        super.prepareForReuse()

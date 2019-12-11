@@ -379,6 +379,31 @@ class NetworkService {
         }
     }
     
+    func sendComment(comment: String, id: Int, completion: @escaping (Bool) -> ()){
+        
+        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news/comment"
+        
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer \(storage.getTokenString()!)"
+        ]
+        
+        let parameters: Parameters = [
+        "id" : String(describing: id),
+        "comment" : comment
+        ]
+        
+        manager.request(newsURL, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+            switch responseJSON.result {
+            case .success :
+                completion(true)
+            case .failure(let error) :
+                self.handleError(error: error)
+                completion(false)
+            }
+        }
+    }
+    
     func handleError(error: Error) {
         if let error = error as? AFError {
             switch error {

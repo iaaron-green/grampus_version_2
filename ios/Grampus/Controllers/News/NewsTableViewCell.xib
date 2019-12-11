@@ -53,7 +53,7 @@
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Comments: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UvW-DU-a16">
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Comments: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UvW-DU-a16">
                                 <rect key="frame" x="264" y="184.5" width="80" height="15.5"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="13"/>
                                 <nil key="textColor"/>
@@ -94,6 +94,7 @@
                 <outlet property="avatarImageView" destination="fdI-Re-sQ6" id="Eqr-RK-5Bo"/>
                 <outlet property="bodyLabel" destination="APy-Ug-XhG" id="J43-FJ-rWI"/>
                 <outlet property="cardView" destination="xpE-9g-r1r" id="W9F-9E-Pdd"/>
+                <outlet property="commentsLabel" destination="UvW-DU-a16" id="yD7-0T-coV"/>
                 <outlet property="dateLabel" destination="sfi-a2-Eko" id="GzI-2Q-ha5"/>
                 <outlet property="nameLabel" destination="SRl-J2-9Nx" id="Ua4-Of-PWH"/>
                 <outlet property="newsImageView" destination="gyF-3H-fgZ" id="fyL-hQ-vOu"/>

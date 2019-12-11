@@ -12,14 +12,17 @@
 		3F0F9500239806290072A94E /* NewsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0F94FF239806290072A94E /* NewsTableViewController.swift */; };
 		3F3C4E1E23950E6600927B4C /* dislike_animation.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F3C4E1D23950E6500927B4C /* dislike_animation.json */; };
 		3F4324AE237AF540005D744D /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4324AD237AF540005D744D /* NetworkService.swift */; };
-		3F64FF37239FA05F0028590F /* CommentsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64FF36239FA05F0028590F /* CommentsTableViewController.swift */; };
+		3F64FF37239FA05F0028590F /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64FF36239FA05F0028590F /* CommentsViewController.swift */; };
 		3F6B9C982383F8F700C96012 /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B9C972383F8F700C96012 /* ImageService.swift */; };
+		3F6D578D239FE144001FB590 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6D578B239FE144001FB590 /* CommentTableViewCell.swift */; };
+		3F6D578E239FE144001FB590 /* CommentTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3F6D578C239FE144001FB590 /* CommentTableViewCell.xib */; };
 		3F7529CD237D7F380021B8AE /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7529CC237D7F380021B8AE /* StorageService.swift */; };
 		3F8373AB23990A900045773B /* AddNewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8373AA23990A900045773B /* AddNewsViewController.swift */; };
 		3F8373AE2399361E0045773B /* NewsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8373AC2399361E0045773B /* NewsTableViewCell.swift */; };
 		3F8373AF2399361E0045773B /* NewsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3F8373AD2399361E0045773B /* NewsTableViewCell.xib */; };
 		3FE0B22A2382C06B0027A12C /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE0B2292382C06B0027A12C /* InitialViewController.swift */; };
 		3FF6735D2390288D00E838DF /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF6735C2390288D00E838DF /* UserModel.swift */; };
+		3FF90F9723A1000200745457 /* AddImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF90F9623A1000200745457 /* AddImageService.swift */; };
 		410DF94970F197AFAE034B4E /* Pods_Grampus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */; };
 		761E1524237EC4490088CBF8 /* AchievementsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E1523237EC4490088CBF8 /* AchievementsModel.swift */; };
 		76997BD62382985B00FD3F4F /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76997BD52382985B00FD3F4F /* RootViewController.swift */; };
@@ -44,14 +47,17 @@
 		3F0F94FF239806290072A94E /* NewsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTableViewController.swift; sourceTree = "<group>"; };
 		3F3C4E1D23950E6500927B4C /* dislike_animation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = dislike_animation.json; sourceTree = "<group>"; };
 		3F4324AD237AF540005D744D /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
-		3F64FF36239FA05F0028590F /* CommentsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsTableViewController.swift; sourceTree = "<group>"; };
+		3F64FF36239FA05F0028590F /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
 		3F6B9C972383F8F700C96012 /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
+		3F6D578B239FE144001FB590 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
+		3F6D578C239FE144001FB590 /* CommentTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentTableViewCell.xib; sourceTree = "<group>"; };
 		3F7529CC237D7F380021B8AE /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		3F8373AA23990A900045773B /* AddNewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewsViewController.swift; sourceTree = "<group>"; };
 		3F8373AC2399361E0045773B /* NewsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTableViewCell.swift; sourceTree = "<group>"; };
 		3F8373AD2399361E0045773B /* NewsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsTableViewCell.xib; sourceTree = "<group>"; };
 		3FE0B2292382C06B0027A12C /* InitialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		3FF6735C2390288D00E838DF /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		3FF90F9623A1000200745457 /* AddImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddImageService.swift; sourceTree = "<group>"; };
 		4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Grampus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		761E1523237EC4490088CBF8 /* AchievementsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsModel.swift; sourceTree = "<group>"; };
 		76997BD52382985B00FD3F4F /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
@@ -103,7 +109,9 @@
 		3F64FF38239FA0640028590F /* Comments */ = {
 			isa = PBXGroup;
 			children = (
-				3F64FF36239FA05F0028590F /* CommentsTableViewController.swift */,
+				3F64FF36239FA05F0028590F /* CommentsViewController.swift */,
+				3F6D578B239FE144001FB590 /* CommentTableViewCell.swift */,
+				3F6D578C239FE144001FB590 /* CommentTableViewCell.xib */,
 			);
 			path = Comments;
 			sourceTree = "<group>";
@@ -142,6 +150,7 @@
 				3F4324AD237AF540005D744D /* NetworkService.swift */,
 				3F7529CC237D7F380021B8AE /* StorageService.swift */,
 				3F6B9C972383F8F700C96012 /* ImageService.swift */,
+				3FF90F9623A1000200745457 /* AddImageService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -279,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D93B26FA2292BFF000741E7F /* LaunchScreen.storyboard in Resources */,
+				3F6D578E239FE144001FB590 /* CommentTableViewCell.xib in Resources */,
 				D93B26F72292BFF000741E7F /* Assets.xcassets in Resources */,
 				3F3C4E1E23950E6600927B4C /* dislike_animation.json in Resources */,
 				D93B26F52292BFEF00741E7F /* Main.storyboard in Resources */,
@@ -344,14 +354,16 @@
 				D960170D229572E80011C9E9 /* RatingTableViewCell.swift in Sources */,
 				D93B26F02292BFEF00741E7F /* AppDelegate.swift in Sources */,
 				3F8373AE2399361E0045773B /* NewsTableViewCell.swift in Sources */,
-				3F64FF37239FA05F0028590F /* CommentsTableViewController.swift in Sources */,
+				3F64FF37239FA05F0028590F /* CommentsViewController.swift in Sources */,
 				76997BD62382985B00FD3F4F /* RootViewController.swift in Sources */,
 				3FE0B22A2382C06B0027A12C /* InitialViewController.swift in Sources */,
 				D90CFD9F22948204002B8871 /* SWRevealViewController.m in Sources */,
 				761E1524237EC4490088CBF8 /* AchievementsModel.swift in Sources */,
 				3F4324AE237AF540005D744D /* NetworkService.swift in Sources */,
+				3F6D578D239FE144001FB590 /* CommentTableViewCell.swift in Sources */,
 				3FF6735D2390288D00E838DF /* UserModel.swift in Sources */,
 				D9E2A3C422AA4E4200F91E3D /* Enums.swift in Sources */,
+				3FF90F9723A1000200745457 /* AddImageService.swift in Sources */,
 				3F6B9C982383F8F700C96012 /* ImageService.swift in Sources */,
 				D90CFDA5229488C5002B8871 /* RatingViewController.swift in Sources */,
 			);

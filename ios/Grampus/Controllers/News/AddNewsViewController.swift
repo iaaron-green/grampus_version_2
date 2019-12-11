@@ -23,9 +23,6 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
     var newsImage: UIImage?
     let network = NetworkService()
     
-    
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -36,8 +33,6 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
         bodyTextView.delegate = self
         titleTextField.delegate = self
         dismissKeyboardOnTap()
-        
-
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -54,8 +49,7 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
         removeNotifications()
     }
     
-      
-      override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
             if textField == titleTextField {
                textField.resignFirstResponder()
                bodyTextView.becomeFirstResponder()
@@ -92,7 +86,7 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
     
     
     @IBAction func addImagePressed(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Choose image source", message: nil, preferredStyle: .actionSheet)
                alert.addAction(UIAlertAction(title: "Gallery", style: .default, handler: { _ in
                    self.openGallery()
                }))
@@ -120,7 +114,7 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
             SVProgressHUD.showError(withStatus: "You don't have permission to access camera")
         }
     }
-    
+
      func openGallery()
     {
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.photoLibrary){
@@ -162,7 +156,7 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
     
     @IBAction func okButtonPressed(_ sender: UIButton) {
         
-        if newsTitleValifstion(title: titleTextField) {
+        if newsTitleValidation(title: titleTextField) {
             network.uploadNews(selectedImage: newsImage, topic: titleTextField.text!, body: bodyTextView.text) { (success) in
                 if success {
                     SVProgressHUD.showSuccess(withStatus: "Sent!")

@@ -137,7 +137,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     }
     
     @objc override func pullToRefresh(sender: UIRefreshControl) {
-//        SDImageCache.shared.clearMemory()
         SDImageCache.shared.clearDisk()
         fetchAllUsers(page: 0, ratingType: "")
         page = 1
@@ -311,7 +310,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
             likeDislikeButtonState = self.filteredJson[indexPath.row]["isAbleToLike"].bool ?? false
             isFollowerState = self.filteredJson[indexPath.row]["isFollowing"].bool ?? false
             totalLikes = self.filteredJson[indexPath.row]["totalLikes"].int ?? 0
-            totalDislikes = self.filteredJson[indexPath.row]["totalDislikes"].int ?? 0
+            totalDislikes = self.filteredJson[indexPath.row]["totalDisLikes"].int ?? 0
             cell.nameLabelCell.text = userNameToDisplay
             cell.professionLabelCell.text = jobTitleToDisplay
             cell.likeCount.text = String(describing: totalLikes!)

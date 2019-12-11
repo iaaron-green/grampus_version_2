@@ -22,6 +22,8 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     let network = NetworkService()
     let imageService = ImageService()
     var newsArray = [JSON]()
+    var commentsArray = [JSON]()
+    var newsID = 0
 
     let myRefreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
@@ -39,6 +41,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         
 
 
+        
         
         tableView.separatorStyle = .none
         tableView.backgroundColor = .clear
@@ -91,9 +94,6 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         return newsArray.count
     }
     
-    var cachedImages = [UIImage]()
-
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "newsTableCell", for: indexPath) as! NewsTableViewCell
         
@@ -113,7 +113,8 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
             titleCell = self.newsArray[indexPath.row]["title"].string ?? ""
             bodyCell = self.newsArray[indexPath.row]["content"].string ?? ""
             imageCell = self.newsArray[indexPath.row]["picture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
-            
+            self.commentsArray = self.newsArray[indexPath.row]["comment"].array ?? [JSON]()
+            self.newsID = self.newsArray[indexPath.row]["id"].int ?? 0
 
             let urlProfile = URL(string: userPictureCell)
             cell.avatarImageView.sd_setImage(with: urlProfile, placeholderImage: UIImage(named: "red cross"))
@@ -121,6 +122,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
             cell.dateLabel.text = dateCell
             cell.titleLabel.text = titleCell
             cell.bodyLabel.text = bodyCell
+            cell.commentsLabel.text = "Comments: \(self.commentsArray.count)"
             let urlNews = URL(string: imageCell)
             cell.newsImageView.sd_setImage(with: urlNews, placeholderImage: nil, options: [], completed: { [weak cell] (image, error, cache, url) in
                 if let image = image {
@@ -136,11 +138,25 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
 //                self.tableView.reloadRows(
 //                    at: [indexPath],
 //                    with: .fade)
-                
             })
         }
+        
+        let commentTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(commentTapped(tapGestureRecognizer:)))
+        cell.commentsLabel.addGestureRecognizer(commentTapGestureRecognizer)
         cell.layoutIfNeeded()
         return cell
+    }
+    
+    @objc func commentTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        self.performSegue(withIdentifier: "goToComments", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToComments" {
+            let vc = CommentsViewController()
+            vc.commentsArray = commentsArray
+            vc.newsID = newsID
+        }
     }
     
 }
