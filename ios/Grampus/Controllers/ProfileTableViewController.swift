@@ -527,7 +527,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         network.fetchUserInformation(userId: userId) { (json) in
             
             if let json = json {
-//                print(json)
+                print(json)
                 self.removeSkeleton()
                 SVProgressHUD.dismiss()
                 self.fullName = json["fullName"] as? String ?? "Full name"
@@ -712,7 +712,11 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         if savedUser != nil && storage.getProfileState() {
             profileFullNameLabel.text = savedUser?.name
             emailLabel.text = savedUser?.email
-            profileProfessionLabel.text = savedUser?.profession ?? "Job title"
+            if savedUser?.profession == nil || savedUser?.profession == "" {
+                profileProfessionLabel.text = "Job title"
+            } else {
+                profileProfessionLabel.text = savedUser?.profession
+            }
             if let imageData = savedUser?.image {
                     profileImageView.image = UIImage(data: imageData)
                 } else {

@@ -31,6 +31,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     var page = 1
     var isFetch = false
     var limit = 0
+    var ratingType = ""
     
     // MARK: - Functions
     override func loadView() {
@@ -102,7 +103,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         network.fetchAllUsers(page: page, name: "", ratingType: ratingType) { (json) in
             if let json = json {
                 SVProgressHUD.dismiss()
-                print(json)
+//                print(json)
                 self.json = json
                 self.filteredJson = [JSON]()
                 for i in 0..<json.count {
@@ -118,7 +119,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @objc func loadList(notification: NSNotification){
         DispatchQueue.main.async {
-            self.fetchAllUsers(page: 0, ratingType: "")
+            self.fetchAllUsers(page: 0, ratingType: self.ratingType)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 SVProgressHUD.showSuccess(withStatus: "Sucess!")
             }
@@ -127,7 +128,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @objc override func pullToRefresh(sender: UIRefreshControl) {
         SDImageCache.shared.clearDisk()
-        fetchAllUsers(page: 0, ratingType: "")
+        fetchAllUsers(page: 0, ratingType: ratingType)
         page = 1
         limit = 0
         sender.endRefreshing()
@@ -207,34 +208,43 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         
         let action1 = UIAlertAction(title: "Likes", style: .default) { (action) in
             self.fetchAllUsers(page: 0, ratingType: "")
+            self.ratingType = ""
         }
         
         let action2 = UIAlertAction(title: "Dislikes", style: .default) { (action) in
             self.fetchAllUsers(page: 0, ratingType: "DISLIKE")
+            self.ratingType = "DISLIKE"
         }
         
         let action3 = UIAlertAction(title: "Rating types", style: .default) { (action) in
             let ratingTypesSortAlert = UIAlertController(title: "Sort by rating types", message: nil, preferredStyle: .actionSheet)
             let bestlooker = UIAlertAction(title: "Bestlooker", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "BEST_LOOKER")
+                self.ratingType = "BEST_LOOKER"
             })
             let deadliner = UIAlertAction(title: "Deadliner", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "DEADLINER")
+                self.ratingType = "DEADLINER"
             })
             let smartMind = UIAlertAction(title: "Smart mind", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "SMART_MIND")
+                self.ratingType = "SMART_MIND"
             })
             let superWorker = UIAlertAction(title: "Super worker", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "SUPER_WORKER")
+                self.ratingType = "SUPER_WORKER"
             })
             let motivator = UIAlertAction(title: "Motivator", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "MOTIVATOR")
+                self.ratingType = "MOTIVATOR"
             })
             let TOP1 = UIAlertAction(title: "TOP1", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "TOP1")
+                self.ratingType = "TOP1"
             })
             let mentor = UIAlertAction(title: "Mentor", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "MENTOR")
+                self.ratingType = "MENTOR"
             })
             ratingTypesSortAlert.addAction(bestlooker)
             ratingTypesSortAlert.addAction(deadliner)
