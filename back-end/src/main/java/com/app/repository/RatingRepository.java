@@ -35,7 +35,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     Long countProfileDislikes(@Param("id")Long id, @Param("ratingType") Mark ratingType);
 
     @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType not like :ratingType or r.ratingType IS NULL THEN 'like' else null end), " +
+            "count(case when r.ratingType not like :ratingType  THEN 'like' else null end), " +
             "count(case when r.ratingType like :ratingType THEN 'dislike' else null end))" +
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
             " GROUP BY u.id")
@@ -49,10 +49,10 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     Page<DTOLikableProfile> findAllProfilesWithoutSearchParamAndByRatingType(@Param("ratingType") Mark ratingType, @Param("dislike") Mark dislike, Pageable p);
 
        @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType not like :ratingType or r.ratingType IS NULL THEN 'like' else null end), " +
+            "count(case when r.ratingType not like :ratingType THEN 'like' else null end), " +
             "count(case when r.ratingType like :ratingType THEN 'dislike' else null end))" +
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
-            " AND u.fullName LIKE :searchParam%" +
+            " AND u.fullName LIKE %:searchParam%" +
             " GROUP BY u.id")
     Page<DTOLikableProfile> findAllProfilesBySearchParam(@Param("ratingType") Mark ratingType, @Param("searchParam") String searchParam, Pageable p);
 
@@ -60,7 +60,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "count(case when r.ratingType like :ratingType THEN 'like' else null end), " +
             "count(case when r.ratingType like :dislike THEN 'dislike' else null end))" +
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
-            " AND u.fullName LIKE :searchParam%" +
+            " AND u.fullName LIKE %:searchParam%" +
             " GROUP BY u.id")
     Page<DTOLikableProfile> findAllProfilesBySearchParamAndRatingType(@Param("ratingType") Mark ratingType, @Param("dislike") Mark dislike, @Param("searchParam") String searchParam, Pageable p);
 
