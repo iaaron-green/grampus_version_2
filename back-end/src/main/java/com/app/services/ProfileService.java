@@ -26,7 +26,7 @@ public interface ProfileService {
 
     List<Profile> getAllProfiles() throws CustomException;
 
-    List<DTOLikableProfile> getAllProfilesForLike(String userName, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException;
+    List<DTOLikableProfile> getAllProfilesForRating(String userName, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException;
 
     Boolean changeSubscription(Long profileId, Principal principal) throws CustomException;
 }
