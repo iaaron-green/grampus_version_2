@@ -86,7 +86,7 @@ public class ProfileController {
                                                       @RequestParam(value = "sortParam", defaultValue = "") RatingSortParam sortParam,
                                                       @RequestParam(value = "ratingType", defaultValue = "") Mark ratingType,
                                                       Principal principal) throws CustomException {
-        return  profileService.getAllProfilesForLike(principal.getName(), searchParam, page, size, sortParam, ratingType);
+        return  profileService.getAllProfilesForRating(principal.getName(), searchParam, page, size, sortParam, ratingType);
     }
 
     @GetMapping("/achieve")
