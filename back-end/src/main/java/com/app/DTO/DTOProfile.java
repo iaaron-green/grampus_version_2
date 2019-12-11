@@ -26,7 +26,6 @@ public class DTOProfile {
     private String country;
     private String fullName;
     private Boolean isAbleToLike = false;
-    private Boolean isFollowing = false;
     private Map<Mark, Object> likesNumber;
     private List<DTOComment> comments;
 }

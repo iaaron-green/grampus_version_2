@@ -1,7 +1,6 @@
 package com.app.services.impl;
 
 import com.app.DTO.DTOComment;
-import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
 import com.app.configtoken.Constants;
 import com.app.entities.Profile;
@@ -19,12 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.mail.MessagingException;
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -57,57 +54,7 @@ public class RatingServiceImpl implements RatingService {
 
     }
 
-    public List<Rating> getAllAchieves() {
-        return ratingRepository.findAllRatingById();
-    }
-
-    @Override
-    public Map<Long, Map<Mark, Long>> addInfoAchievement() {
-
-        Map<Long, Map<Mark, Long>> userIdAndAchievments = new HashMap<>();
-        List<Mark> positiveRating = Arrays.asList(Mark.values());
-
-        Set<Long> userId = userRepository.getAllId();
-
-        userId.forEach(user -> {
-            Map<Mark, Long> achievements = new HashMap<>();
-            positiveRating.forEach(mark -> achievements.put(mark, ratingRepository.countRatingType(user, mark.toString())));
-            userIdAndAchievments.put(user, achievements);
-        });
-
-        return userIdAndAchievments;
-    }
-
-    @Override
-    public List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) {
-        List<DTOLikableProfile> achievementData = new ArrayList<>();
-        Set<DTOLikableProfile> profilesWithMark = ratingRepository.findProfileByRatingType(markType);
-        if (!CollectionUtils.isEmpty(profilesWithMark)) {
-            achievementData.addAll(profilesWithMark);
-        }
-        return achievementData;
-    }
-
-    @Override
-    public List<DTOLikableProfile> addDTOInfoAchievement() {
-
-        List<DTOLikableProfile> userIdAndAchievments = new ArrayList<>();
-        List<Mark> marks = Arrays.asList(Mark.values());
-
-        Set<Long> dtoUserShortInfoId = userRepository.getAllId();
-        List<DTOLikableProfile> dtoProfiles = userRepository.findProfileByRatingType(marks, dtoUserShortInfoId);
-
-        if (!CollectionUtils.isEmpty(dtoProfiles)) {
-            dtoProfiles = dtoProfiles.stream().sorted(Comparator.comparing(DTOLikableProfile::getId)).collect(Collectors.toList());
-        }
-
-        dtoProfiles.forEach(profile -> profile.setAchieveCount(getAndCountLikesByProfileId(profile.getId())));
-
-        userIdAndAchievments.addAll(dtoProfiles);
-        return userIdAndAchievments;
-    }
-
-    private Profile checkProfile(Long profileId, DTOLikeDislike dtoLikeDislike) throws CustomException {
+      private Profile checkProfile(Long profileId, DTOLikeDislike dtoLikeDislike) throws CustomException {
 
         if (profileId == null || profileId == 0) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);

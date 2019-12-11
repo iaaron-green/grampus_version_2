@@ -19,7 +19,6 @@ public class DTOLikableProfile {
     private String jobTitle;
     private String profilePicture;
     private Boolean isAbleToLike = false;
-    private Boolean isFollowing = false;
     private Map<Mark, Object> achieveCount;
     private Long totalLikes;
     private Long totalDisLikes;
@@ -43,13 +42,12 @@ public class DTOLikableProfile {
     }
 
 
-    public DTOLikableProfile(Long id, String fullName, String jobTitle, String profilePicture, Boolean isAbleToLike, Boolean isFollowing, Map<Mark, Object> achieveCount, Long totalLikes, Long totalDisLikes) {
+    public DTOLikableProfile(Long id, String fullName, String jobTitle, String profilePicture, Boolean isAbleToLike,  Map<Mark, Object> achieveCount, Long totalLikes, Long totalDisLikes) {
         this.id = id;
         this.fullName = fullName;
         this.jobTitle = jobTitle;
         this.profilePicture = profilePicture;
         this.isAbleToLike = isAbleToLike;
-        this.isFollowing = isFollowing;
         this.achieveCount = achieveCount;
         this.totalLikes = totalLikes;
         this.totalDisLikes = totalDisLikes;

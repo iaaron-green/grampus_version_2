@@ -8,7 +8,6 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -44,21 +43,6 @@ public class Profile {
            fetch = FetchType.LAZY, mappedBy = "profileRating")
    private List<Rating> ratings = new ArrayList<>();
 
-   @ManyToMany
-   @JoinTable(
-           name = "user_subscriptions",
-           joinColumns = @JoinColumn(name = "user_id"),
-           inverseJoinColumns = @JoinColumn(name = "profile_id")
-   )
-   private Set<Profile> subscriptions;
-
-   @ManyToMany
-   @JoinTable(
-           name = "user_subscriptions",
-           joinColumns = @JoinColumn(name = "profile_id"),
-           inverseJoinColumns = @JoinColumn(name = "user_id")
-   )
-   private Set<Profile> subscribers;
 
    public Profile() {
    }
