@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="jhq-hs-0cB">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Grampus" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SvT-A9-W79">
+                                <rect key="frame" x="57" y="184" width="300" height="126"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="Zsu-Tx-Yi0"/>
+                                    <constraint firstAttribute="height" constant="126" id="yw6-pQ-oCY"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBold" family="Helvetica Neue" pointSize="60"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="jhq-hs-0cB" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="6iX-yI-ZvH"/>
+                            <constraint firstItem="jhq-hs-0cB" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="topMargin" constant="-44" id="HrE-8e-Icm"/>
+                            <constraint firstItem="SvT-A9-W79" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="140" id="JpQ-Ng-ciF"/>
+                            <constraint firstItem="SvT-A9-W79" firstAttribute="centerX" secondItem="jhq-hs-0cB" secondAttribute="centerX" id="Vu5-ah-FaA"/>
+                            <constraint firstItem="SvT-A9-W79" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="iBY-Rn-wzI"/>
+                            <constraint firstItem="jhq-hs-0cB" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="tJz-bu-hLd"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="50.724637681159422" y="374.33035714285711"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="background" width="1402" height="2491"/>
+    </resources>
+</document>

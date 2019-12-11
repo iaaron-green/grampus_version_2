@@ -1,0 +1,56 @@
+PODS:
+  - Alamofire (4.9.1)
+  - Charts (3.4.0):
+    - Charts/Core (= 3.4.0)
+  - Charts/Core (3.4.0)
+  - JWTDecode (2.4.0)
+  - lottie-ios (3.1.5)
+  - SDWebImage (5.3.3):
+    - SDWebImage/Core (= 5.3.3)
+  - SDWebImage/Core (5.3.3)
+  - SkeletonView (1.8.2)
+  - SVProgressHUD (2.2.5)
+  - SwiftyJSON (5.0.0)
+  - ValidationComponents (0.3.0):
+    - ValidationToolkit (~> 0.4.1)
+  - ValidationToolkit (0.4.1)
+
+DEPENDENCIES:
+  - Alamofire
+  - Charts
+  - JWTDecode (~> 2.3)
+  - lottie-ios
+  - SDWebImage
+  - SkeletonView
+  - SVProgressHUD
+  - SwiftyJSON
+  - ValidationComponents
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - Charts
+    - JWTDecode
+    - lottie-ios
+    - SDWebImage
+    - SkeletonView
+    - SVProgressHUD
+    - SwiftyJSON
+    - ValidationComponents
+    - ValidationToolkit
+
+SPEC CHECKSUMS:
+  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
+  Charts: 74c9f256eaf0460c0c416522d1cf8c634ea6b286
+  JWTDecode: 0930fb517c27bac2daef7cabc13577b18fdee0da
+  lottie-ios: 32bf84389337d86fbc8b12266e88452e0abf1dee
+  SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41
+  SkeletonView: bb27c39857e5492136f02ee8a3aa78de55d12ecd
+  SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
+  ValidationComponents: fad1f9e9d7fbf3e10c893c880ef9d27627e90382
+  ValidationToolkit: ce8e9c1a5d49eddc3266a009d46df5ea22042dbc
+
+PODFILE CHECKSUM: 71fd704317409e7b261c211fa89faab19dcffb6e
+
+COCOAPODS: 1.7.2
