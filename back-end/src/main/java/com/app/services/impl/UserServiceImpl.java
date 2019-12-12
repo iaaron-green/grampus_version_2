@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.mail.MessagingException;
 import java.util.ArrayList;
@@ -48,6 +49,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public DTONewUser saveUser(DTONewUser newUser) throws CustomException, MessagingException {
+
+        if (StringUtils.isEmpty(newUser.getEmail())){
+
+        }
 
         if (userRepository.findByEmail(newUser.getEmail()) != null) {
             throw new CustomException(messageSource.getMessage("user.already.exist", null, LocaleContextHolder.getLocale()), Errors.USER_ALREADY_EXIST);
