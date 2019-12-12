@@ -45,66 +45,113 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     Long countProfileDislikes(@Param("id")Long id, @Param("ratingType") Mark ratingType);
 
     @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType not like :ratingType or r.ratingType IS NULL THEN 'like' else null end), " +
-            "count(case when r.ratingType like :ratingType THEN 'dislike' else null end))" +
+            "count(case when r.ratingType not like :dislike or r.ratingType IS NULL THEN 'like' else null end) as likecount, " +
+            "count(case when r.ratingType like :dislike THEN 'dislike' else null end))" +
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id AND r.profileRating.user.id IN :userIds" +
-            " GROUP BY u.id")
-    Page<DTOLikableProfile> findProfilesSubscriptionsWithoutSearchParam(@Param("userIds") Set<Long> userIds, @Param("ratingType") Mark ratingType, Pageable p);
+            " GROUP BY u.id " +
+            "ORDER BY likecount DESC")
+    Page<DTOLikableProfile> findProfilesSubscriptionsWithoutSearchParamAndWithoutRatingType(@Param("userIds") Set<Long> userIds, @Param("dislike") Mark dislike, Pageable p);
+
 
     @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType like :ratingType THEN 'like' else null end), " +
+            "count(case when r.ratingType not like :dislike or r.ratingType IS NULL THEN 'like' else null end) as likecount, " +
+            "count(case when r.ratingType like :dislike THEN 'dislike' else null end) as dislikecount)" +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id AND r.profileRating.user.id IN :userIds" +
+            " GROUP BY u.id " +
+            "ORDER BY dislikecount DESC")
+    Page<DTOLikableProfile> findProfilesSubscriptionsWithoutSearchParamAndByDislikeType(@Param("userIds") Set<Long> userIds, @Param("dislike") Mark dislike, Pageable p);
+
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
+            "count(case when r.ratingType like :ratingType THEN 'like' else null end) as likecount, " +
             "count(case when r.ratingType like :dislike THEN 'dislike' else null end))" +
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id " +
             " AND r.profileRating.user.id IN :userIds" +
-            " GROUP BY u.id")
+            " GROUP BY u.id " +
+            " ORDER BY likecount DESC")
     Page<DTOLikableProfile> findProfilesSubscriptionsWithoutSearchParamAndByRatingType(@Param("userIds") Set<Long> userIds, @Param("ratingType") Mark ratingType, @Param("dislike") Mark dislike, Pageable p);
 
     @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType not like :ratingType or r.ratingType IS NULL THEN 'like' else null end), " +
-            "count(case when r.ratingType like :ratingType THEN 'dislike' else null end))" +
-            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
-            " GROUP BY u.id")
-    Page<DTOLikableProfile> findAllProfilesWithoutSearchParam(@Param("ratingType") Mark ratingType, Pageable p);
-
-    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType like :ratingType THEN 'like' else null end), " +
+            "count(case when r.ratingType not like :dislike THEN 'like' else null end) as likecount," +
             "count(case when r.ratingType like :dislike THEN 'dislike' else null end))" +
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
-            " GROUP BY u.id")
+            " GROUP BY u.id " +
+            " ORDER BY likecount DESC")
+    Page<DTOLikableProfile> findAllProfilesWithoutSearchParamAndWithoutRatingType(@Param("dislike") Mark dislike, Pageable p);
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
+            "count(case when r.ratingType not like :dislike THEN 'like' else null end)," +
+            "count(case when r.ratingType like :dislike THEN 'dislike' else null end) as dislikecount)" +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
+            " GROUP BY u.id " +
+            " ORDER BY dislikecount DESC")
+    Page<DTOLikableProfile> findAllProfilesWithoutSearchParamAndByDislikeType(@Param("dislike") Mark dislike, Pageable p);
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
+            "count(case when r.ratingType like :ratingType THEN 'like' else null end) as likecount, " +
+            "count(case when r.ratingType like :dislike THEN 'dislike' else null end))" +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
+            " GROUP BY u.id " +
+            " ORDER BY likecount DESC")
     Page<DTOLikableProfile> findAllProfilesWithoutSearchParamAndByRatingType(@Param("ratingType") Mark ratingType, @Param("dislike") Mark dislike, Pageable p);
 
     @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType like :ratingType THEN 'like' else null end), " +
+            "count(case when r.ratingType like :ratingType THEN 'like' else null end) as likecount, " +
             "count(case when r.ratingType like :dislike THEN 'dislike' else null end))" +
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
             " AND r.profileRating.user.id IN :userIds " +
-            "AND u.fullName LIKE :searchParam%" +
-            " GROUP BY u.id")
+            "AND u.fullName LIKE %:searchParam%" +
+            " GROUP BY u.id " +
+            " ORDER BY likecount DESC")
     Page<DTOLikableProfile> findProfilesSubscriptionsBySearchParamAndRatingType(@Param("userIds") Set<Long> userIds, @Param("ratingType") Mark ratingType, @Param("dislike") Mark dislike, @Param("searchParam") String searchParam, Pageable p);
 
     @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType not like :ratingType or r.ratingType IS NULL THEN 'like' else null end), " +
-            "count(case when r.ratingType like :ratingType THEN 'dislike' else null end))" +
-            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
-            " AND r.profileRating.user.id IN :userIds" +
-            " AND u.fullName LIKE :searchParam%" +
-            " GROUP BY u.id")
-    Page<DTOLikableProfile> findProfilesSubscriptionsBySearchParam(@Param("userIds") Set<Long> userIds, @Param("ratingType") Mark ratingType,  @Param("searchParam") String searchParam, Pageable p);
-
-    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType not like :ratingType or r.ratingType IS NULL THEN 'like' else null end), " +
-            "count(case when r.ratingType like :ratingType THEN 'dislike' else null end))" +
-            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
-            " AND u.fullName LIKE :searchParam%" +
-            " GROUP BY u.id")
-    Page<DTOLikableProfile> findAllProfilesBySearchParam(@Param("ratingType") Mark ratingType, @Param("searchParam") String searchParam, Pageable p);
-
-    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
-            "count(case when r.ratingType like :ratingType THEN 'like' else null end), " +
+            "count(case when r.ratingType not like :dislike THEN 'like' else null end) as likecount, " +
             "count(case when r.ratingType like :dislike THEN 'dislike' else null end))" +
             " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
-            " AND u.fullName LIKE :searchParam%" +
-            " GROUP BY u.id")
+            " AND r.profileRating.user.id IN :userIds" +
+            " AND u.fullName LIKE %:searchParam%" +
+            " GROUP BY u.id " +
+            " ORDER BY likecount DESC")
+    Page<DTOLikableProfile> findProfilesSubscriptionsBySearchParamWithoutRatingType(@Param("userIds") Set<Long> userIds, @Param("dislike") Mark dislike, @Param("searchParam") String searchParam, Pageable p);
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
+            "count(case when r.ratingType not like :dislike THEN 'like' else null end), " +
+            "count(case when r.ratingType like :dislike THEN 'dislike' else null end) as dislikecount)" +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
+            " AND r.profileRating.user.id IN :userIds" +
+            " AND u.fullName LIKE %:searchParam%" +
+            " GROUP BY u.id " +
+            " ORDER BY dislikecount DESC")
+    Page<DTOLikableProfile> findProfilesSubscriptionsBySearchParamAndByDislikeType(@Param("userIds") Set<Long> userIds, @Param("dislike") Mark dislike, @Param("searchParam") String searchParam, Pageable p);
+
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
+            "count(case when r.ratingType not like :dislike or r.ratingType IS NULL THEN 'like' else null end) as likecount, " +
+            "count(case when r.ratingType like :dislike THEN 'dislike' else null end))" +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
+            " AND u.fullName LIKE %:searchParam%" +
+            " GROUP BY u.id " +
+            " ORDER BY likecount DESC")
+    Page<DTOLikableProfile> findAllProfilesBySearchParamWithoutRatingType(@Param("dislike") Mark dislike, @Param("searchParam") String searchParam, Pageable p);
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
+            "count(case when r.ratingType not like :dislike or r.ratingType IS NULL THEN 'like' else null end), " +
+            "count(case when r.ratingType like :dislike THEN 'dislike' else null end) as dislikecount)" +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
+            " AND u.fullName LIKE %:searchParam%" +
+            " GROUP BY u.id " +
+            " ORDER BY dislikecount DESC")
+    Page<DTOLikableProfile> findAllProfilesBySearchParamAndByDislikeType(@Param("dislike") Mark dislike, @Param("searchParam") String searchParam, Pageable p);
+
+
+    @Query("SELECT DISTINCT NEW com.app.DTO.DTOLikableProfile (u.id, u.fullName, u.jobTitle, p.profilePicture," +
+            "count(case when r.ratingType like :ratingType THEN 'like' else null end) as likecount, " +
+            "count(case when r.ratingType like :dislike THEN 'dislike' else null end))" +
+            " FROM Rating r JOIN Profile p ON p.id = r.profileRating.user.id JOIN User u ON u.id = p.id" +
+            " AND u.fullName LIKE %:searchParam%" +
+            " GROUP BY u.id " +
+            " ORDER BY likecount DESC")
     Page<DTOLikableProfile> findAllProfilesBySearchParamAndRatingType(@Param("ratingType") Mark ratingType, @Param("dislike") Mark dislike, @Param("searchParam") String searchParam, Pageable p);
 
     @Query(value = "SELECT * FROM ratings WHERE comment is not NULL and profile_id = ?",
