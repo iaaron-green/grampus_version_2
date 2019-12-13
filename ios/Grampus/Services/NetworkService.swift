@@ -53,10 +53,22 @@ class NetworkService {
                 }
                 
             case .failure(let error) :
-                completion(error.localizedDescription)
-                self.handleError(error: error)
+                completion(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
             }
         }
+    }
+    
+    func getErrorMessageFromAPI(responseJSON: DataResponse<Any>) -> String? {
+        var errorMessage: String?
+        if let data = responseJSON.data {
+            if let json = try? JSON(data: data) {
+                let message: String = json["message"].stringValue
+                  if !message.isEmpty {
+                    errorMessage = message
+                  }
+            }
+         }
+        return errorMessage
     }
     
     
@@ -80,9 +92,7 @@ class NetworkService {
                 completion(true, nil)
                 
             case .failure(let error) :
-                
-                self.handleError(error: error)
-                completion(false, error.localizedDescription)
+                completion(false, self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
             }
         }
     }
@@ -100,14 +110,13 @@ class NetworkService {
         manager.request(userURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             switch responseJSON.result {
             case .success :
-                
                 if let result = responseJSON.result.value {
                     let json = result as! NSDictionary
                     completion(json)
                 }
                 
             case .failure(let error) :
-                self.handleError(error: error)
+                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
                 completion(nil)
             }
         }
@@ -133,7 +142,7 @@ class NetworkService {
             case .success :
                 completion(true)
             case .failure(let error) :
-                self.handleError(error: error)
+                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
                 completion(false)
             }
         }
@@ -166,7 +175,7 @@ class NetworkService {
                 }
                 
             case .failure(let error) :
-                self.handleError(error: error)
+                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
                 completion(nil)
             }
         }
@@ -185,26 +194,16 @@ class NetworkService {
             "message" : message
         ]
         
-        var apiUrl = ""
-//        if likeState {
-//
-//            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/like"
-//        } else {
-//            apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/dislike"
-//        }
-        
-        apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/addRating"
+        let apiUrl = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/addRating"
 
 
         manager.request(apiUrl, method: .post, parameters: body, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
 
             switch responseJSON.result {
             case .success :
-                print(apiUrl)
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)
-                
             case .failure(let error) :
-                self.handleError(error: error)
+                 print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
             }
         }
     }
@@ -234,7 +233,7 @@ class NetworkService {
                 }
                 
             case .failure(let error) :
-                self.handleError(error: error)
+                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
                 achievements = ["empty": "true"]
                 completion(nil)
             }
@@ -245,7 +244,6 @@ class NetworkService {
         
         let userID = storage.getUserId()
 
-        
         let imageURL = "\(DynamicURL.dynamicURL.rawValue)profiles/\(userID!)/photo"
         
         let headers : HTTPHeaders = [
@@ -253,18 +251,9 @@ class NetworkService {
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-//        let userID = storage.getUserId()
-//        let parameters: Parameters = [
-//        "id" : userID!
-//        ]
-        
         manager.upload(multipartFormData: { (multipart: MultipartFormData) in
             let imageData = selectedImage!.jpegData(compressionQuality: 0.8)
             multipart.append(imageData!, withName: "file", fileName: "file.png", mimeType: "image/png")
-//            for (key,value) in parameters {
-//                 multipart.append((value as! String).data(using: .utf8)!, withName: key)
-//            }
-            
         },usingThreshold: UInt64.init(),
            to: imageURL,
            method: .post,
@@ -277,7 +266,7 @@ class NetworkService {
                 completion(true)
                 break
             case .failure(let error):
-                self.handleError(error: error)
+                print(error.localizedDescription)
                 completion(false)
                     break
                 }
@@ -286,25 +275,21 @@ class NetworkService {
     
     func followUser(completion: @escaping (Bool) -> ()) {
         
-        let url = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserIdProfile()!)/change-subscription"
+        let url = "\(DynamicURL.dynamicURL.rawValue)profiles/\(storage.getSelectedUserId()!)/change-subscription"
         
         let headers: HTTPHeaders = [
             "Content-Type": "application/json; charset=utf-8",
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-
         manager.request(url, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
 
             switch responseJSON.result {
             case .success :
-                print(url)
                 completion(true)
             case .failure(let error) :
-                print(url)
-
+                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
                 completion(false)
-                self.handleError(error: error)
             }
         }
     }
@@ -348,7 +333,7 @@ class NetworkService {
                     completion(true)
                     break
                 case .failure(let error):
-                    self.handleError(error: error)
+                    print(error.localizedDescription)
                     completion(false)
                         break
                     }
@@ -364,7 +349,11 @@ class NetworkService {
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-        manager.request(newsURL, method: .get, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        let parameters: Parameters = [
+            "page" : 0
+        ]
+        
+        manager.request(newsURL, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             switch responseJSON.result {
             case .success :
                 
@@ -373,7 +362,7 @@ class NetworkService {
                 }
                 
             case .failure(let error) :
-                self.handleError(error: error)
+                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
                 completion(nil)
             }
         }
@@ -381,7 +370,7 @@ class NetworkService {
     
     func sendComment(comment: String, id: Int, completion: @escaping (Bool) -> ()){
         
-        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news/comment"
+        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news/comment/"
         
         let headers: HTTPHeaders = [
             "Content-Type": "application/json; charset=utf-8",
@@ -389,8 +378,8 @@ class NetworkService {
         ]
         
         let parameters: Parameters = [
-        "id" : String(describing: id),
-        "comment" : comment
+        "id" : id,
+        "text" : comment
         ]
         
         manager.request(newsURL, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
@@ -398,47 +387,38 @@ class NetworkService {
             case .success :
                 completion(true)
             case .failure(let error) :
-                self.handleError(error: error)
+                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
                 completion(false)
             }
         }
     }
     
-    func handleError(error: Error) {
-        if let error = error as? AFError {
-            switch error {
-            case .invalidURL(let url):
-                print("Invalid URL: \(url) - \(error.localizedDescription)")
-            case .parameterEncodingFailed(let reason):
-                print("Parameter encoding failed: \(error.localizedDescription)")
-                print("Failure Reason: \(reason)")
-            case .multipartEncodingFailed(let reason):
-                print("Multipart encoding failed: \(error.localizedDescription)")
-                print("Failure Reason: \(reason)")
-            case .responseValidationFailed(let reason):
-                print("Response validation failed: \(error.localizedDescription)")
-                print("Failure Reason: \(reason)")
-
-                switch reason {
-                case .dataFileNil, .dataFileReadFailed:
-                    print("Downloaded file could not be read")
-                case .missingContentType(let acceptableContentTypes):
-                    print("Content Type Missing: \(acceptableContentTypes)")
-                case .unacceptableContentType(let acceptableContentTypes, let responseContentType):
-                    print("Response content type: \(responseContentType) was unacceptable: \(acceptableContentTypes)")
-                case .unacceptableStatusCode(let code):
-                    print("Response status code was unacceptable: \(code)")
+    func fetchComments(newsID : Int, completion: @escaping (JSON?) -> ()) {
+        
+        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news/comment/\(newsID)"
+        
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer \(storage.getTokenString()!)"
+        ]
+        
+        let parameters: Parameters = [
+            "page" : 0
+        ]
+        
+        manager.request(newsURL, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+            switch responseJSON.result {
+            case .success :
+    
+                if let result = responseJSON.result.value {
+                    completion(JSON(result))
                 }
-            case .responseSerializationFailed(let reason):
-                print("Response serialization failed: \(error.localizedDescription)")
-                print("Failure Reason: \(reason)")
+                
+            case .failure(let error) :
+                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
+                completion(nil)
             }
-
-            print("Underlying error: \(String(describing: error.underlyingError))")
-        } else if let error = error as? URLError {
-            print("URLError occurred: \(error)")
-        } else {
-            print("Unknown error: \(error)")
         }
     }
+    
 }

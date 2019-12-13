@@ -20,10 +20,11 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     @IBOutlet weak var addButton: UIBarButtonItem!
     
     let network = NetworkService()
+    let storage = StorageService()
     let imageService = ImageService()
     var newsArray = [JSON]()
-    var commentsArray = [JSON]()
     var newsID = 0
+    var profileID = 0
 
     let myRefreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
@@ -39,10 +40,6 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         tableView.estimatedRowHeight = 500
         tableView.rowHeight = UITableView.automaticDimension
         
-
-
-        
-        
         tableView.separatorStyle = .none
         tableView.backgroundColor = .clear
         view.backgroundColor = #colorLiteral(red: 0.1125021651, green: 0.1299118698, blue: 0.1408866942, alpha: 1)
@@ -52,10 +49,8 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         if revealViewController() != nil {
             leftBarButton.target = self.revealViewController()
             leftBarButton.action = #selector(SWRevealViewController().revealToggle(_:))
-            
             self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
         }
-
     }
 
     
@@ -94,6 +89,11 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         return newsArray.count
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        newsID = newsArray[indexPath.row]["id"].int ?? 0
+        profileID = newsArray[indexPath.row]["profileID"].int ?? 0
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "newsTableCell", for: indexPath) as! NewsTableViewCell
         
@@ -103,27 +103,26 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         var titleCell = ""
         var bodyCell = ""
         var imageCell = ""
-        
+        var countOfComment = 0
+            
+        nameCell = self.newsArray[indexPath.row]["nameProfile"].string ?? ""
+        userPictureCell = self.newsArray[indexPath.row]["imgProfile"].string ?? ""
+        dateCell = self.newsArray[indexPath.row]["date"].string ?? ""
+        titleCell = self.newsArray[indexPath.row]["title"].string ?? ""
+        bodyCell = self.newsArray[indexPath.row]["content"].string ?? ""
+        imageCell = self.newsArray[indexPath.row]["picture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
+        countOfComment = self.newsArray[indexPath.row]["countOfComment"].int ?? 0
+        let urlProfile = URL(string: userPictureCell.replacingOccurrences(of: "\\", with: ""))
+        let urlNews = URL(string: imageCell.replacingOccurrences(of: "\\", with: ""))
+            
+        cell.nameLabel.text = nameCell
+        cell.dateLabel.text = dateCell
+        cell.titleLabel.text = titleCell
+        cell.bodyLabel.text = bodyCell
+        cell.commentsLabel.text = "Comments: \(countOfComment)"
+            
         DispatchQueue.main.async {
-            
-            
-            nameCell = self.newsArray[indexPath.row]["nameProfile"].string ?? ""
-            userPictureCell = self.newsArray[indexPath.row]["imgProfile"].string ?? ""
-            dateCell = self.newsArray[indexPath.row]["date"].string ?? ""
-            titleCell = self.newsArray[indexPath.row]["title"].string ?? ""
-            bodyCell = self.newsArray[indexPath.row]["content"].string ?? ""
-            imageCell = self.newsArray[indexPath.row]["picture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
-            self.commentsArray = self.newsArray[indexPath.row]["comment"].array ?? [JSON]()
-            self.newsID = self.newsArray[indexPath.row]["id"].int ?? 0
-
-            let urlProfile = URL(string: userPictureCell)
             cell.avatarImageView.sd_setImage(with: urlProfile, placeholderImage: UIImage(named: "red cross"))
-            cell.nameLabel.text = nameCell
-            cell.dateLabel.text = dateCell
-            cell.titleLabel.text = titleCell
-            cell.bodyLabel.text = bodyCell
-            cell.commentsLabel.text = "Comments: \(self.commentsArray.count)"
-            let urlNews = URL(string: imageCell)
             cell.newsImageView.sd_setImage(with: urlNews, placeholderImage: nil, options: [], completed: { [weak cell] (image, error, cache, url) in
                 if let image = image {
                     cell?.setCustomImage(image: image)
@@ -131,31 +130,45 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
                 else {
                     cell?.setCustomImage(image: UIImage(named: "2")!)
                 }
-                
                 self.tableView.beginUpdates()
-//                print("UPDATES")
                 self.tableView.endUpdates()
-//                self.tableView.reloadRows(
-//                    at: [indexPath],
-//                    with: .fade)
+
             })
         }
         
         let commentTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(commentTapped(tapGestureRecognizer:)))
+        let profileTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(profileTapped(tapGestureRecognizer:)))
+        let profileImageTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(profileTapped(tapGestureRecognizer:)))
+        profileImageTapGestureRecognizer.cancelsTouchesInView = false
+        profileTapGestureRecognizer.cancelsTouchesInView = false
+        commentTapGestureRecognizer.cancelsTouchesInView = false
+        cell.nameLabel.addGestureRecognizer(profileTapGestureRecognizer)
+        cell.avatarImageView.addGestureRecognizer(profileImageTapGestureRecognizer)
         cell.commentsLabel.addGestureRecognizer(commentTapGestureRecognizer)
         cell.layoutIfNeeded()
         return cell
     }
     
     @objc func commentTapped(tapGestureRecognizer: UITapGestureRecognizer) {
-        self.performSegue(withIdentifier: "goToComments", sender: self)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.performSegue(withIdentifier: "goToComments", sender: self)
+        }
     }
+    
+    @objc func profileTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.performSegue(withIdentifier: "goToProfile", sender: self)
+        }
+    }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToComments" {
-            let vc = CommentsViewController()
-            vc.commentsArray = commentsArray
-            vc.newsID = newsID
+            let vc = segue.destination as? CommentsViewController
+            vc?.newsID = newsID
+        } else if segue.identifier == "goToProfile" {
+            storage.saveSelectedUserId(selectedUserId: String(describing: profileID))
+            storage.saveProfileState(state: false)
         }
     }
     

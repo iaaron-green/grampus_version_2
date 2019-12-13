@@ -27,18 +27,12 @@ class MenuTableViewController: UITableViewController {
     let storage = StorageService()
     let imageService = ImageService()
     
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         firstCell.layer.insertSublayer(gradient(frame: view.bounds), at:0)
             
         fetchUserInformation(userId: storage.getUserId()!)
-        
-//        NotificationCenter.default.addObserver(self, selector: #selector(updateImage), name: NSNotification.Name(rawValue: "imageChanged"), object: nil)
-        
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadUser), name: NSNotification.Name(rawValue: "updateUserInfo"), object: nil)
         
@@ -51,16 +45,8 @@ class MenuTableViewController: UITableViewController {
         self.clearsSelectionOnViewWillAppear = true
         
         tableView.reloadData()
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-    
-    
-    
-//    @objc func updateImage(notification: NSNotification) {
-//        if let image = notification.userInfo?["image"] as? UIImage {
-//            imageView.image = image
-//        }
-//    }
+
     
     @objc func loadUser(notification: NSNotification) {
         if let user = self.storage.getUserProfile() {
