@@ -102,7 +102,8 @@ public class NewsServiceImpl implements NewsService {
     public Page<DTONews> getAllNews(Principal principal, Integer page, Integer size) {
         User currentUser = userRepository.findByEmail(principal.getName());
         Set<Long> subscriptions = newsRepository.allSubscriptionId(currentUser.getId());
-        Page<DTONews> news = newsRepository.news(subscriptions, pageRequest(page, size));
+        Set<Long> newsForProfile = newsRepository.newsForProfile(subscriptions);
+        Page<DTONews> news = newsRepository.news(newsForProfile, pageRequest(page, size));
         return news;
     }
 
@@ -128,13 +129,6 @@ public class NewsServiceImpl implements NewsService {
     }
 
 
-
-    private DTONews getDtoNews(News s) throws CustomException {
-        return new DTONews(s.getId(), s.getTitle(), s.getContent(), s.getPicture(),
-                profileService.getProfileById(s.getProfileID()).getProfilePicture(),
-                userRepository.getById(s.getProfileID()).getFullName(),
-                s.getDate(), s.getProfileID());
-    }
 
     private DTOComment getDtoComment(Comment c) throws CustomException {
         return new DTOComment(c.getId(), c.getImgProfile(),c.getCommentDate(),c.getText(), c.getFullName());

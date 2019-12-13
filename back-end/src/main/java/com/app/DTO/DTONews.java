@@ -20,9 +20,8 @@ public class DTONews {
     private String nameProfile;
     private String picture;
     private String date;
-    private List<Comment> comment = new ArrayList<>();
     private Long profileId;
-
+    private Long countOfComments;
     public DTONews() {
     }
 
@@ -36,13 +35,15 @@ public class DTONews {
         this.picture = picture;
         this.date = date;
         this.profileId = profileId;
+        this.countOfComments = countOfComments;
     }
 
-    public DTONews(Long id, String title, String date, Long profileId, String content) {
+    public DTONews(Long id, String title, String date, Long profileId, String content, Long countOfComments) {
         this.id = id;
         this.title = title;
         this.date = date;
         this.profileId = profileId;
         this.content = content;
+        this.countOfComments = countOfComments;
     }
 }
