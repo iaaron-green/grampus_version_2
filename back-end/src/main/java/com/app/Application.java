@@ -1,5 +1,7 @@
 package com.app;
 
+import com.app.netty.ChatServer;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -18,4 +20,10 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
+    @Bean
+    public CommandLineRunner demo() {
+        return strings -> {
+            new ChatServer(5001).run();
+        };
+    }
 }

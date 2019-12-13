@@ -290,6 +290,4 @@ public class ProfileServiceImpl implements ProfileService {
     private Pageable pageRequest(int page, int size) {
         return PageRequest.of(page, size);
     }
-
-
 }

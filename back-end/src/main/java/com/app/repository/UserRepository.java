@@ -37,7 +37,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
    List<DTOLikableProfile> findProfileByRatingType(@Param("ratingTypes") List<Mark> ratingTypes, @Param("userIds") Set<Long> userIds);
 
 
-
    @Query("SELECT NEW com.app.DTO.DTOLikableProfile(u.id, u.fullName, u.jobTitle, p.profilePicture) " +
            "FROM  User u, Profile p WHERE u.id NOT LIKE :id AND u.fullName LIKE :searchParam% OR u.jobTitle LIKE :searchParam%")
    Page<DTOLikableProfile> findByMask(@Param("id") Long id, @Param("searchParam") String searchParam, Pageable p);
