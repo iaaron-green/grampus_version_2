@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 @PropertySources({
         @PropertySource("classpath:application.properties"),
-        @PropertySource("classpath:config/test/config.properties")
+        @PropertySource("classpath:config/dev/config.properties")
 //        @PropertySource("file:${config.path}/dev-config.properties")
 })
 @EnableJms
