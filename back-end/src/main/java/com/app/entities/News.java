@@ -25,11 +25,9 @@ public class News {
     private String picture;
     private String date;
     private Long profileID;
-    private long countOfLikes;
-    private Long amountOfComent;
 
-//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "news")
-//    private List<Comment> comment = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "news")
+    private List<Comment> comment = new ArrayList<>();
 
     public News() {};
 

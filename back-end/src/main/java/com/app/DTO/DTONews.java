@@ -20,16 +20,14 @@ public class DTONews {
     private String nameProfile;
     private String picture;
     private String date;
-    private Long countOfLikes;
-    private Long amountOfComent;
     private List<Comment> comment = new ArrayList<>();
     private Long profileId;
 
     public DTONews() {
     }
 
-    public DTONews(Long id, String title, String content, String picture, String imgProfile, String nameProfile, String date,
-                   Long countOfLikes, Long profileId, Long amountOfComent) {
+    public DTONews(Long id, String title, String content, String picture, String imgProfile, String nameProfile, String date
+            , Long profileId) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -37,17 +35,14 @@ public class DTONews {
         this.nameProfile = nameProfile;
         this.picture = picture;
         this.date = date;
-        this.countOfLikes = countOfLikes;
         this.profileId = profileId;
-        this.amountOfComent = amountOfComent;
     }
 
-    public DTONews(Long id, String title, String date, Long profileId, String content, Long amountOfComent) {
+    public DTONews(Long id, String title, String date, Long profileId, String content) {
         this.id = id;
         this.title = title;
         this.date = date;
         this.profileId = profileId;
         this.content = content;
-        this.amountOfComent = amountOfComent;
     }
 }

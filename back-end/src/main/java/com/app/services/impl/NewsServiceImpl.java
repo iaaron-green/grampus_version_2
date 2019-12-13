@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -64,7 +63,6 @@ public class NewsServiceImpl implements NewsService {
         newNews.setDate(df.format(new Date().getTime()));
 
         newNews.setProfileID(userRepository.findByEmail(principal.getName()).getId());
-        newNews.setCountOfLikes(0);
         newsRepository.save(newNews);
     }
 
@@ -103,7 +101,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Page<DTONews> getAllNews(Principal principal, Integer page, Integer size) {
         User currentUser = userRepository.findByEmail(principal.getName());
-        Set<Long> subscriptions = newsRepository.allSubscriiptionId(currentUser.getId());
+        Set<Long> subscriptions = newsRepository.allSubscriptionId(currentUser.getId());
         Page<DTONews> news = newsRepository.news(subscriptions, pageRequest(page, size));
         return news;
     }
@@ -114,18 +112,19 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public void saveComment(Long id, String textComment, Principal principal) throws CustomException {
+    public DTOComment saveComment(Long id, String textComment, Principal principal) throws CustomException {
         News s = newsRepository.findOneById(id);
         if (s == null)
             throw new CustomException(messageSource.getMessage("news.not.exist", null, LocaleContextHolder.getLocale()), Errors.NEWS_NOT_EXIST);
+
 
         User user = userRepository.findByEmail(principal.getName());
         Profile profile = user.getProfile();
 
         SimpleDateFormat df = new SimpleDateFormat("HH:mm dd.MM.yyy");
-        Comment newComment = new Comment(user.getFullName(), profile.getProfilePicture(), textComment, df.format(new Date().getTime()), s.getId());
-        newComment.setNews_id(s.getId());
-        commentRepository.save(newComment);
+        Comment newComment = new Comment(user.getFullName(), profile.getProfilePicture(), textComment, df.format(new Date().getTime()), s);
+
+        return getDtoComment(commentRepository.save(newComment));
     }
 
 
@@ -134,7 +133,11 @@ public class NewsServiceImpl implements NewsService {
         return new DTONews(s.getId(), s.getTitle(), s.getContent(), s.getPicture(),
                 profileService.getProfileById(s.getProfileID()).getProfilePicture(),
                 userRepository.getById(s.getProfileID()).getFullName(),
-                s.getDate(), s.getCountOfLikes(), s.getProfileID(), s.getAmountOfComent());
+                s.getDate(), s.getProfileID());
+    }
+
+    private DTOComment getDtoComment(Comment c) throws CustomException {
+        return new DTOComment(c.getId(), c.getImgProfile(),c.getCommentDate(),c.getText(), c.getFullName());
     }
 
     private Pageable pageRequest(int page, int size) {

@@ -28,13 +28,17 @@ public interface NewsRepository extends CrudRepository<News, Long> {
     List<Comment> findAllCommentById(Long id);
 
     @Query(
-            value = "SELECT users.id  FROM users WHERE users.job_title IN('DEV', 'PM') UNION SELECT profile_id " +
-                    "FROM user_subscriptions WHERE user_id = ?;", nativeQuery = true)
-    Set<Long> allSubscriiptionId(Long id);
+            value = "SELECT id FROM users WHERE job_title IN('DEV', 'PM') UNION SELECT profile_id " +
+                    "FROM user_subscriptions WHERE user_id = ?", nativeQuery = true)
+    Set<Long> allSubscriptionId(Long id);
 
-    @Query("SELECT NEW com.app.DTO.DTONews(n.id, n.date, n.title, n.profileID, n.content, n.amountOfComent) FROM News n WHERE id IN :allSubscriiptionId")
-    Page<DTONews> news(@Param("allSubscriiptionId") Set<Long> allSubscriiptionId, Pageable p);
+    @Query("SELECT NEW com.app.DTO.DTONews(n.id, n.date, n.title, n.profileID, n.content) " +
+            "FROM News n WHERE n.profileID IN :allSubscriptionId")
+    Page<DTONews> news(@Param("allSubscriptionId") Set<Long> allSubscriptionId, Pageable p);
 
-    @Query("SELECT NEW com.app.DTO.DTOComment(c.id, c.imgProfile, c.comment_date, c.text) FROM Comment c WHERE news_id = :id")
+    @Query("SELECT NEW com.app.DTO.DTOComment(p.id, c.imgProfile, c.commentDate, c.text, c.fullName) " +
+            "FROM Comment c JOIN Profile p ON c.news.profileID = p.id where c.news.id =:id" )
     Page<DTOComment> comments(@Param("id") Long id, Pageable p);
+
+
 }
