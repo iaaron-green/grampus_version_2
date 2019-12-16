@@ -34,7 +34,7 @@ public interface NewsRepository extends CrudRepository<News, Long> {
             "FROM News n LEFT JOIN Comment c ON n.id = c.news.id " +
             "LEFT JOIN Profile p ON p.id = n.profileID " +
             "LEFT JOIN User u ON p.id = u.id " +
-            "WHERE n.id IN :ids GROUP BY n.id")
+            "WHERE n.id IN :ids GROUP BY n.id ORDER BY n.date DESC")
     Page<DTONews> news(@Param("ids") Set<Long> ids, Pageable p);
 
     @Query("SELECT NEW com.app.DTO.DTOComment(p.id, c.imgProfile, c.commentDate, c.text, c.fullName) " +
