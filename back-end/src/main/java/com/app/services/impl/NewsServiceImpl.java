@@ -99,10 +99,13 @@ public class NewsServiceImpl implements NewsService {
 //    }
 
     @Override
-    public Page<DTONews> getAllNews(Principal principal, Integer page, Integer size) {
+    public Page<DTONews> getAllNews(Principal principal, Integer page, Integer size) throws CustomException {
         User currentUser = userRepository.findByEmail(principal.getName());
         Set<Long> subscriptions = newsRepository.allSubscriptionId(currentUser.getId());
+        subscriptions.add(currentUser.getId());
         Set<Long> newsForProfile = newsRepository.newsForProfile(subscriptions);
+        if(newsForProfile == null || newsForProfile.isEmpty())
+            throw new CustomException(messageSource.getMessage("News.is.empty", null, LocaleContextHolder.getLocale()), Errors.NEWS_IS_EMPTY);
         Page<DTONews> news = newsRepository.news(newsForProfile, pageRequest(page, size));
         return news;
     }

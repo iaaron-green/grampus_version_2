@@ -18,7 +18,7 @@ public interface NewsService {
 
     DTOComment saveComment(Long id, String comment, Principal principal) throws CustomException;
 
-    Page<DTONews> getAllNews(Principal principal, Integer page, Integer size);
+    Page<DTONews> getAllNews(Principal principal, Integer page, Integer size) throws CustomException;
 
     Page<DTOComment> getAllCommentByNewsId(Long id, Integer page, Integer size);
 }

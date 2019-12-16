@@ -25,25 +25,16 @@ public class DTONews {
     public DTONews() {
     }
 
-    public DTONews(Long id, String title, String content, String picture, String imgProfile, String nameProfile, String date
-            , Long profileId) {
+    public DTONews(Long id, String title, String date, Long profileId, String content, Long countOfComments,
+                   String picture, String imgProfile, String nameProfile) {
         this.id = id;
         this.title = title;
+        this.date = date;
+        this.profileId = profileId;
         this.content = content;
+        this.countOfComments = countOfComments;
+        this.picture = picture;
         this.imgProfile = imgProfile;
         this.nameProfile = nameProfile;
-        this.picture = picture;
-        this.date = date;
-        this.profileId = profileId;
-        this.countOfComments = countOfComments;
-    }
-
-    public DTONews(Long id, String title, String date, Long profileId, String content, Long countOfComments) {
-        this.id = id;
-        this.title = title;
-        this.date = date;
-        this.profileId = profileId;
-        this.content = content;
-        this.countOfComments = countOfComments;
     }
 }
