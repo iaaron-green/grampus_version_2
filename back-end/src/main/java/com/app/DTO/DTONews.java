@@ -25,8 +25,8 @@ public class DTONews {
     public DTONews() {
     }
 
-    public DTONews(Long id, String title, String date, Long profileId, String content, Long countOfComments,
-                   String picture, String imgProfile, String nameProfile) {
+    public DTONews(Long id, String title, String date, Long profileId, String content, String picture, String imgProfile,
+                   String nameProfile, Long countOfComments) {
         this.id = id;
         this.title = title;
         this.date = date;

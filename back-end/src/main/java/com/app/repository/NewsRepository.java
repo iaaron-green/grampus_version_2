@@ -29,8 +29,12 @@ public interface NewsRepository extends CrudRepository<News, Long> {
                     "FROM user_subscriptions WHERE user_id = ?", nativeQuery = true)
     Set<Long> allSubscriptionId(Long id);
 
-    @Query("SELECT NEW com.app.DTO.DTONews(n.id, n.title, n.date, n.profileID, n.content, COUNT(c.id), n.picture) " +
-            "FROM News n LEFT JOIN Comment c ON n.id = c.news.id WHERE n.id IN :ids GROUP BY n.id")
+    @Query("SELECT NEW com.app.DTO.DTONews(n.id, n.title, n.date, n.profileID, n.content, n.picture, " +
+            "p.profilePicture, u.fullName, COUNT(c.id)) " +
+            "FROM News n LEFT JOIN Comment c ON n.id = c.news.id " +
+            "LEFT JOIN Profile p ON p.id = n.profileID " +
+            "LEFT JOIN User u ON p.id = u.id " +
+            "WHERE n.id IN :ids GROUP BY n.id")
     Page<DTONews> news(@Param("ids") Set<Long> ids, Pageable p);
 
     @Query("SELECT NEW com.app.DTO.DTOComment(p.id, c.imgProfile, c.commentDate, c.text, c.fullName) " +
