@@ -18,6 +18,11 @@ class NewsTableViewCell: UITableViewCell {
     @IBOutlet weak var newsImageView: UIImageView!
     @IBOutlet weak var cardView: UIView!
     @IBOutlet weak var commentsLabel: UILabel!
+    @IBOutlet weak var deleteButton: UIButton!
+    let storage = StorageService()
+    let network = NetworkService()
+    var newsId = 0
+    
     
     
     internal var aspectConstraint : NSLayoutConstraint? {
@@ -34,7 +39,6 @@ class NewsTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         aspectConstraint = nil
-        
         avatarImageView.layer.cornerRadius = 20
         avatarImageView.layer.borderWidth = 1.5
         avatarImageView.layer.borderColor = UIColor.darkGray.cgColor
@@ -47,18 +51,28 @@ class NewsTableViewCell: UITableViewCell {
     }
     
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        newsImageView.sd_cancelCurrentImageLoad()
-        newsImageView.image = nil
-    }
+//    override func prepareForReuse() {
+//        super.prepareForReuse()
+//        newsImageView.sd_cancelCurrentImageLoad()
+//        newsImageView.image = nil
+//    }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
     }
     
-
+    @IBAction func deleteAction(_ sender: UIButton) {
+        network.deleteNews(id: newsId) { (success) in
+            if success {
+                print("OK")
+            } else {
+                print("error")
+            }
+        }
+    }
+    
+    
     
     func setCustomImage(image : UIImage) {
         

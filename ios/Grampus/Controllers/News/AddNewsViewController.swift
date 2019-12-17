@@ -35,6 +35,7 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
         dismissKeyboardOnTap()
     }
     
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
           return .lightContent
     }
@@ -95,9 +96,18 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
                    self.openCamera()
                }))
 
-               alert.addAction(UIAlertAction.init(title: "Cancel", style: .destructive, handler: nil))
-
-               self.present(alert, animated: true, completion: nil)
+        self.present(alert, animated: true) {
+            self.tapRecognizer(alert: alert)
+        }
+    }
+    
+    func tapRecognizer(alert: UIAlertController) {
+        alert.view.superview?.subviews.first?.isUserInteractionEnabled = true
+        alert.view.superview?.subviews.first?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.actionSheetBackgroundTapped)))
+    }
+    
+    @objc func actionSheetBackgroundTapped() {
+        self.dismiss(animated: true, completion: nil)
     }
     
     func openCamera()
@@ -159,7 +169,7 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
         if newsTitleValidation(title: titleTextField) {
             network.uploadNews(selectedImage: newsImage, topic: titleTextField.text!, body: bodyTextView.text) { (success) in
                 if success {
-                    SVProgressHUD.showSuccess(withStatus: "Sent!")
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "loadNews"), object: nil)
                     self.dismiss(animated: true, completion: nil)
                 } else {
                     SVProgressHUD.showError(withStatus: "Error!")

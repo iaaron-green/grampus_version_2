@@ -69,7 +69,7 @@ class SignInViewController: RootViewController {
             network.signIn(username: userNameTextField.text!, password: passwordTextField.text!) { (error) in
                 if let error = error {
                     SVProgressHUD.dismiss()
-                    SVProgressHUD.showError(withStatus: "Error. \(error)")
+                    SVProgressHUD.showError(withStatus: error)
                 } else {
                     SVProgressHUD.dismiss()
                     self.performSegue(withIdentifier: SegueIdentifier.login_to_profile.rawValue, sender: self)

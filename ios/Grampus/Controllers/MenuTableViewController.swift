@@ -71,7 +71,7 @@ class MenuTableViewController: UITableViewController {
                 imageView.image = UIImage(named: "red cross")
             }
         } else {
-            network.fetchUserInformation(userId: userId) { (json) in
+            network.fetchUserInformation(userId: userId) { (json, error) in
                 if let json = json {
                     self.fullName = json["fullName"] as? String ?? ""
                     self.email = json["email"] as? String ?? ""
@@ -95,6 +95,8 @@ class MenuTableViewController: UITableViewController {
                         }
                         
                     }
+                } else {
+                    print(error)
                 }
             }
         }

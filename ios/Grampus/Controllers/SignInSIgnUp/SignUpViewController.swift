@@ -102,7 +102,7 @@ class SignUpViewController: RootViewController {
                 } else {
                     if let error = error {
                         SVProgressHUD.dismiss()
-                        SVProgressHUD.showError(withStatus: "Error. \(error)")
+                        SVProgressHUD.showError(withStatus: error)
                     }
                 }
             }

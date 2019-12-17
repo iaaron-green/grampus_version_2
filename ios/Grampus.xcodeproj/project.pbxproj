@@ -22,6 +22,7 @@
 		3F8373AE2399361E0045773B /* NewsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8373AC2399361E0045773B /* NewsTableViewCell.swift */; };
 		3F8373AF2399361E0045773B /* NewsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3F8373AD2399361E0045773B /* NewsTableViewCell.xib */; };
 		3FE0B22A2382C06B0027A12C /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE0B2292382C06B0027A12C /* InitialViewController.swift */; };
+		3FE558ED23A3A77C009CA277 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE558EC23A3A77C009CA277 /* ChatViewController.swift */; };
 		3FF6735D2390288D00E838DF /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF6735C2390288D00E838DF /* UserModel.swift */; };
 		410DF94970F197AFAE034B4E /* Pods_Grampus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */; };
 		761E1524237EC4490088CBF8 /* AchievementsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E1523237EC4490088CBF8 /* AchievementsModel.swift */; };
@@ -57,6 +58,7 @@
 		3F8373AC2399361E0045773B /* NewsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTableViewCell.swift; sourceTree = "<group>"; };
 		3F8373AD2399361E0045773B /* NewsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsTableViewCell.xib; sourceTree = "<group>"; };
 		3FE0B2292382C06B0027A12C /* InitialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
+		3FE558EC23A3A77C009CA277 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		3FF6735C2390288D00E838DF /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Grampus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		761E1523237EC4490088CBF8 /* AchievementsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsModel.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				761E1525237ECAA10088CBF8 /* SignInSIgnUp */,
 				D921AF9C2296BC3E00C714E2 /* ProfileTableViewController.swift */,
 				D90CFDA022948747002B8871 /* MenuTableViewController.swift */,
+				3FE558EC23A3A77C009CA277 /* ChatViewController.swift */,
 				D90CFDA4229488C5002B8871 /* RatingViewController.swift */,
 				D956BFA622A7A89B001D2CE5 /* ModalViewController.swift */,
 				3F0F95012398063F0072A94E /* News */,
@@ -363,6 +366,7 @@
 				3F6D578D239FE144001FB590 /* CommentTableViewCell.swift in Sources */,
 				3FF6735D2390288D00E838DF /* UserModel.swift in Sources */,
 				D9E2A3C422AA4E4200F91E3D /* Enums.swift in Sources */,
+				3FE558ED23A3A77C009CA277 /* ChatViewController.swift in Sources */,
 				3F6B9C982383F8F700C96012 /* ImageService.swift in Sources */,
 				3F230AA823A1391C00282997 /* UserRatingModel.swift in Sources */,
 				D90CFDA5229488C5002B8871 /* RatingViewController.swift in Sources */,

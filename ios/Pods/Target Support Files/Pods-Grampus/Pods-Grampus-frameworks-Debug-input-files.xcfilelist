@@ -1,10 +1,15 @@
 ${PODS_ROOT}/Target Support Files/Pods-Grampus/Pods-Grampus-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework
 ${BUILT_PRODUCTS_DIR}/Charts/Charts.framework
+${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework
+${BUILT_PRODUCTS_DIR}/JKVValue/JKVValue.framework
 ${BUILT_PRODUCTS_DIR}/JWTDecode/JWTDecode.framework
+${BUILT_PRODUCTS_DIR}/RMQClient/RMQClient.framework
 ${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework
 ${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework
 ${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework
+${BUILT_PRODUCTS_DIR}/SocketRocket/SocketRocket.framework
+${BUILT_PRODUCTS_DIR}/StompClientLib/StompClientLib.framework
 ${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework
 ${BUILT_PRODUCTS_DIR}/ValidationComponents/ValidationComponents.framework
 ${BUILT_PRODUCTS_DIR}/ValidationToolkit/ValidationToolkit.framework

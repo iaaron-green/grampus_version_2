@@ -103,6 +103,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         profileCheck()
         addSkeleton()
         chartView.delegate = self
+        createChatButton()
 
         SVProgressHUD.setMinimumDismissTimeInterval(2)
         SVProgressHUD.setDefaultStyle(.dark)
@@ -435,7 +436,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     }
     
     func fetchUser(userId: String) {
-        network.fetchUserInformation(userId: userId) { (json) in
+        network.fetchUserInformation(userId: userId) { (json, error) in
             if let json = json {
 //                print(json)
                 self.removeSkeleton()
@@ -481,7 +482,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
                     self.tableView.reloadData()
                 
             } else {
-                print("Error")
+                SVProgressHUD.showError(withStatus: error)
             }
         }
     }
@@ -754,6 +755,22 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     @objc func dismisController() {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    func createChatButton() {
+        let chatButton = UIButton.init(type: .system)
+         chatButton.setImage(UIImage(named: "chat"), for: .normal)
+         chatButton.tintColor = .black
+        chatButton.addTarget(self, action: #selector(chatButtonAction(sender:)), for: .touchUpInside)
+         self.view.addSubview(chatButton)
+
+         chatButton.translatesAutoresizingMaskIntoConstraints = false
+              chatButton.rightAnchor.constraint(equalTo: tableView.layoutMarginsGuide.rightAnchor, constant: 0).isActive = true
+              chatButton.bottomAnchor.constraint(equalTo: tableView.layoutMarginsGuide.bottomAnchor, constant: -15).isActive = true
+    }
+    
+    @objc func chatButtonAction(sender: UIButton!) {
+        performSegue(withIdentifier: "goToChat", sender: self)
     }
     
     

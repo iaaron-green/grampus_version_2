@@ -24,7 +24,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     let network = NetworkService()
     let storage = StorageService()
     let imageService = ImageService()
-//    var json = JSON()
     var filteredJson = [JSON]()
     var UrlsToPrefetch = [URL]()
     var page = 1
@@ -341,6 +340,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if let id = self.filteredJson[indexPath.row]["id"].int {
+            print(id)
             storage.saveSelectedUserId(selectedUserId: String(describing: id))
             storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)

@@ -98,7 +98,7 @@ class NetworkService {
     }
     
     
-    func fetchUserInformation(userId: String, completion: @escaping (NSDictionary?) -> ()) {
+    func fetchUserInformation(userId: String, completion: @escaping (NSDictionary?, String?) -> ()) {
         
         let userURL: String = "\(DynamicURL.dynamicURL.rawValue)profiles/\(userId)"
         
@@ -112,12 +112,12 @@ class NetworkService {
             case .success :
                 if let result = responseJSON.result.value {
                     let json = result as! NSDictionary
-                    completion(json)
+                    completion(json, nil)
                 }
                 
-            case .failure(let error) :
-                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
-                completion(nil)
+            case .failure :
+                print(userURL)
+                completion(nil, self.getErrorMessageFromAPI(responseJSON: responseJSON))
             }
         }
     }
@@ -340,7 +340,7 @@ class NetworkService {
                 })
         }
     
-    func fetchNews(completion: @escaping (JSON?) -> ()) {
+    func fetchNews(page : Int, completion: @escaping (JSON?) -> ()) {
         
         let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news"
         
@@ -350,7 +350,7 @@ class NetworkService {
         ]
         
         let parameters: Parameters = [
-            "page" : 0
+            "page" : String(page)
         ]
         
         manager.request(newsURL, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers).validate().responseJSON { responseJSON in
@@ -364,6 +364,30 @@ class NetworkService {
             case .failure(let error) :
                 print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
                 completion(nil)
+            }
+        }
+    }
+    
+    func deleteNews(id: Int, completion: @escaping (Bool) -> ()){
+        
+        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news/delete/"
+        
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer \(storage.getTokenString()!)"
+        ]
+        
+        let parameters: Parameters = [
+        "id" : id
+        ]
+        
+        manager.request(newsURL, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+            switch responseJSON.result {
+            case .success :
+                completion(true)
+            case .failure(let error) :
+                print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
+                completion(false)
             }
         }
     }
@@ -393,7 +417,7 @@ class NetworkService {
         }
     }
     
-    func fetchComments(newsID : Int, completion: @escaping (JSON?) -> ()) {
+    func fetchComments(newsID : Int, page: Int, completion: @escaping (JSON?) -> ()) {
         
         let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news/comment/\(newsID)"
         
@@ -403,13 +427,12 @@ class NetworkService {
         ]
         
         let parameters: Parameters = [
-            "page" : 0
+            "page" : String(page)
         ]
         
         manager.request(newsURL, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             switch responseJSON.result {
             case .success :
-    
                 if let result = responseJSON.result.value {
                     completion(JSON(result))
                 }

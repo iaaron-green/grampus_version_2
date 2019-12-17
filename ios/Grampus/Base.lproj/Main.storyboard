@@ -379,14 +379,15 @@
                                 </items>
                             </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="AVM-M0-QIj">
-                                <rect key="frame" x="0.0" y="56" width="414" height="718"/>
+                                <rect key="frame" x="0.0" y="56" width="414" height="713"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="10" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TST-oY-zr6">
-                                <rect key="frame" x="5" y="774" width="404" height="34"/>
+                                <rect key="frame" x="5" y="769" width="404" height="34"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" clearsOnBeginEditing="YES" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Jek-W4-9wd">
                                         <rect key="frame" x="0.0" y="0.0" width="362" height="34"/>
+                                        <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
@@ -406,7 +407,7 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="Lz3-8C-vFB" firstAttribute="bottom" secondItem="TST-oY-zr6" secondAttribute="bottom" id="1Ui-gc-GZV"/>
+                            <constraint firstItem="Lz3-8C-vFB" firstAttribute="bottom" secondItem="TST-oY-zr6" secondAttribute="bottom" constant="5" id="1Ui-gc-GZV"/>
                             <constraint firstAttribute="trailing" secondItem="UIA-Ux-B5M" secondAttribute="trailing" id="4Fv-lK-w2l"/>
                             <constraint firstItem="UIA-Ux-B5M" firstAttribute="leading" secondItem="Lz3-8C-vFB" secondAttribute="leading" id="6Z6-ul-nhU"/>
                             <constraint firstItem="TST-oY-zr6" firstAttribute="top" secondItem="AVM-M0-QIj" secondAttribute="bottom" id="Ez9-gm-YQ7"/>
@@ -1504,11 +1505,88 @@
                         <outlet property="telephoneAddButton" destination="u5Y-YA-oWl" id="ISf-6K-6Tu"/>
                         <outlet property="telephoneLabel" destination="uaL-7n-imi" id="Iab-JJ-X74"/>
                         <segue destination="JAj-pM-pSU" kind="presentation" identifier="ShowModalView" id="Plf-mn-PaB"/>
+                        <segue destination="kwh-W8-bRn" kind="presentation" identifier="goToChat" id="YC3-KL-GRl"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xG3-r1-1i7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2542.0289855072465" y="124.55357142857142"/>
+        </scene>
+        <!--Chat View Controller-->
+        <scene sceneID="qvb-Pp-gR6">
+            <objects>
+                <viewController id="kwh-W8-bRn" customClass="ChatViewController" customModule="Grampus" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Azw-tZ-rya">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L8M-7x-b6f">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
+                                <color key="barTintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <textAttributes key="titleTextAttributes">
+                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </textAttributes>
+                                <items>
+                                    <navigationItem title="Chat" id="XOX-rZ-gLb">
+                                        <barButtonItem key="leftBarButtonItem" title="Back" id="U9w-9E-eRg">
+                                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <connections>
+                                                <action selector="BackButtonPressed:" destination="kwh-W8-bRn" id="5RZ-bl-etJ"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="dQc-ia-LUH">
+                                <rect key="frame" x="0.0" y="56" width="414" height="718"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </tableView>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="10" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C0f-dM-L3N">
+                                <rect key="frame" x="5" y="774" width="404" height="34"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" clearsOnBeginEditing="YES" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TZI-4p-VQQ">
+                                        <rect key="frame" x="0.0" y="0.0" width="362" height="34"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9R4-b9-7gy">
+                                        <rect key="frame" x="372" y="0.0" width="32" height="34"/>
+                                        <inset key="imageEdgeInsets" minX="-5" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <state key="normal" image="send"/>
+                                        <connections>
+                                            <action selector="sendButtonPressed:" destination="kwh-W8-bRn" eventType="touchUpInside" id="rRZ-LW-fOl"/>
+                                            <action selector="sendPressed:" destination="KRi-oy-kCR" eventType="touchUpInside" id="jfa-fO-HZc"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="9R4-b9-7gy" firstAttribute="leading" secondItem="TZI-4p-VQQ" secondAttribute="trailing" constant="10" id="rBf-fa-Rp0"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="C0f-dM-L3N" firstAttribute="bottom" secondItem="1nu-dm-cCA" secondAttribute="bottom" id="3WP-Rh-gPf"/>
+                            <constraint firstItem="C0f-dM-L3N" firstAttribute="top" secondItem="dQc-ia-LUH" secondAttribute="bottom" id="59S-e4-gSr"/>
+                            <constraint firstItem="C0f-dM-L3N" firstAttribute="leading" secondItem="1nu-dm-cCA" secondAttribute="leading" constant="5" id="BOm-Zw-90J"/>
+                            <constraint firstItem="dQc-ia-LUH" firstAttribute="top" secondItem="L8M-7x-b6f" secondAttribute="bottom" id="QgC-cc-EQx"/>
+                            <constraint firstItem="L8M-7x-b6f" firstAttribute="trailing" secondItem="1nu-dm-cCA" secondAttribute="trailing" id="SPJ-11-Os1"/>
+                            <constraint firstItem="L8M-7x-b6f" firstAttribute="top" secondItem="1nu-dm-cCA" secondAttribute="top" id="ViC-HL-htP"/>
+                            <constraint firstItem="L8M-7x-b6f" firstAttribute="leading" secondItem="1nu-dm-cCA" secondAttribute="leading" id="XWd-LV-aZ3"/>
+                            <constraint firstItem="dQc-ia-LUH" firstAttribute="leading" secondItem="1nu-dm-cCA" secondAttribute="leading" id="cJV-Cr-P5o"/>
+                            <constraint firstItem="dQc-ia-LUH" firstAttribute="trailing" secondItem="1nu-dm-cCA" secondAttribute="trailing" id="p8y-W7-zNH"/>
+                            <constraint firstItem="C0f-dM-L3N" firstAttribute="trailing" secondItem="1nu-dm-cCA" secondAttribute="trailing" constant="-5" id="pCm-RI-rCw"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="1nu-dm-cCA"/>
+                    </view>
+                    <connections>
+                        <outlet property="messageTextField" destination="TZI-4p-VQQ" id="sff-jT-cI5"/>
+                        <outlet property="tableView" destination="dQc-ia-LUH" id="JSE-CI-nCj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2ZJ-3M-ONq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3421.739130434783" y="129.91071428571428"/>
         </scene>
         <!--Modal View Controller-->
         <scene sceneID="Zt8-DU-gp3">

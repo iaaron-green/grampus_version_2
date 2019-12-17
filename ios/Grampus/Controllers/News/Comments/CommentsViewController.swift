@@ -12,7 +12,7 @@ import SwiftyJSON
 import SDWebImage
 import SVProgressHUD
 
-class CommentsViewController: RootViewController, UITableViewDelegate, UITableViewDataSource {
+class CommentsViewController: RootViewController, UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var stackViewBottomConstraint: NSLayoutConstraint!
@@ -21,15 +21,19 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
     var commentsArray = [JSON]()
     var newsID = 0
     var profileID = 0
+    var page = 1
+    var isFetch = false
+    var limit = 0
     let network = NetworkService()
     let storage = StorageService()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        fetchComments()
+        fetchComments(page: 0)
         dismissKeyboardOnTap()
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.prefetchDataSource = self
         tableView.separatorStyle = .none
         tableView.register(UINib(nibName: "CommentTableViewCell", bundle: nil), forCellReuseIdentifier: "commentCell")
         
@@ -38,8 +42,8 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
     }
     
     
-    func fetchComments() {
-        network.fetchComments(newsID: newsID) { (comments) in
+    func fetchComments(page: Int) {
+        network.fetchComments(newsID: newsID, page: page) { (comments) in
             if let comments = comments {
                 print(comments)
                 self.commentsArray = [JSON]()
@@ -73,7 +77,9 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
         network.sendComment(comment: comment, id: newsID) { (success) in
             if success {
                 self.commentTextField.text = ""
-                self.fetchComments()
+                self.fetchComments(page: 0)
+                self.page = 1
+                self.limit = 0
                 SVProgressHUD.showSuccess(withStatus: "Success!")
             } else {
                 SVProgressHUD.showError(withStatus: "Error!")
@@ -88,7 +94,6 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         profileID = commentsArray[indexPath.row]["id"].int ?? 0
-        print(profileID)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -101,14 +106,14 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
         var text = ""
         
         image = self.commentsArray[indexPath.row]["picture"].string ?? ""
-        name = self.commentsArray[indexPath.row]["fullName"].string ?? "Barack Obama"
+        name = self.commentsArray[indexPath.row]["fullname"].string ?? ""
         date = self.commentsArray[indexPath.row]["date"].string ?? ""
         text = self.commentsArray[indexPath.row]["text"].string ?? ""
         
-        DispatchQueue.main.async {
+//        DispatchQueue.main.async {
             let imageURL = URL(string: image)
             cell.commentImageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "red cross"))
-        }
+//        }
         
         cell.commentNameLabel.text = name
         cell.commentDateLabel.text = date
@@ -121,14 +126,43 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
         return cell
     }
     
-    @objc func userTapped(tapGestureRecognizer: UITapGestureRecognizer) {
-        storage.saveSelectedUserId(selectedUserId: String(describing: profileID))
-        storage.saveProfileState(state: false)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.performSegue(withIdentifier: "goToProfile", sender: self)
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == commentsArray.count - 1 {
+            isFetch = true
+        } else {
+            isFetch = false
         }
     }
     
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+
+        limit = commentsArray.count
+        if isFetch {
+            network.fetchComments(newsID: newsID, page: page) { (json) in
+                if let json = json {
+                    for i in 0..<json.count {
+                        if !self.commentsArray.contains(json[i]) {
+                            self.commentsArray.append(json[i])
+                        }
+                    }
+                    if self.limit < self.commentsArray.count {
+                        self.page += 1
+                        self.tableView.reloadData()
+                    }
+                } else {
+                    print("Error")
+                }
+            }
+        }
+    }
+    
+    @objc func userTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.storage.saveSelectedUserId(selectedUserId: String(describing: self.profileID))
+            self.storage.saveProfileState(state: false)
+            self.performSegue(withIdentifier: "goToProfile", sender: self)
+        }
+    }
     
     // Notifications for moving view when keyboard appears.
     func setUpNotifications() {
@@ -144,13 +178,13 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
     }
     
     @objc func keyboardWillHide() {
-        stackViewBottomConstraint.constant = 0
+        stackViewBottomConstraint.constant = 5
     }
     
     @objc func keyboardWillChange(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if commentTextField.isFirstResponder {
-                stackViewBottomConstraint.constant = keyboardSize.height - 20
+                stackViewBottomConstraint.constant = keyboardSize.height
             }
         }
     }
