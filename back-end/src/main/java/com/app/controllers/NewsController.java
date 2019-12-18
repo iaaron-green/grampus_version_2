@@ -2,7 +2,10 @@ package com.app.controllers;
 
 import com.app.DTO.DTOComment;
 import com.app.DTO.DTONews;
+import com.app.entities.News;
 import com.app.exceptions.CustomException;
+import com.app.mq.Producer;
+import com.app.repository.UserRepository;
 import com.app.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,12 @@ import java.util.List;
 public class NewsController {
     @Autowired
     NewsService newsService;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    Producer producer;
 
     @GetMapping("")
     public ResponseEntity<?>getAllDTONews(@RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -47,12 +56,15 @@ public class NewsController {
         return new ResponseEntity<>(newsService.saveComment(dtoComment.getId(), dtoComment.getText(), principal),HttpStatus.OK) ;
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteNews(@PathVariable Long  id, Principal principal) throws CustomException {
+        return new ResponseEntity<>(newsService.deleteNews(id, principal),HttpStatus.OK) ;
+    }
 
     @GetMapping("/comment/{newsId}")
     public ResponseEntity<?>getCommentsByNewsId(@PathVariable Long  newsId,
                                                 @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                @RequestParam(value = "size", defaultValue = "10") Integer size){
-        //Page<DTOComment> dto = newsService.getAllCommentByNewsId(newsId);
+                                                @RequestParam(value = "size", defaultValue = "10") Integer size) throws CustomException {
         return new ResponseEntity<>(newsService.getAllCommentByNewsId(newsId, page, size).getContent(), HttpStatus.OK);
     };
 }

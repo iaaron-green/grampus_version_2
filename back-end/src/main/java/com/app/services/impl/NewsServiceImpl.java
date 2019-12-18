@@ -21,11 +21,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Set;
+import java.util.UUID;
 
 
 @Service
@@ -104,15 +107,38 @@ public class NewsServiceImpl implements NewsService {
         Set<Long> subscriptions = newsRepository.allSubscriptionId(currentUser.getId());
         subscriptions.add(currentUser.getId());
         Set<Long> newsForProfile = newsRepository.newsForProfile(subscriptions);
-        if(newsForProfile == null || newsForProfile.isEmpty())
+        if (CollectionUtils.isEmpty(newsForProfile))
             throw new CustomException(messageSource.getMessage("News.is.empty", null, LocaleContextHolder.getLocale()), Errors.NEWS_IS_EMPTY);
         Page<DTONews> news = newsRepository.news(newsForProfile, pageRequest(page, size));
         return news;
     }
 
     @Override
-    public Page<DTOComment> getAllCommentByNewsId(Long id, Integer page, Integer size) {
+    public Page<DTOComment> getAllCommentByNewsId(Long id, Integer page, Integer size) throws CustomException {
+        if(id == null)
+            throw new CustomException(messageSource.getMessage("null.news.id", null, LocaleContextHolder.getLocale()), Errors.NEWS_NULL_ID_EMPTY);
         return newsRepository.comments(id, pageRequest(page, size));
+    }
+
+    @Override
+    public Boolean deleteNews(Long id, Principal principal) throws CustomException {
+        Long currentNewsCreatorProfileId;
+        if(id == null)
+            throw new CustomException(messageSource.getMessage("null.news.id", null, LocaleContextHolder.getLocale()), Errors.NEWS_NULL_ID_EMPTY);
+        try {currentNewsCreatorProfileId = newsRepository.findOneById(id).getProfileID();}
+        catch (Exception ex) { throw new CustomException(messageSource.getMessage("news.not.exist", null, LocaleContextHolder.getLocale()), Errors.NEWS_NOT_EXIST); }
+
+        if(currentNewsCreatorProfileId == null)
+            throw new CustomException(messageSource.getMessage("news.not.exist", null, LocaleContextHolder.getLocale()), Errors.NEWS_NOT_EXIST);
+        User currentUserId = userRepository.findByEmail(principal.getName());
+        Set<Long> devAndPm = newsRepository.getAllDevAndPm();
+
+        if (currentNewsCreatorProfileId.equals(currentUserId.getId()) || devAndPm.contains(currentNewsCreatorProfileId)) {
+            newsRepository.deleteById(id);
+            return true;
+        }
+        else
+            throw new CustomException(messageSource.getMessage("delete.without.permission", null, LocaleContextHolder.getLocale()), Errors.WITHOUT_PERMISSION);
     }
 
     @Override
@@ -126,15 +152,14 @@ public class NewsServiceImpl implements NewsService {
         Profile profile = user.getProfile();
 
         SimpleDateFormat df = new SimpleDateFormat("HH:mm dd.MM.yyy");
-        Comment newComment = new Comment(user.getFullName(), profile.getProfilePicture(), textComment, df.format(new Date().getTime()), s);
+        Comment newComment = new Comment(userRepository.findByEmail(principal.getName()).getProfile().getId(),user.getFullName(), profile.getProfilePicture(), textComment, df.format(new Date().getTime()), s);
 
         return getDtoComment(commentRepository.save(newComment));
     }
 
 
-
     private DTOComment getDtoComment(Comment c) throws CustomException {
-        return new DTOComment(c.getId(), c.getImgProfile(),c.getCommentDate(),c.getText(), c.getFullName());
+        return new DTOComment(c.getIdProfile(), c.getImgProfile(), c.getCommentDate(), c.getText(), c.getFullName());
     }
 
     private Pageable pageRequest(int page, int size) {

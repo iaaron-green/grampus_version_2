@@ -20,5 +20,7 @@ public interface NewsService {
 
     Page<DTONews> getAllNews(Principal principal, Integer page, Integer size) throws CustomException;
 
-    Page<DTOComment> getAllCommentByNewsId(Long id, Integer page, Integer size);
+    Page<DTOComment> getAllCommentByNewsId(Long id, Integer page, Integer size) throws CustomException;
+
+    Boolean deleteNews(Long id, Principal principal) throws CustomException;
 }

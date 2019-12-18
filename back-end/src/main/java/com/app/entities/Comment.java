@@ -18,6 +18,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private Long IdProfile;
     private String fullName;
     private String imgProfile;
     private String text;
@@ -28,7 +29,8 @@ public class Comment {
     private News news;
 
 
-    public Comment(String fullName, String imgProfile, String text, String commentDate, News news) {
+    public Comment(Long idProfile, String fullName, String imgProfile, String text, String commentDate, News news) {
+        this.IdProfile = idProfile;
         this.fullName = fullName;
         this.imgProfile = imgProfile;
         this.text = text;

@@ -28,7 +28,8 @@ public class Errors {
     public static final int RATING_TYPE_IS_EMPTY = getError(MIDDLE, RATING, 0); //20800
     public static final int TITLE_IS_EMPTY = getError(MIDDLE, NEWS, 0); //20900
     public static final int NEWS_IS_EMPTY = getError(MIDDLE, NEWS, 0); //20900
-
+    public static final int NEWS_NULL_ID_EMPTY = getError(MIDDLE, NEWS, 0); //20900
+    public static final int WITHOUT_PERMISSION = getError(MIDDLE, NEWS, 0); //20900
 
     public static int getError(int priority, int code, int order){
 

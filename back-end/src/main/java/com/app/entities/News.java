@@ -26,7 +26,7 @@ public class News {
     private String date;
     private Long profileID;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "news")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "news", cascade = CascadeType.ALL)
     private List<Comment> comment = new ArrayList<>();
 
     public News() {};

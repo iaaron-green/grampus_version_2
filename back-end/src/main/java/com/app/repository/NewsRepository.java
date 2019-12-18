@@ -37,7 +37,7 @@ public interface NewsRepository extends CrudRepository<News, Long> {
             "WHERE n.id IN :ids GROUP BY n.id ORDER BY n.date DESC")
     Page<DTONews> news(@Param("ids") Set<Long> ids, Pageable p);
 
-    @Query("SELECT NEW com.app.DTO.DTOComment(p.id, c.imgProfile, c.commentDate, c.text, c.fullName) " +
+    @Query("SELECT NEW com.app.DTO.DTOComment(c.IdProfile, c.imgProfile, c.commentDate, c.text, c.fullName) " +
             "FROM Comment c JOIN Profile p ON c.news.profileID = p.id where c.news.id =:id")
     Page<DTOComment> comments(@Param("id") Long id, Pageable p);
 
@@ -45,5 +45,14 @@ public interface NewsRepository extends CrudRepository<News, Long> {
             value = "SELECT id FROM news WHERE profileid IN(:ids)", nativeQuery = true)
     Set<Long> newsForProfile(@Param("ids") Set<Long> ids);
 
+    @Query(
+            value = "SELECT id FROM users WHERE job_title IN('DEV', 'PM')",nativeQuery = true)
+    Set<Long> getAllDevAndPm();
 
+    //       @Query("SELECT new St user  where id Like :id and u.email Like : email")
+//       void deleteNews(@Param("id")Long id,@Param("email") String email);
+//
+//       @Query(value = "SELECT email FROM users where id = 2", nativeQuery = true)
+//   @Query("Delete from News n where id Like :id and u.email Like : email")
+//   void deleteNews(@Param("id")Long id,@Param("email") String email);
 }
