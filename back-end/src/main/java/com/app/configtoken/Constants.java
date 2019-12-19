@@ -16,5 +16,14 @@ public class Constants {
     public static final String MY_EMAIL = "winlixn@gmail.com";
     public static final String MY_PASSWORD = "kapuzi121212";
 
+    public static final String REG_MAIL_SUBJECT = "Profile registration(GRAMPUS)";
+    public static final String REG_MAIL_ARTICLE = "You're profile is register! Thank you";
+    public static final String REG_MAIL_MESSAGE = "To activate you're profile visit next link: http://localhost:8081/api/users/activate/";
+
+    public static final String ACHIEVE_NOTIFIC_MAIL_SUBJECT = "New Achievement(GRAMPUS)";
+    public static final String ACHIEVE_NOTIFIC_MAIL_ARTICLE = "Congratulation!";
+    public static final String ACHIEVE_NOTIFIC_MAIL_MESSAGE = "You got new achievement";
+
+
     public static List<Locale> SUPPORTED_LOCALES =  Arrays.asList(new Locale("en"), new Locale("ru"));
 }

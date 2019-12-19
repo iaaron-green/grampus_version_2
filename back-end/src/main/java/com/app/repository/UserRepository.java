@@ -26,10 +26,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
            nativeQuery = true)
    Set<Long> getAllId();
 
-   @Query("SELECT NEW com.app.DTO.DTOLikableProfile(u.id, u.fullName, u.jobTitle, p.profilePicture) FROM User u, Profile p WHERE u.id NOT LIKE :id AND u.id = p.id")
-   Page<DTOLikableProfile> getLikeableProfiles(@Param("id") Long id, Pageable p);
-
-
    @Query(
            value = "SELECT *  FROM users WHERE job_title = ?",
            nativeQuery = true)
