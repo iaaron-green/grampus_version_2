@@ -12,15 +12,11 @@ import lombok.ToString;
 @ToString
 public class DTOChatMessage {
 
-    private Long destinationUserId;
     private String textMessage;
     private Long roomId;
-    private ChatType chatType;
 
-    public DTOChatMessage(Long destinationUserId, String textMessage, Long roomId, ChatType chatType) {
-        this.destinationUserId = destinationUserId;
+    public DTOChatMessage(String textMessage, Long roomId) {
         this.textMessage = textMessage;
         this.roomId = roomId;
-        this.chatType = chatType;
     }
 }
