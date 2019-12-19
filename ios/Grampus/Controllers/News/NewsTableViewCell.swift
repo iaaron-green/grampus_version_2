@@ -24,7 +24,6 @@ class NewsTableViewCell: UITableViewCell {
     var newsId = 0
     
     
-    
     internal var aspectConstraint : NSLayoutConstraint? {
         didSet {
             if oldValue != nil {
@@ -45,17 +44,18 @@ class NewsTableViewCell: UITableViewCell {
         
         cardView.layer.cornerRadius = 10
         
-        
         backgroundColor = .clear
         selectionStyle = .none
     }
     
     
-//    override func prepareForReuse() {
-//        super.prepareForReuse()
-//        newsImageView.sd_cancelCurrentImageLoad()
-//        newsImageView.image = nil
-//    }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        newsImageView.sd_cancelCurrentImageLoad()
+        newsImageView.image = nil
+        
+    }
+    
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
@@ -65,7 +65,7 @@ class NewsTableViewCell: UITableViewCell {
     @IBAction func deleteAction(_ sender: UIButton) {
         network.deleteNews(id: newsId) { (success) in
             if success {
-                print("OK")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "loadNews"), object: nil)
             } else {
                 print("error")
             }
@@ -88,4 +88,17 @@ class NewsTableViewCell: UITableViewCell {
 
     }
     
+}
+
+extension UIView {
+    var parentViewController: UIViewController? {
+        var parentResponder: UIResponder? = self
+        while parentResponder != nil {
+            parentResponder = parentResponder!.next
+            if parentResponder is UIViewController {
+                return parentResponder as? UIViewController
+            }
+        }
+        return nil
+    }
 }

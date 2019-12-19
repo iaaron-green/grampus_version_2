@@ -32,7 +32,7 @@ class InitialViewController: UIViewController {
                     SVProgressHUD.dismiss()
                     self.performSegue(withIdentifier: "goToReveal", sender: self)
                 } else {
-                    SVProgressHUD.showError(withStatus: error)
+                    SVProgressHUD.showError(withStatus: error ?? "Error connect to server")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         self.performSegue(withIdentifier: "goToSignIn", sender: self)
                     }

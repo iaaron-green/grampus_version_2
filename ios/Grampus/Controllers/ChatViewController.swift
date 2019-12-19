@@ -7,30 +7,26 @@
 //
 
 import UIKit
+import Alamofire
 import StompClientLib
 class ChatViewController: UIViewController, StompClientLibDelegate {
 
     
-
+    let storage = StorageService()
     var socketClient = StompClientLib()
     let url = NSURL(string: "ws://10.11.1.83:8080/websocketApp/websocket")!
-
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextField: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         socketClient.openSocketWithURLRequest(request: NSURLRequest(url: url as URL) , delegate: self)
-//        socketClient.sendMessage(message: "StompClientLib HI!!!", toDestination: "/app/chat.newUser", withHeaders: nil, withReceipt: nil)
-
-
     }
     
     func stompClient(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: AnyObject?, akaStringBody stringBody: String?, withHeader header: [String : String]?, withDestination destination: String) {
     print("Destination : \(destination)")
-    print("JSON Body : \(String(describing: jsonBody))")
+//    print("JSON Body : \(String(describing: jsonBody))")
     print("String Body : \(stringBody ?? "nil")")
     }
     
@@ -38,17 +34,28 @@ class ChatViewController: UIViewController, StompClientLibDelegate {
     print("Socket is Disconnected")
     }
     
-    func stompClientJSONBody(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: String?, withHeader header: [String : String]?, withDestination destination: String) {
-      print("DESTIONATION : \(destination)")
-      print("String JSON BODY : \(String(describing: jsonBody))")
-    }
-    
     func stompClientDidConnect(client: StompClientLib!) {
     print("Socket is connected")
+        
+    let header: HTTPHeaders = [
+            "Authorization": "Bearer \(storage.getTokenString()!)"
+        ]
+        
     // Stomp subscribe will be here!
-//    socketClient.subscribe(destination: "/topic/javainuse")
-        socketClient.subscribeWithHeader(destination: "/topic/javainuse", withHeader: ["username": "Taras"])
-    // Note : topic needs to be a String object
+        let dict: [String: String] = [
+            "type": "newUser",
+            "content": "",
+            "sender": "Taras"
+        ]
+        
+        let encoder = JSONEncoder()
+        if let jsonData = try? encoder.encode(dict) {
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                socketClient.sendMessage(message: jsonString, toDestination: "/app/chat.newUser", withHeaders: header, withReceipt: nil)
+            }
+        }
+
+        socketClient.subscribe(destination: "/topic/javainuse")
     }
     
     func serverDidSendReceipt(client: StompClientLib!, withReceiptId receiptId: String) {
@@ -60,7 +67,7 @@ class ChatViewController: UIViewController, StompClientLibDelegate {
     }
     
     func serverDidSendPing() {
-      print("Server ping")
+//      print("Server ping")
     }
 
     
@@ -69,9 +76,17 @@ class ChatViewController: UIViewController, StompClientLibDelegate {
         self.dismiss(animated: true, completion: nil)
     }
     @IBAction func sendButtonPressed(_ sender: UIButton) {
-        
-        socketClient.sendMessage(message: "StompClientLib Test", toDestination: "/topic/javainuse", withHeaders: ["username": "Taras"], withReceipt: nil)
+        let message = messageTextField.text!
+        let header: HTTPHeaders = [
+            "Authorization": "Bearer \(storage.getTokenString()!)"
+        ]
+        let dic = ["type":"CHAT","content":message,"sender":"Taras"]
+        let encoder = JSONEncoder()
+        if let jsonData = try? encoder.encode(dic) {
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                socketClient.sendMessage(message: jsonString, toDestination: "/app/chat.newUser", withHeaders: header, withReceipt: nil)
+            }
+        }
         
     }
-    
 }

@@ -370,22 +370,23 @@ class NetworkService {
     
     func deleteNews(id: Int, completion: @escaping (Bool) -> ()){
         
-        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news/delete/"
+        let newsURL: String = "\(DynamicURL.dynamicURL.rawValue)news/delete/\(id)"
         
         let headers: HTTPHeaders = [
             "Content-Type": "application/json; charset=utf-8",
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-        let parameters: Parameters = [
-        "id" : id
-        ]
+//        let parameters: Parameters = [
+//        "id" : id
+//        ]
         
-        manager.request(newsURL, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
+        manager.request(newsURL, method: .delete, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             switch responseJSON.result {
             case .success :
                 completion(true)
             case .failure(let error) :
+                print(newsURL)
                 print(self.getErrorMessageFromAPI(responseJSON: responseJSON) ?? error.localizedDescription)
                 completion(false)
             }

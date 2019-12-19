@@ -76,6 +76,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         
     }
     
+    
     func fetchNews(page: Int) {
         network.fetchNews(page: page) { (news) in
             if let news = news {
@@ -105,6 +106,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         profileID = newsArray[indexPath.row]["profileId"].int ?? 0
     }
     
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "newsTableCell", for: indexPath) as! NewsTableViewCell
         
@@ -129,15 +131,6 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         bodyCell = self.newsArray[indexPath.row]["content"].string ?? ""
         imageCell = self.newsArray[indexPath.row]["picture"].string?.replacingOccurrences(of: "\\", with: "") ?? ""
         countOfComment = self.newsArray[indexPath.row]["countOfComments"].int ?? 0
-        let urlProfile = URL(string: userPictureCell.replacingOccurrences(of: "\\", with: ""))
-        let urlNews = URL(string: imageCell.replacingOccurrences(of: "\\", with: ""))
-        if urlProfile != nil {
-            UrlsToPrefetch.append(urlProfile!)
-        }
-        if urlNews != nil {
-            UrlsToPrefetch.append(urlNews!)
-        }
-            
         cell.nameLabel.text = nameCell
         cell.dateLabel.text = dateCell
         cell.titleLabel.text = titleCell
@@ -146,22 +139,30 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         cell.newsId = newsArray[indexPath.row]["id"].int ?? 0
         
         
-//        DispatchQueue.main.async {
+        if let urlProfile = URL(string: userPictureCell.replacingOccurrences(of: "\\", with: "")) {
+            self.UrlsToPrefetch.append(urlProfile)
             cell.avatarImageView.sd_setImage(with: urlProfile, placeholderImage: UIImage(named: "red cross"))
+        } else {
+            cell.avatarImageView.image = UIImage(named: "red cross")!
+        }
+
+        if let urlNews = URL(string: imageCell.replacingOccurrences(of: "\\", with: "")) {
+            self.UrlsToPrefetch.append(urlNews)
             cell.newsImageView.sd_setImage(with: urlNews, placeholderImage: nil, options: [], completed: { [weak cell] (image, error, cache, url) in
                             if let image = image {
                                 cell?.setCustomImage(image: image)
+                                self.tableView.beginUpdates()
+                                self.tableView.endUpdates()
                             }
-                            else {
-                                cell?.setCustomImage(image: UIImage(named: "2")!)
-
-                            }
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
-
                 })
+        } else {
+            cell.setCustomImage(image: UIImage(named: "2")!)
+        }
+        
+        cell.deleteButton.tag = indexPath.row
+        cell.deleteButton.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
 
-//        }
+
         
         let commentTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(commentTapped(tapGestureRecognizer:)))
         let profileTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(profileTapped(tapGestureRecognizer:)))
@@ -175,10 +176,13 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         return cell
     }
     
-    
-    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
+    @objc func buttonClicked(sender:UIButton) {
+        let buttonRow = sender.tag
+//        if let id = self.filteredJson[buttonRow]["id"].int {
+//            storage.saveSelectedUserId(selectedUserId: String(describing: id))
+//        }
     }
+    
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension

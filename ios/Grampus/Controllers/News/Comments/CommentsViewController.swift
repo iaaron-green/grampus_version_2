@@ -56,6 +56,7 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
             }
         }
     }
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -69,6 +70,7 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
     
     @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
         self.dismiss(animated: true, completion: nil)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "loadNews"), object: nil)
     }
     
     
@@ -110,10 +112,8 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
         date = self.commentsArray[indexPath.row]["date"].string ?? ""
         text = self.commentsArray[indexPath.row]["text"].string ?? ""
         
-//        DispatchQueue.main.async {
-            let imageURL = URL(string: image)
-            cell.commentImageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "red cross"))
-//        }
+        let imageURL = URL(string: image)
+        cell.commentImageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "red cross"))
         
         cell.commentNameLabel.text = name
         cell.commentDateLabel.text = date

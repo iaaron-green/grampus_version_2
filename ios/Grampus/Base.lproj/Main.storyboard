@@ -159,6 +159,7 @@
                     <connections>
                         <segue destination="YEf-lm-5xb" kind="custom" identifier="sw_rear" customClass="SWRevealViewControllerSegueSetController" id="7WY-WI-rte"/>
                         <segue destination="drC-Kd-Fe9" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="LUG-hn-vFb"/>
+                        <segue destination="kwh-W8-bRn" kind="presentation" identifier="goToChat" id="5jN-kP-CSK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eI5-fW-DHl" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1017,7 +1018,7 @@
         <!--Profile Table View Controller-->
         <scene sceneID="zic-7W-8Is">
             <objects>
-                <tableViewController automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="fullScreen" id="drC-Kd-Fe9" customClass="ProfileTableViewController" customModule="Grampus" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="ProfileTableViewController" automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="fullScreen" id="drC-Kd-Fe9" customClass="ProfileTableViewController" customModule="Grampus" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="536-US-Cg9">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1515,7 +1516,7 @@
         <!--Chat View Controller-->
         <scene sceneID="qvb-Pp-gR6">
             <objects>
-                <viewController id="kwh-W8-bRn" customClass="ChatViewController" customModule="Grampus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatViewController" id="kwh-W8-bRn" customClass="ChatViewController" customModule="Grampus" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Azw-tZ-rya">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1739,7 +1740,8 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Plf-mn-PaB"/>
-        <segue reference="msn-EC-Cqj"/>
+        <segue reference="5jN-kP-CSK"/>
+        <segue reference="i1B-xH-khV"/>
         <segue reference="aW1-4Z-rxf"/>
         <segue reference="xAE-M7-WWY"/>
     </inferredMetricsTieBreakers>
