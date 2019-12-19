@@ -17,7 +17,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
         Channel incoming = ctx.channel();
         System.out.println(ctx.read());
         for (Channel c : channels) {
-            c.writeAndFlush("[MY SERVER] - " + incoming.remoteAddress() + " has joined!\n");
+            c.writeAndFlush("[MY SERVER] - " + incoming.remoteAddress() + " has join!\n");
         }
         channels.add(incoming);
     }
@@ -44,4 +44,5 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
 
     }
+
 }

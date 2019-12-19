@@ -20,10 +20,10 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    @Bean
-    public CommandLineRunner demo() {
-        return strings -> {
-            new ChatServer(5001).run();
-        };
-    }
+//    @Bean
+//    public CommandLineRunner demo() {
+//        return strings -> {
+//            new ChatServer(5001).run();
+//        };
+//    }
 }
