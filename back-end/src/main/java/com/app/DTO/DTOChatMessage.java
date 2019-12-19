@@ -15,9 +15,9 @@ public class DTOChatMessage {
     private Long destinationUserId;
     private String textMessage;
     private Long roomId;
-    private ChatType chatType;
+    private String chatType;
 
-    public DTOChatMessage(Long destinationUserId, String textMessage, Long roomId, ChatType chatType) {
+    public DTOChatMessage(Long destinationUserId, String textMessage, Long roomId, String chatType) {
         this.destinationUserId = destinationUserId;
         this.textMessage = textMessage;
         this.roomId = roomId;

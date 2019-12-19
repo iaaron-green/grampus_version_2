@@ -25,6 +25,7 @@ public class Room {
 
     private String roomName;
 
+    @Enumerated(EnumType.STRING)
     private ChatType chatType;
 
     @OneToMany(cascade = CascadeType.ALL,
