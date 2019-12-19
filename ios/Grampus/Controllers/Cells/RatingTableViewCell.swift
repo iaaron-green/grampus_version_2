@@ -18,6 +18,7 @@ class RatingTableViewCell: UITableViewCell {
     @IBOutlet weak var dislikeButton: UIButton!
     @IBOutlet weak var likeCount: UILabel!
     @IBOutlet weak var dislikeCount: UILabel!
+    @IBOutlet weak var isFollowerImageView: UIImageView!
     
     
     

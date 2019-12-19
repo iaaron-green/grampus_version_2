@@ -18,6 +18,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     @IBOutlet weak var menuBarButton: UIBarButtonItem!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var isFollowerImageView: UIImageView!
     
     
     // MARK: - Properties

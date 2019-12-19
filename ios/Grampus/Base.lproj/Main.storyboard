@@ -317,7 +317,7 @@
                                             <outlet property="dislikeButton" destination="gtq-Fq-fud" id="dPa-Td-7RZ"/>
                                             <outlet property="dislikeCount" destination="D7J-pB-DZn" id="alO-HE-r5Y"/>
                                             <outlet property="imageViewCell" destination="Qxb-m3-18l" id="CpA-j9-jsw"/>
-                                            <outlet property="isFollowerImageView" destination="mGW-Fc-nag" id="cgD-YZ-Yak"/>
+                                            <outlet property="isFollowerImageView" destination="mGW-Fc-nag" id="Cxu-U0-HHS"/>
                                             <outlet property="likeButton" destination="M5i-ny-19n" id="Okr-sC-rjX"/>
                                             <outlet property="likeCount" destination="sEs-Vf-VDE" id="hmr-yU-bMD"/>
                                             <outlet property="nameLabelCell" destination="BMk-0f-Ygl" id="uF3-1x-MEF"/>
@@ -1739,10 +1739,10 @@
         <image name="super_worker" width="128" height="128"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Plf-mn-PaB"/>
+        <segue reference="suT-6V-ku3"/>
         <segue reference="5jN-kP-CSK"/>
         <segue reference="i1B-xH-khV"/>
-        <segue reference="aW1-4Z-rxf"/>
+        <segue reference="na6-d2-zak"/>
         <segue reference="xAE-M7-WWY"/>
     </inferredMetricsTieBreakers>
 </document>
