@@ -3,12 +3,31 @@ PODS:
   - Charts (3.4.0):
     - Charts/Core (= 3.4.0)
   - Charts/Core (3.4.0)
+  - CocoaAsyncSocket (7.4.3):
+    - CocoaAsyncSocket/All (= 7.4.3)
+  - CocoaAsyncSocket/All (7.4.3):
+    - CocoaAsyncSocket/GCD
+    - CocoaAsyncSocket/RunLoop
+  - CocoaAsyncSocket/GCD (7.4.3)
+  - CocoaAsyncSocket/RunLoop (7.4.3)
+  - JKVValue (1.3.3)
   - JWTDecode (2.4.0)
   - lottie-ios (3.1.5)
-  - SDWebImage (5.3.3):
-    - SDWebImage/Core (= 5.3.3)
-  - SDWebImage/Core (5.3.3)
+  - MarqueeLabel (4.0.0)
+  - NotificationBannerSwift (3.0.2):
+    - MarqueeLabel (~> 4.0.0)
+    - SnapKit (~> 5.0.0)
+  - RMQClient (0.10.0):
+    - CocoaAsyncSocket (~> 7.4.0)
+    - JKVValue
+  - SDWebImage (5.4.0):
+    - SDWebImage/Core (= 5.4.0)
+  - SDWebImage/Core (5.4.0)
   - SkeletonView (1.8.2)
+  - SnapKit (5.0.1)
+  - SocketRocket (0.5.1)
+  - StompClientLib (1.3.7):
+    - SocketRocket
   - SVProgressHUD (2.2.5)
   - SwiftyJSON (5.0.0)
   - ValidationComponents (0.3.0):
@@ -20,8 +39,11 @@ DEPENDENCIES:
   - Charts
   - JWTDecode (~> 2.3)
   - lottie-ios
+  - NotificationBannerSwift
+  - RMQClient
   - SDWebImage
   - SkeletonView
+  - StompClientLib
   - SVProgressHUD
   - SwiftyJSON
   - ValidationComponents
@@ -30,10 +52,18 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
     - Charts
+    - CocoaAsyncSocket
+    - JKVValue
     - JWTDecode
     - lottie-ios
+    - MarqueeLabel
+    - NotificationBannerSwift
+    - RMQClient
     - SDWebImage
     - SkeletonView
+    - SnapKit
+    - SocketRocket
+    - StompClientLib
     - SVProgressHUD
     - SwiftyJSON
     - ValidationComponents
@@ -42,15 +72,23 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
   Charts: 74c9f256eaf0460c0c416522d1cf8c634ea6b286
+  CocoaAsyncSocket: a18c75dca4b08723628a0bacca6e94803d90be91
+  JKVValue: d7941071b1cf9ba35c194fd40bcf4c4d9b5462e9
   JWTDecode: 0930fb517c27bac2daef7cabc13577b18fdee0da
   lottie-ios: 32bf84389337d86fbc8b12266e88452e0abf1dee
-  SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41
+  MarqueeLabel: b55b26e690b6ad41faedd95cbf5eae6f1d1735b4
+  NotificationBannerSwift: 713e20f21b6105f4a36a00e5d9fa414a930d3d8e
+  RMQClient: e9bfea2d08f151b6b12df82ad115c78bd8de2106
+  SDWebImage: 5bf6aec6481ae2a062bdc59f9d6c1d1e552090e0
   SkeletonView: bb27c39857e5492136f02ee8a3aa78de55d12ecd
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
+  StompClientLib: c9361dd2f8baa05998f61a79d4c5b5be0d93744b
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
   ValidationComponents: fad1f9e9d7fbf3e10c893c880ef9d27627e90382
   ValidationToolkit: ce8e9c1a5d49eddc3266a009d46df5ea22042dbc
 
-PODFILE CHECKSUM: 71fd704317409e7b261c211fa89faab19dcffb6e
+PODFILE CHECKSUM: b467a478b040e4733ce86b154bd4796433e41cd2
 
 COCOAPODS: 1.7.2

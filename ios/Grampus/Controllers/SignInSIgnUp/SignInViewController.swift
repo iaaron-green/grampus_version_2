@@ -68,12 +68,8 @@ class SignInViewController: RootViewController {
 
             network.signIn(username: userNameTextField.text!, password: passwordTextField.text!) { (error) in
                 if let error = error {
-                    if error.contains("401") {
-                        SVProgressHUD.showError(withStatus: "User not found")
-                    } else {
-                        SVProgressHUD.dismiss()
-                        SVProgressHUD.showError(withStatus: "Error. \(error)")
-                    }
+                    SVProgressHUD.dismiss()
+                    SVProgressHUD.showError(withStatus: error)
                 } else {
                     SVProgressHUD.dismiss()
                     self.performSegue(withIdentifier: SegueIdentifier.login_to_profile.rawValue, sender: self)
@@ -98,6 +94,7 @@ class SignInViewController: RootViewController {
         signInButton.layer.shadowOffset = CGSize(width: 3, height: 3)
         signInButton.layer.shadowRadius = 5
         signInButton.layer.shadowOpacity = 0.5
+        
         signInButton.layer.cornerRadius = 5
         backView.layer.cornerRadius = 7
         

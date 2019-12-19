@@ -19,17 +19,17 @@ class StorageService {
         return def.string(forKey: UserDefKeys.token.rawValue)
     }
     
-    func getSelectedUserId() -> Int? {
-        return def.integer(forKey: UserDefKeys.selectedUserId.rawValue)
+    func getSelectedUserId() -> String? {
+        return def.string(forKey: UserDefKeys.selectedUserId.rawValue)
     }
     
     func getUserId() -> String? {
         return def.string(forKey: UserDefKeys.userId.rawValue)
     }
     
-    func getSelectedUserIdProfile() -> String? {
-        return def.string(forKey: UserDefKeys.selectedUserIdProfile.rawValue)
-    }
+//    func getSelectedUserIdProfile() -> String? {
+//        return def.string(forKey: UserDefKeys.selectedUserIdProfile.rawValue)
+//    }
     
     func getProfileState() -> Bool {
         return def.bool(forKey: UserDefKeys.profileState.rawValue)
@@ -61,13 +61,13 @@ class StorageService {
         def.set(bool, forKey: UserDefKeys.likeState.rawValue)
     }
     
-    func saveSelectedUserId( selectedUserId: Int ) {
+    func saveSelectedUserId( selectedUserId: String ) {
         def.set(selectedUserId, forKey: UserDefKeys.selectedUserId.rawValue)
     }
     
-    func saveSelectedUserIdProfile(id: Int) {
-        def.set("\(id)", forKey: UserDefKeys.selectedUserIdProfile.rawValue)
-    }
+//    func saveSelectedUserIdProfile(id: Int) {
+//        def.set("\(id)", forKey: UserDefKeys.selectedUserIdProfile.rawValue)
+//    }
     
     func saveProfileState(state: Bool) {
         def.set(state, forKey: UserDefKeys.profileState.rawValue)

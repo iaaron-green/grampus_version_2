@@ -27,9 +27,6 @@ class MenuTableViewController: UITableViewController {
     let storage = StorageService()
     let imageService = ImageService()
     
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -49,6 +46,7 @@ class MenuTableViewController: UITableViewController {
         
         tableView.reloadData()
     }
+
     
     @objc func loadUser(notification: NSNotification) {
         if let user = self.storage.getUserProfile() {
@@ -73,7 +71,7 @@ class MenuTableViewController: UITableViewController {
                 imageView.image = UIImage(named: "red cross")
             }
         } else {
-            network.fetchUserInformation(userId: userId) { (json) in
+            network.fetchUserInformation(userId: userId) { (json, error) in
                 if let json = json {
                     self.fullName = json["fullName"] as? String ?? ""
                     self.email = json["email"] as? String ?? ""
@@ -86,6 +84,7 @@ class MenuTableViewController: UITableViewController {
                     
                     DispatchQueue.main.async {
                         let url = URL(string: self.profilePicture!)
+                        
                         self.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross")) { (image, error, cache, url) in
                             var imageData: Data?
                             if let image = image {
@@ -96,6 +95,8 @@ class MenuTableViewController: UITableViewController {
                         }
                         
                     }
+                } else {
+                    print(error)
                 }
             }
         }
@@ -124,7 +125,7 @@ class MenuTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 6
+        return 7
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -132,7 +133,7 @@ class MenuTableViewController: UITableViewController {
         if indexPath.row == 1 {
             storage.saveProfileState(state: true)
         }
-        if indexPath.row == 5 {
+        if indexPath.row == 6 {
             storage.saveLoggedState(state: false)
             storage.saveUserToken(token: "")
         }

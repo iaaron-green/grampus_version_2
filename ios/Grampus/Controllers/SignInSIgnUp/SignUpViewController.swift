@@ -99,10 +99,11 @@ class SignUpViewController: RootViewController {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                         self.dismiss(animated: true, completion: nil)
                     }
-                } else if (error?.contains("400"))! {
-                    SVProgressHUD.showError(withStatus: "This email address already exists, please enter another email address")
                 } else {
-                    SVProgressHUD.showError(withStatus: "Error, registration error")
+                    if let error = error {
+                        SVProgressHUD.dismiss()
+                        SVProgressHUD.showError(withStatus: error)
+                    }
                 }
             }
         }

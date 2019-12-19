@@ -15,7 +15,6 @@ import SDWebImage
 class RatingViewController: RootViewController, ModalViewControllerDelegate, UISearchBarDelegate, SWRevealViewControllerDelegate, UITableViewDelegate, UITableViewDataSource, UITableViewDataSourcePrefetching {
     
     // MARK: - Outlets
-    @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var menuBarButton: UIBarButtonItem!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
@@ -25,7 +24,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     let network = NetworkService()
     let storage = StorageService()
     let imageService = ImageService()
-    var json = JSON()
     var filteredJson = [JSON]()
     var UrlsToPrefetch = [URL]()
     var page = 1
@@ -52,10 +50,9 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         tableView.refreshControl = myRefreshControl
         searchBar.delegate = self
         tableView.prefetchDataSource = self
-
-        navBarAppearance()
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "load"), object: nil)
+
         
         if revealViewController() != nil {
             menuBarButton.target = self.revealViewController()
@@ -103,8 +100,8 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         network.fetchAllUsers(page: page, name: "", ratingType: ratingType) { (json) in
             if let json = json {
                 SVProgressHUD.dismiss()
-//                print(json)
-                self.json = json
+                print(json)
+//                self.json = json
                 self.filteredJson = [JSON]()
                 for i in 0..<json.count {
                     self.filteredJson.append(json[i])
@@ -120,6 +117,8 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     @objc func loadList(notification: NSNotification){
         DispatchQueue.main.async {
             self.fetchAllUsers(page: 0, ratingType: self.ratingType)
+            self.page = 1
+            self.limit = 0
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 SVProgressHUD.showSuccess(withStatus: "Sucess!")
             }
@@ -133,13 +132,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         limit = 0
         sender.endRefreshing()
     }
-    
-    
-    func navBarAppearance() {
-        navigationBar.barTintColor = UIColor.darkText
-        navigationBar.tintColor = UIColor.white
-    }
-    
     
     // Actions
     @IBAction func likeButtonAction(_ sender: Any) {
@@ -197,9 +189,8 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     
     @objc func buttonClicked(sender:UIButton) {
         let buttonRow = sender.tag
-        
-        if let id = self.json[buttonRow]["id"].int {
-            storage.saveSelectedUserId(selectedUserId: id)
+        if let id = self.filteredJson[buttonRow]["id"].int {
+            storage.saveSelectedUserId(selectedUserId: String(describing: id))
         }
     }
     
@@ -220,11 +211,11 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
             let ratingTypesSortAlert = UIAlertController(title: "Sort by rating types", message: nil, preferredStyle: .actionSheet)
             let bestlooker = UIAlertAction(title: "Bestlooker", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "BEST_LOOKER")
-                self.ratingType = "BEST_LOOKER"
+                self.ratingType = "DISLIKE"
             })
             let deadliner = UIAlertAction(title: "Deadliner", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "DEADLINER")
-                self.ratingType = "DEADLINER"
+                self.ratingType = "BEST_LOOKER"
             })
             let smartMind = UIAlertAction(title: "Smart mind", style: .default, handler: { (action) in
                 self.fetchAllUsers(page: 0, ratingType: "SMART_MIND")
@@ -246,6 +237,8 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
                 self.fetchAllUsers(page: 0, ratingType: "MENTOR")
                 self.ratingType = "MENTOR"
             })
+            
+            
             ratingTypesSortAlert.addAction(bestlooker)
             ratingTypesSortAlert.addAction(deadliner)
             ratingTypesSortAlert.addAction(smartMind)
@@ -256,13 +249,13 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
             self.present(ratingTypesSortAlert, animated: true) {
                 self.tapRecognizer(alert: ratingTypesSortAlert)
             }
-            
         }
-        
         alert.addAction(action1)
         alert.addAction(action2)
         alert.addAction(action3)
         present(alert, animated: true) {
+            self.page = 1
+            self.limit = 0
             self.tapRecognizer(alert: alert)
         }
     }
@@ -277,8 +270,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     }
     
     
-    
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
         
@@ -291,32 +282,40 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ratingCell", for: indexPath) as! RatingTableViewCell
-        
+
         var userNameToDisplay = ""
         var jobTitleToDisplay = ""
         var likeDislikeButtonState: Bool?
+        var isFollowerState: Bool?
         var profilePictureString = ""
         var totalLikes: Int?
         var totalDislikes: Int?
         
         DispatchQueue.main.async {
-
             userNameToDisplay = self.filteredJson[indexPath.row]["fullName"].string ?? ""
             jobTitleToDisplay = self.filteredJson[indexPath.row]["jobTitle"].string ?? ""
             profilePictureString = self.filteredJson[indexPath.row]["profilePicture"].string ?? ""
             likeDislikeButtonState = self.filteredJson[indexPath.row]["isAbleToLike"].bool ?? false
+            isFollowerState = self.filteredJson[indexPath.row]["isFollowing"].bool ?? false
             totalLikes = self.filteredJson[indexPath.row]["totalLikes"].int ?? 0
             totalDislikes = self.filteredJson[indexPath.row]["totalDisLikes"].int ?? 0
             cell.nameLabelCell.text = userNameToDisplay
             cell.professionLabelCell.text = jobTitleToDisplay
             cell.likeCount.text = String(describing: totalLikes!)
             cell.dislikeCount.text = String(describing: totalDislikes!)
-                
+
             if let url = URL(string: profilePictureString) {
                 self.UrlsToPrefetch.append(url)
                 cell.imageViewCell.sd_setImage(with: url, placeholderImage: UIImage(named: "red cross"))
             } else {
                 cell.imageViewCell.image = UIImage(named: "red cross")!
+            }
+
+
+            if !isFollowerState! {
+                cell.isFollowerImageView.isHidden = true
+            } else {
+                cell.isFollowerImageView.isHidden = false
             }
 
                 if likeDislikeButtonState! {
@@ -341,8 +340,8 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if let id = self.filteredJson[indexPath.row]["id"].int {
-            storage.saveSelectedUserIdProfile(id: id)
-//            print(id)
+            print(id)
+            storage.saveSelectedUserId(selectedUserId: String(describing: id))
             storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)
         } else {
@@ -357,8 +356,6 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
             isFetch = false
         }
     }
-    
-
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
 

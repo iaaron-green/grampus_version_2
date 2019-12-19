@@ -18,7 +18,7 @@ class InitialViewController: UIViewController {
         super.viewDidLoad()
         SVProgressHUD.show()
         SVProgressHUD.setDefaultStyle(.dark)
-        SVProgressHUD.setMinimumDismissTimeInterval(20)
+        SVProgressHUD.setMinimumDismissTimeInterval(5)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -27,16 +27,16 @@ class InitialViewController: UIViewController {
         storage.saveProfileState(state: true)
         if is_authenticated {
             let userId = storage.getUserId()!
-            network.fetchUserInformation(userId: userId) { (json) in
+            network.fetchUserInformation(userId: userId) { (json, error) in
                 if json != nil {
+                    SVProgressHUD.dismiss()
                     self.performSegue(withIdentifier: "goToReveal", sender: self)
                 } else {
-                    SVProgressHUD.showError(withStatus: "Connection error. Please try later")
+                    SVProgressHUD.showError(withStatus: error ?? "Error connect to server")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         self.performSegue(withIdentifier: "goToSignIn", sender: self)
                     }
                 }
-                SVProgressHUD.dismiss()
             }
         } else {
             self.window = UIWindow(frame: UIScreen.main.bounds)
