@@ -42,9 +42,9 @@ class ChatViewController: UIViewController, StompClientLibDelegate {
     // Stomp subscribe will be here!
         let dict: [String: String] = [
             "destinationUserId": "1",
-            "textMessage": "Test",
+            "textMessage": "",
             "ChatType": "PRIVATE",
-            "roomId" : ""
+            "roomId" : "1"
         ]
         
         let encoder = JSONEncoder()

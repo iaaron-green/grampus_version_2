@@ -57,10 +57,12 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     }
     
     @objc func loadNews(notification: NSNotification){
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        SVProgressHUD.show()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.fetchNews(page: 0)
                 self.page = 1
                 self.limit = 0
+                SVProgressHUD.dismiss()
         }
     }
     
