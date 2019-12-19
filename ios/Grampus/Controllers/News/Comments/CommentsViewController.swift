@@ -45,7 +45,7 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
     func fetchComments(page: Int) {
         network.fetchComments(newsID: newsID, page: page) { (comments) in
             if let comments = comments {
-                print(comments)
+//                print(comments)
                 self.commentsArray = [JSON]()
                 for i in 0..<comments.count {
                     self.commentsArray.append(comments[i])

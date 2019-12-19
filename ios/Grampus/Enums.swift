@@ -14,10 +14,10 @@ enum SegueIdentifier: String {
 }
 
 enum DynamicURL: String {
-     case dynamicURL = "http://mexanik.ddns.net:6001/api/" //web
+     //case dynamicURL = "http://mexanik.ddns.net:6001/api/" //web
      //case dynamicURL = "http://10.11.1.155:8081/api/" //host
-    //case dynamicURL = "http://10.11.1.83:8080/api/" //vadim
-    //case dynamicURL = "http://10.11.1.25:8081/api/" //igor
+    //case dynamicURL = "http://10.11.1.83:8081/api/" //vadim
+    case dynamicURL = "http://10.11.1.25:8081/api/" //igor
 }
 
 enum UserDefKeys: String {

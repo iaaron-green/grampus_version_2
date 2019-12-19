@@ -83,7 +83,6 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
             let theJSONData = try JSONSerialization.data(withJSONObject: dict, options: JSONSerialization.WritingOptions())
             let theJSONText = String(data: theJSONData, encoding: String.Encoding.utf8)
             //print(theJSONText!)
-            // Setting up the content length.
             let header = [StompCommands.commandHeaderContentType:"application/json;charset=UTF-8"]
             sendMessage(message: theJSONText!, toDestination: destination, withHeaders: header, withReceipt: nil)
         } catch {

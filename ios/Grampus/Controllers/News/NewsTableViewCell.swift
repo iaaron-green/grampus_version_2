@@ -62,18 +62,6 @@ class NewsTableViewCell: UITableViewCell {
 
     }
     
-    @IBAction func deleteAction(_ sender: UIButton) {
-        network.deleteNews(id: newsId) { (success) in
-            if success {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "loadNews"), object: nil)
-            } else {
-                print("error")
-            }
-        }
-    }
-    
-    
-    
     func setCustomImage(image : UIImage) {
         
         let aspect = image.size.width / image.size.height

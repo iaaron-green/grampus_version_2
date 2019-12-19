@@ -15,7 +15,9 @@ target 'Grampus' do
   pod "SkeletonView"
   pod 'lottie-ios'
   pod 'RMQClient'
+  pod 'NotificationBannerSwift'
   pod 'StompClientLib'
+
   # Pods for Grampus
 
 end

@@ -34,7 +34,7 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="gyF-3H-fgZ">
                                 <rect key="frame" x="10" y="102.5" width="334" height="199"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="red cross" translatesAutoresizingMaskIntoConstraints="NO" id="fdI-Re-sQ6">
+                            <imageView clipsSubviews="YES" tag="1" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="red cross" translatesAutoresizingMaskIntoConstraints="NO" id="fdI-Re-sQ6">
                                 <rect key="frame" x="10" y="10" width="40" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="nBa-i6-tVx"/>
@@ -62,9 +62,6 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uuf-0P-meI">
                                 <rect key="frame" x="322.5" y="10" width="21.5" height="22"/>
                                 <state key="normal" image="delete"/>
-                                <connections>
-                                    <action selector="deleteAction:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Od2-e2-oAP"/>
-                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

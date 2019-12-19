@@ -81,7 +81,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         network.fetchNews(page: page) { (news) in
             if let news = news {
                 self.newsArray = [JSON]()
-                print(news)
+//                print(news)
                 SVProgressHUD.dismiss()
                 for i in 0..<news.count {
                     self.newsArray.append(news[i])
@@ -178,9 +178,21 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     
     @objc func buttonClicked(sender:UIButton) {
         let buttonRow = sender.tag
-//        if let id = self.filteredJson[buttonRow]["id"].int {
-//            storage.saveSelectedUserId(selectedUserId: String(describing: id))
-//        }
+        newsID = newsArray[buttonRow]["id"].int ?? 0
+        let alert = UIAlertController(title: "Are you sure?", message: "This action cannot be undone", preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
+            self.network.deleteNews(id: self.newsID) { (success) in
+                if success {
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "loadNews"), object: nil)
+                } else {
+                    print("error")
+                }
+            }
+        }))
+        self.present(alert, animated: true)
+
     }
     
     

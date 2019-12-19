@@ -593,8 +593,15 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     @IBAction func saveAction(_ sender: UIButton) {
         let image = chartView.getChartImage(transparent: false)
-        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
-        SVProgressHUD.showSuccess(withStatus: "Saved to Camera roll!")
+        UIImageWriteToSavedPhotosAlbum(image!, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+    }
+    
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: UnsafeRawPointer) {
+        if error != nil {
+            SVProgressHUD.showError(withStatus: "Error saving image!")
+        } else {
+            SVProgressHUD.showSuccess(withStatus: "Saved to Camera roll!")
+        }
     }
     
     func setUpProfile(fullName: String, country: String, profession: String, likes: Int, dislikes: Int, email: String, skype: String, telephone: String, telegram: String, skills: String, photo: String) {

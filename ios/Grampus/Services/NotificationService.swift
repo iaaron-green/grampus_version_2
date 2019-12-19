@@ -8,6 +8,7 @@
 
 import Foundation
 import RMQClient
+import NotificationBannerSwift
 
 class NotificationService {
     
@@ -36,10 +37,9 @@ class NotificationService {
                 content.title = "Congratulation!"
                 content.body =  messageText!
                 content.sound = UNNotificationSound.default
-                
                 // Когда получим сообщение от брокера, то через 2 секунды нам придет уведомление
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2, repeats: false)
-                
+
                 let request = UNNotificationRequest(identifier: "TestIdentifier", content: content, trigger: trigger)
                 UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
             })
