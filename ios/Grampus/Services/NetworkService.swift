@@ -377,9 +377,6 @@ class NetworkService {
             "Authorization": "Bearer \(storage.getTokenString()!)"
         ]
         
-//        let parameters: Parameters = [
-//        "id" : id
-//        ]
         
         manager.request(newsURL, method: .delete, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { responseJSON in
             switch responseJSON.result {

@@ -18,12 +18,10 @@
 		3F6D578D239FE144001FB590 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6D578B239FE144001FB590 /* CommentTableViewCell.swift */; };
 		3F6D578E239FE144001FB590 /* CommentTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3F6D578C239FE144001FB590 /* CommentTableViewCell.xib */; };
 		3F7529CD237D7F380021B8AE /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7529CC237D7F380021B8AE /* StorageService.swift */; };
-		3F7B674323AA314C007D740F /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7B674223AA314C007D740F /* NotificationService.swift */; };
 		3F8373AB23990A900045773B /* AddNewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8373AA23990A900045773B /* AddNewsViewController.swift */; };
 		3F8373AE2399361E0045773B /* NewsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8373AC2399361E0045773B /* NewsTableViewCell.swift */; };
 		3F8373AF2399361E0045773B /* NewsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3F8373AD2399361E0045773B /* NewsTableViewCell.xib */; };
 		3FE0B22A2382C06B0027A12C /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE0B2292382C06B0027A12C /* InitialViewController.swift */; };
-		3FE558ED23A3A77C009CA277 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE558EC23A3A77C009CA277 /* ChatViewController.swift */; };
 		3FF6735D2390288D00E838DF /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF6735C2390288D00E838DF /* UserModel.swift */; };
 		410DF94970F197AFAE034B4E /* Pods_Grampus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */; };
 		761E1524237EC4490088CBF8 /* AchievementsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E1523237EC4490088CBF8 /* AchievementsModel.swift */; };
@@ -55,12 +53,10 @@
 		3F6D578B239FE144001FB590 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
 		3F6D578C239FE144001FB590 /* CommentTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentTableViewCell.xib; sourceTree = "<group>"; };
 		3F7529CC237D7F380021B8AE /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
-		3F7B674223AA314C007D740F /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		3F8373AA23990A900045773B /* AddNewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewsViewController.swift; sourceTree = "<group>"; };
 		3F8373AC2399361E0045773B /* NewsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTableViewCell.swift; sourceTree = "<group>"; };
 		3F8373AD2399361E0045773B /* NewsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsTableViewCell.xib; sourceTree = "<group>"; };
 		3FE0B2292382C06B0027A12C /* InitialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
-		3FE558EC23A3A77C009CA277 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		3FF6735C2390288D00E838DF /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		4E4997C24BD925AC8EFA391D /* Pods_Grampus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Grampus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		761E1523237EC4490088CBF8 /* AchievementsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsModel.swift; sourceTree = "<group>"; };
@@ -154,7 +150,6 @@
 				3F4324AD237AF540005D744D /* NetworkService.swift */,
 				3F7529CC237D7F380021B8AE /* StorageService.swift */,
 				3F6B9C972383F8F700C96012 /* ImageService.swift */,
-				3F7B674223AA314C007D740F /* NotificationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -224,7 +219,6 @@
 				761E1525237ECAA10088CBF8 /* SignInSIgnUp */,
 				D921AF9C2296BC3E00C714E2 /* ProfileTableViewController.swift */,
 				D90CFDA022948747002B8871 /* MenuTableViewController.swift */,
-				3FE558EC23A3A77C009CA277 /* ChatViewController.swift */,
 				D90CFDA4229488C5002B8871 /* RatingViewController.swift */,
 				D956BFA622A7A89B001D2CE5 /* ModalViewController.swift */,
 				3F0F95012398063F0072A94E /* News */,
@@ -351,7 +345,6 @@
 				3F0F9500239806290072A94E /* NewsTableViewController.swift in Sources */,
 				D93CE89022B8D91B00B8B6DE /* AchievementsCollectionViewCell.swift in Sources */,
 				0436D54B229413B600BE2612 /* SignUpViewController.swift in Sources */,
-				3F7B674323AA314C007D740F /* NotificationService.swift in Sources */,
 				04DE7C21229BCE6B00BB8B88 /* TableViewCellForPieChart.swift in Sources */,
 				3F8373AB23990A900045773B /* AddNewsViewController.swift in Sources */,
 				D93B26F22292BFEF00741E7F /* SignInViewController.swift in Sources */,
@@ -370,7 +363,6 @@
 				3F6D578D239FE144001FB590 /* CommentTableViewCell.swift in Sources */,
 				3FF6735D2390288D00E838DF /* UserModel.swift in Sources */,
 				D9E2A3C422AA4E4200F91E3D /* Enums.swift in Sources */,
-				3FE558ED23A3A77C009CA277 /* ChatViewController.swift in Sources */,
 				3F6B9C982383F8F700C96012 /* ImageService.swift in Sources */,
 				3F230AA823A1391C00282997 /* UserRatingModel.swift in Sources */,
 				D90CFDA5229488C5002B8871 /* RatingViewController.swift in Sources */,

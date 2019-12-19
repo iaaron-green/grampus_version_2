@@ -8,25 +8,15 @@
 
 import UIKit
 import SDWebImage
-import UserNotifications
-import RMQClient
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     var window: UIWindow?
-    let storage = StorageService()
-    let notifications = NotificationService()
-    
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         SDImageCache.shared.clearDisk()
-        
-        UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
-//            self.notifications.getMessage()
-        }
         return true
     }
     
@@ -52,25 +42,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)
-    {
-        completionHandler([.alert, .badge, .sound])
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let exampleViewController: SWRevealViewController = mainStoryboard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
-        self.window?.rootViewController = exampleViewController
-        
-        self.window?.makeKeyAndVisible()
-        exampleViewController.performSegue(withIdentifier: "goToChat", sender: nil)
-    
-    }
-    
-    
 }
 
