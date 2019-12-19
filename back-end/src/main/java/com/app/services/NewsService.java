@@ -1,6 +1,6 @@
 package com.app.services;
 
-import com.app.DTO.DTOComment;
+import com.app.DTO.DTONewsComment;
 import com.app.DTO.DTONews;
 import com.app.exceptions.CustomException;
 import org.springframework.data.domain.Page;
@@ -16,11 +16,11 @@ public interface NewsService {
 
    // List<DTONews> getAllNews(Principal principal, Integer page, Integer size) throws CustomException;
 
-    DTOComment saveComment(Long id, String comment, Principal principal) throws CustomException;
+    DTONewsComment saveComment(Long id, String comment, Principal principal) throws CustomException;
 
     Page<DTONews> getAllNews(Principal principal, Integer page, Integer size) throws CustomException;
 
-    Page<DTOComment> getAllCommentByNewsId(Long id, Integer page, Integer size) throws CustomException;
+    Page<DTONewsComment> getAllCommentByNewsId(Long id, Integer page, Integer size) throws CustomException;
 
     Boolean deleteNews(Long id, Principal principal) throws CustomException;
 }

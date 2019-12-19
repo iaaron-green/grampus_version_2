@@ -1,6 +1,6 @@
 package com.app.repository;
 
-import com.app.DTO.DTOComment;
+import com.app.DTO.DTONewsComment;
 import com.app.DTO.DTONews;
 import com.app.entities.News;
 import org.springframework.data.domain.Page;
@@ -37,9 +37,9 @@ public interface NewsRepository extends CrudRepository<News, Long> {
             "WHERE n.id IN :ids GROUP BY n.id ORDER BY n.date DESC")
     Page<DTONews> news(@Param("ids") Set<Long> ids, Pageable p);
 
-    @Query("SELECT NEW com.app.DTO.DTOComment(c.IdProfile, c.imgProfile, c.commentDate, c.text, c.fullName) " +
+    @Query("SELECT NEW com.app.DTO.DTONewsComment(c.IdProfile, c.imgProfile, c.commentDate, c.text, c.fullName) " +
             "FROM Comment c JOIN Profile p ON c.news.profileID = p.id where c.news.id =:id")
-    Page<DTOComment> comments(@Param("id") Long id, Pageable p);
+    Page<DTONewsComment> comments(@Param("id") Long id, Pageable p);
 
     @Query(
             value = "SELECT id FROM news WHERE profileid IN(:ids)", nativeQuery = true)

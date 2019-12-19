@@ -1,14 +1,11 @@
 package com.app.controllers;
 
-import com.app.DTO.DTOComment;
-import com.app.DTO.DTONews;
-import com.app.entities.News;
+import com.app.DTO.DTONewsComment;
 import com.app.exceptions.CustomException;
 import com.app.mq.Producer;
 import com.app.repository.UserRepository;
 import com.app.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/news")
@@ -51,9 +47,9 @@ public class NewsController {
 
 
     @PostMapping("/comment")
-    public ResponseEntity<?> addComment(@Valid @RequestBody DTOComment dtoComment,
+    public ResponseEntity<?> addComment(@Valid @RequestBody DTONewsComment dtoNewsComment,
                                         Principal principal) throws CustomException {
-        return new ResponseEntity<>(newsService.saveComment(dtoComment.getId(), dtoComment.getText(), principal),HttpStatus.OK) ;
+        return new ResponseEntity<>(newsService.saveComment(dtoNewsComment.getId(), dtoNewsComment.getText(), principal),HttpStatus.OK) ;
     }
 
     @DeleteMapping("/delete/{id}")

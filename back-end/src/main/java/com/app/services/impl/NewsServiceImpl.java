@@ -1,6 +1,6 @@
 package com.app.services.impl;
 
-import com.app.DTO.DTOComment;
+import com.app.DTO.DTONewsComment;
 import com.app.DTO.DTONews;
 import com.app.configtoken.Constants;
 import com.app.entities.Comment;
@@ -114,7 +114,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<DTOComment> getAllCommentByNewsId(Long id, Integer page, Integer size) throws CustomException {
+    public Page<DTONewsComment> getAllCommentByNewsId(Long id, Integer page, Integer size) throws CustomException {
         if(id == null)
             throw new CustomException(messageSource.getMessage("null.news.id", null, LocaleContextHolder.getLocale()), Errors.NEWS_NULL_ID_EMPTY);
         return newsRepository.comments(id, pageRequest(page, size));
@@ -142,7 +142,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public DTOComment saveComment(Long id, String textComment, Principal principal) throws CustomException {
+    public DTONewsComment saveComment(Long id, String textComment, Principal principal) throws CustomException {
         News s = newsRepository.findOneById(id);
         if (s == null)
             throw new CustomException(messageSource.getMessage("news.not.exist", null, LocaleContextHolder.getLocale()), Errors.NEWS_NOT_EXIST);
@@ -158,8 +158,8 @@ public class NewsServiceImpl implements NewsService {
     }
 
 
-    private DTOComment getDtoComment(Comment c) throws CustomException {
-        return new DTOComment(c.getIdProfile(), c.getImgProfile(), c.getCommentDate(), c.getText(), c.getFullName());
+    private DTONewsComment getDtoComment(Comment c) throws CustomException {
+        return new DTONewsComment(c.getIdProfile(), c.getImgProfile(), c.getCommentDate(), c.getText(), c.getFullName());
     }
 
     private Pageable pageRequest(int page, int size) {
