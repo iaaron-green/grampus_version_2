@@ -1,5 +1,6 @@
 package com.app.entities;
 
+import com.app.DTO.DTOChatMessage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,5 +28,14 @@ public class ChatMessage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+    public ChatMessage() {
+    }
+
+    public ChatMessage(Long userId, String message, Room room) {
+        this.userId = userId;
+        this.message = message;
+        this.room = room;
+    }
 
 }

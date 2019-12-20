@@ -1,8 +1,10 @@
 package com.app.WebSocket;
 
-import com.app.DTO.DTOChatInit;
-import com.app.services.ChatRoomService;
+import com.app.DTO.DTOChatMember;
+import com.app.DTO.DTOChatMessage;
 import com.google.gson.Gson;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -10,11 +12,18 @@ import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
 
+
 @Controller
 public class WebSocketChatController {
 
+
+    private ChatService chatService;
+
     @Autowired
-    SimpMessagingTemplate simpMessagingTemplate;
+    public WebSocketChatController(ChatService chatService) {
+        this.chatService = chatService;
+    }
+
 
     @Autowired
     ChatRoomService chatRoomService;
@@ -34,5 +43,6 @@ public class WebSocketChatController {
 
         simpMessagingTemplate.convertAndSend("/topic/chat", "FROM convert");
 
+     chatService.sendMessage(dtoChatMessage, principal.getName());
     }
 }
