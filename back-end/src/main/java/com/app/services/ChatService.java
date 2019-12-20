@@ -6,5 +6,7 @@ public interface ChatService {
 
     void chatInit(DTOChatInit dtoChatMessage, String currentUserEmail);
 
+    void chatInitTest(String dtoChatInit, String currentUserEmail);
+
     void sendMessage(String dtoChatMessage, String principalName);
 }

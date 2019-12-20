@@ -2,6 +2,7 @@ package com.app.services.impl;
 
 import com.app.DTO.DTOChatInit;
 import com.app.DTO.DTOChatMessage;
+import com.app.DTO.DTOTest;
 import com.app.entities.ChatMember;
 import com.app.entities.ChatMessage;
 import com.app.entities.Room;
@@ -34,6 +35,45 @@ public class ChatServiceImpl implements ChatService {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
         this.chatMemberRepository = chatMemberRepository;
+    }
+
+    @Override
+    public void chatInitTest(String dto, String currentUserEmail) {
+
+        if (StringUtils.isEmpty(dto)) {
+            System.out.println("throw exception wrong input data ");
+        }
+
+        User currentUser = userRepository.findByEmail(currentUserEmail);
+
+        DTOChatInit dtoChatInit = new Gson().fromJson(dto, DTOChatInit.class);
+
+        if (dtoChatInit.getTargetUserId() == null || StringUtils.isEmpty(dtoChatInit.getChatType())) {
+            System.out.println("throw exception wrong input data ");
+        }
+
+        Long currentRoomId = roomRepository.getRoomIdByMembersIdAndChatType(currentUser.getId(),
+                dtoChatInit.getTargetUserId(), dtoChatInit.getChatType());
+
+        if (currentRoomId == null) {
+            ChatMember currentChatMember = new ChatMember();
+            currentChatMember.setMemberId(currentUser.getId());
+            ChatMember targetChatMember = new ChatMember();
+            targetChatMember.setMemberId(dtoChatInit.getTargetUserId());
+            Room newRoom = new Room();
+            newRoom.setChatType(dtoChatInit.getChatType());
+            newRoom = roomRepository.save(newRoom);
+            currentRoomId = newRoom.getId();
+            currentChatMember.setRoom(newRoom);
+            targetChatMember.setRoom(newRoom);
+            chatMemberRepository.save(currentChatMember);
+            chatMemberRepository.save(targetChatMember);
+
+        }
+
+        String roomDestination = "/topic/chat/" + currentRoomId;
+
+        simpMessagingTemplate.convertAndSend("/topic/chatListener", new Gson().toJson(new DTOTest(currentUser.getId(), dtoChatInit.getTargetUserId(), currentRoomId)));
     }
 
     @Override
@@ -73,6 +113,8 @@ public class ChatServiceImpl implements ChatService {
 
         simpMessagingTemplate.convertAndSend("/topic/chatListener", roomDestination);
     }
+
+
 
     @Override
     public void sendMessage(String dtoChatMessage, String principalName) {
