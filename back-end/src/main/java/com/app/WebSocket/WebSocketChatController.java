@@ -1,6 +1,6 @@
 package com.app.WebSocket;
 
-import com.app.DTO.DTOChatMessage;
+import com.app.DTO.DTOChatInit;
 import com.app.services.ChatRoomService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +29,8 @@ public class WebSocketChatController {
 
         System.out.println("PRINCIPAL - "+ principal.getName());
 
-        DTOChatMessage dtoChatMessageFromJSON = new Gson().fromJson(dtoChatMessage, DTOChatMessage.class);
-        System.out.println(dtoChatMessageFromJSON);
+        DTOChatInit dtoChatInitFromJSON = new Gson().fromJson(dtoChatMessage, DTOChatInit.class);
+        System.out.println(dtoChatInitFromJSON);
 
         simpMessagingTemplate.convertAndSend("/topic/chat", "FROM convert");
 

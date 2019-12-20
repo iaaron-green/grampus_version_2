@@ -1,6 +1,6 @@
 package com.app.services.impl;
 
-import com.app.DTO.DTOChatMessage;
+import com.app.DTO.DTOChatInit;
 import com.app.entities.ChatMember;
 import com.app.entities.Room;
 import com.app.entities.User;
@@ -12,7 +12,6 @@ import com.app.services.ChatRoomService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -39,15 +38,15 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             System.out.println("throw exception wrong input data ");
         }
 
-        DTOChatMessage dtoChatMessageFromJSON = new Gson().fromJson(dtoChatMessage, DTOChatMessage.class);
+        DTOChatInit dtoChatInitFromJSON = new Gson().fromJson(dtoChatMessage, DTOChatInit.class);
         User currentUser = userRepository.findByEmail(currentUserEmail);
 
-        if (dtoChatMessageFromJSON.getDestinationUserId() == null || StringUtils.isEmpty(dtoChatMessageFromJSON.getChatType())) {
+        if (dtoChatInitFromJSON.getDestinationUserId() == null || StringUtils.isEmpty(dtoChatInitFromJSON.getChatType())) {
             System.out.println("throw exception wrong input data ");
         }
 
         Long currentRoomId = chatRoomRepository.getRoomIdByMembersIdAndChatType(currentUser.getId(),
-                dtoChatMessageFromJSON.getDestinationUserId(), dtoChatMessageFromJSON.getChatType());
+                dtoChatInitFromJSON.getDestinationUserId(), dtoChatInitFromJSON.getChatType());
 
         String roomDestination;
         if (currentRoomId != null)
@@ -56,7 +55,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             ChatMember currentChatMember = new ChatMember();
             currentChatMember.setMemberId(currentUser.getId());
             ChatMember destinationChatMember = new ChatMember();
-            destinationChatMember.setMemberId(dtoChatMessageFromJSON.getDestinationUserId());
+            destinationChatMember.setMemberId(dtoChatInitFromJSON.getDestinationUserId());
             Room newRoom = new Room();
             newRoom.setChatType(ChatType.PRIVATE); // REWORK THIS HARDCODE!!!
             newRoom = chatRoomRepository.save(newRoom);
