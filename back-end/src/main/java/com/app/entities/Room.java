@@ -35,4 +35,8 @@ public class Room {
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "room")
     private List<ChatMessage> chatMessages = new ArrayList<>();
+
+    public Room() {
+    }
+
 }

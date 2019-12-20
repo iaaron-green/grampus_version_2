@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Calendar;
 
 @Entity
 @Setter
@@ -20,6 +21,8 @@ public class ChatMessage {
     private Long userId;
 
     private String message;
+
+    private Calendar createDate = Calendar.getInstance();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
