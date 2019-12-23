@@ -12,8 +12,10 @@ import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
+import com.app.services.NewsService;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
+import com.app.services.UserService;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -26,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Comparator;
@@ -60,6 +63,15 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public Profile getProfileById(Long id) throws CustomException {
+        Profile profile = profileRepository.findProfileById(id);
+        if (profile != null) {
+            return profile;
+        } else
+            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+    }
+
+    @Override
     public DTOProfile getDTOProfileById(Long id, Principal principal) throws CustomException {
 
         if (id == null || id == 0) {
@@ -85,6 +97,7 @@ public class ProfileServiceImpl implements ProfileService {
             dtoProfile.setLikesNumber(ratingService.getAndCountLikesByProfileId(id));
             dtoProfile.setComments(ratingService.getAllComments(id));
             if (ratingRepository.checkLike(id, currentUser.getEmail()) == null && !currentUser.getId().equals(id)) dtoProfile.setIsAbleToLike(true);
+            if (profileFromDB.getSubscribers().contains(currentUser.getProfile())) dtoProfile.setIsFollowing(true);
             return dtoProfile;
         } else
             throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
@@ -141,14 +154,62 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         Profile profile = profileRepository.findOneById(id);
-        if (profile == null) {
-            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+        if (profile != null) {
+                String pictureFullName = saveImgInFtp(file, "img/" + profile.getId());
+                if(pictureFullName != null)
+                    profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
+                saveProfile(profile);
+            }
+        else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
+    }
+
+    public List<Profile> getAllProfiles() {
+
+        return profileRepository.findAll();
+    }
+
+    @Override
+    public List<DTOLikableProfile> getAllProfilesForRating(String userName, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException {
+
+        User user = userRepository.findByEmail(userName);
+        if (user == null) {
+            throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
         }
+        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
+        Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(user.getId());
+
+        if (StringUtils.isEmpty(searchParam)) {
+            return getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
+        } else {
+            return getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
+        }
+    }
+
+    @Override
+    public Boolean changeSubscription(Long profileId, Principal principal) throws CustomException {
+        User currentUser = userRepository.findByEmail(principal.getName());
+        Profile profile = profileRepository.findOneById(profileId);
+        if (currentUser.getId().equals(profileId)) {
+            throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
+        }
+
+        Set<Profile> subscribers = profile.getSubscribers();
+        if (subscribers.contains(currentUser.getProfile())) {
+            subscribers.remove(currentUser.getProfile());
+        } else {
+            subscribers.add(currentUser.getProfile());
+        }
+        profileRepository.save(profile);
+        return true;
+    }
+    @Override
+    public String saveImgInFtp(MultipartFile file, String directory) throws CustomException {
+        String pictureFullName = null;
 
         if (file != null) {
             String contentType = file.getContentType();
             String profilePictureType = contentType.substring(contentType.indexOf("/") + 1);
-            String pictureFullName = "img/" + profile.getId() + "." + profilePictureType;
+            pictureFullName = directory + "." + profilePictureType;
             FTPClient client = new FTPClient();
             try {
                 client.connect(Constants.FTP_SERVER, Constants.FTP_PORT);
@@ -161,63 +222,74 @@ public class ProfileServiceImpl implements ProfileService {
             } catch (IOException e) {
                 throw new CustomException(messageSource.getMessage("ftp.connection.error", null, LocaleContextHolder.getLocale()), Errors.FTP_CONNECTION_ERROR);
             }
-            profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
-            saveProfile(profile);
-        } else
-            throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
-    }
-
-    @Override
-    public List<DTOLikableProfile> getAllProfilesForRating(String userName, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException {
-
-        User user = userRepository.findByEmail(userName);
-        if (user == null) {
-            throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
         }
-        List<DTOLikableProfile> resultList;
-        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
-
-        if (StringUtils.isEmpty(searchParam)) {
-            resultList = getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, user.getId());
-        } else {
-            resultList = getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, user.getId());
-        }
-
-        return resultList.stream().sorted(Comparator.comparingLong(DTOLikableProfile::getTotalLikes).reversed()).collect(Collectors.toList());
+        return pictureFullName;
     }
 
     private List<DTOLikableProfile> getAllRatingProfilesWithoutSearchParam(Integer page, Integer size, RatingSortParam sortParam, Mark ratingType,
-                                                                           Set<Long> profilesIdWithLike, Long currentUserId) {
+                                                                           Set<Long> profilesIdWithLike, Set<Long> subscriptions, Long currentUserId) {
+        if (sortParam != null) {
+
+            Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
+            if (ratingType == null)
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParamAndWithoutRatingType(subscriptions, Mark.DISLIKE, pageRequest(page, size));
+            else if (ratingType.equals(Mark.DISLIKE))
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParamAndByDislikeType(subscriptions, Mark.DISLIKE, pageRequest(page, size));
+            else
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsWithoutSearchParamAndByRatingType(subscriptions, ratingType, Mark.DISLIKE, pageRequest(page, size));
+
+            return fillDTOLikableProfile(profilesIdWithLike, null, dtoLikableProfilesWithSubscriptions, currentUserId);
+        } else {
 
             Page<DTOLikableProfile> dtoLikableProfiles;
             if (ratingType == null)
-                dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParam(Mark.DISLIKE, pageRequest(page, size));
+                dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParamAndWithoutRatingType(Mark.DISLIKE, pageRequest(page, size));
+            else if (ratingType.equals(Mark.DISLIKE))
+                dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParamAndByDislikeType(Mark.DISLIKE, pageRequest(page, size));
             else
                 dtoLikableProfiles = ratingRepository.findAllProfilesWithoutSearchParamAndByRatingType(ratingType, Mark.DISLIKE, pageRequest(page, size));
 
-            return fillDTOLikableProfile(profilesIdWithLike,  dtoLikableProfiles, currentUserId);
-
+            return fillDTOLikableProfile(profilesIdWithLike, subscriptions, dtoLikableProfiles, currentUserId);
+        }
     }
 
     private List<DTOLikableProfile> getAllRatingProfilesWithSearchParam(String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType,
-                                                                        Set<Long> profilesIdWithLike,  Long currentUserId) {
+                                                                        Set<Long> profilesIdWithLike, Set<Long> subscriptions, Long currentUserId) {
+        if (sortParam != null) {
 
-        Page<DTOLikableProfile> dtoLikableProfiles;
+            Page<DTOLikableProfile> dtoLikableProfilesWithSubscriptions;
             if (ratingType == null)
-                dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParam(Mark.DISLIKE, searchParam, pageRequest(page, size));
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParamWithoutRatingType(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
+            else if (ratingType.equals(Mark.DISLIKE))
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParamAndByDislikeType(subscriptions, Mark.DISLIKE, searchParam, pageRequest(page, size));
+            else
+                dtoLikableProfilesWithSubscriptions = ratingRepository.findProfilesSubscriptionsBySearchParamAndRatingType(subscriptions, ratingType, Mark.DISLIKE, searchParam, pageRequest(page, size));
+
+            return fillDTOLikableProfile(profilesIdWithLike, null, dtoLikableProfilesWithSubscriptions, currentUserId);
+        } else {
+
+            Page<DTOLikableProfile> dtoLikableProfiles;
+            if (ratingType == null)
+                dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParamWithoutRatingType(Mark.DISLIKE, searchParam, pageRequest(page, size));
+            else if (ratingType.equals(Mark.DISLIKE))
+                dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParamAndByDislikeType(Mark.DISLIKE, searchParam, pageRequest(page, size));
             else
                 dtoLikableProfiles = ratingRepository.findAllProfilesBySearchParamAndRatingType(ratingType, Mark.DISLIKE, searchParam, pageRequest(page, size));
 
-            return fillDTOLikableProfile(profilesIdWithLike,  dtoLikableProfiles, currentUserId);
-
+            return fillDTOLikableProfile(profilesIdWithLike, subscriptions, dtoLikableProfiles, currentUserId);
+        }
     }
 
-    private List<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Page<DTOLikableProfile> dtoLikableProfiles, Long currentUserId) {
+    private List<DTOLikableProfile> fillDTOLikableProfile(Set<Long> profilesIdWithLike, Set<Long> subscriptions, Page<DTOLikableProfile> dtoLikableProfiles, Long currentUserId) {
 
         boolean isProfileIdsWithLikeEmpty = CollectionUtils.isEmpty(profilesIdWithLike);
+        boolean isSubscriptionIsNotEmpty = !CollectionUtils.isEmpty(subscriptions);
         dtoLikableProfiles.forEach(profile -> {
             if (!profile.getId().equals(currentUserId) && (isProfileIdsWithLikeEmpty || !profilesIdWithLike.contains(profile.getId()))) {
                 profile.setIsAbleToLike(true);
+            }
+            if (isSubscriptionIsNotEmpty && subscriptions.contains(profile.getId())) {
+                profile.setIsFollowing(true);
             }
         });
 
@@ -227,6 +299,7 @@ public class ProfileServiceImpl implements ProfileService {
     private Pageable pageRequest(int page, int size) {
         return PageRequest.of(page, size);
     }
+
 
 
 }

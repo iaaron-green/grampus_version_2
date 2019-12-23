@@ -35,7 +35,6 @@ public class Profile {
 
    private String country;
 
-
    @OneToOne
    private User user;
 

@@ -9,6 +9,7 @@ import com.app.exceptions.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.security.Principal;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public interface ProfileService {
     <S extends Profile> S saveProfile(S entity);
 
+    Profile getProfileById(Long id) throws CustomException;
 
     DTOProfile getDTOProfileById(Long id, Principal principal) throws CustomException;
 
@@ -23,6 +25,12 @@ public interface ProfileService {
 
     void saveProfilePhoto(MultipartFile file, Long id, Principal principal) throws CustomException;
 
+    List<Profile> getAllProfiles() throws CustomException;
+
     List<DTOLikableProfile> getAllProfilesForRating(String userName, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException;
+
+    Boolean changeSubscription(Long profileId, Principal principal) throws CustomException;
+
+    String saveImgInFtp(MultipartFile file, String directory) throws CustomException;
 
 }
