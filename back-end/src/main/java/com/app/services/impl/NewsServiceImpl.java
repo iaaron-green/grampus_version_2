@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -107,9 +106,12 @@ public class NewsServiceImpl implements NewsService {
         Set<Long> subscriptions = newsRepository.allSubscriptionId(currentUser.getId());
         subscriptions.add(currentUser.getId());
         Set<Long> newsForProfile = newsRepository.newsForProfile(subscriptions);
+        Page<DTONews> news;
         if (CollectionUtils.isEmpty(newsForProfile))
-            throw new CustomException(messageSource.getMessage("News.is.empty", null, LocaleContextHolder.getLocale()), Errors.NEWS_IS_EMPTY);
-        Page<DTONews> news = newsRepository.news(newsForProfile, pageRequest(page, size));
+            news = new PageImpl<>(new ArrayList<>());
+       else {
+            news = newsRepository.news(newsForProfile, pageRequest(page, size));
+        }
         return news;
     }
 
