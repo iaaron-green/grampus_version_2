@@ -2,9 +2,7 @@ package com.app.controllers;
 
 
 import com.app.DTO.DTONewUser;
-import com.app.configtoken.JwtTokenProvider;
 import com.app.exceptions.CustomException;
-import com.app.exceptions.Errors;
 import com.app.services.ActivationService;
 import com.app.services.UserService;
 import com.app.validators.JWTLoginSuccessResponse;
@@ -12,22 +10,13 @@ import com.app.validators.LoginRequest;
 import com.app.validators.UserValidator;
 import com.app.validators.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
-
-import static com.app.configtoken.Constants.TOKEN_PREFIX;
 
 @RestController
 @CrossOrigin

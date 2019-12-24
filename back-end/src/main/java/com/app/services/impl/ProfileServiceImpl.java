@@ -62,17 +62,9 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.save(entity);
     }
 
-    @Override
-    public Profile getProfileById(Long id) throws CustomException {
-        Profile profile = profileRepository.findProfileById(id);
-        if (profile != null) {
-            return profile;
-        } else
-            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
-    }
 
     @Override
-    public DTOProfile getDTOProfileById(Long id, Principal principal) throws CustomException {
+    public DTOProfile getDTOProfileById(Long id, User currentUser) throws CustomException {
 
         if (id == null || id == 0) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
@@ -80,7 +72,6 @@ public class ProfileServiceImpl implements ProfileService {
 
         Profile profileFromDB = profileRepository.findProfileById(id);
         if (profileFromDB != null) {
-            User currentUser = userRepository.findByEmail(principal.getName());
             DTOProfile dtoProfile = new DTOProfile();
             dtoProfile.setId(profileFromDB.getId());
             dtoProfile.setDislikes(ratingRepository.countProfileDislikes(id, Mark.DISLIKE));
@@ -104,8 +95,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Boolean updateProfile(DTOProfile profile, String principalName) {
-        User currentUser = userRepository.findByEmail(principalName);
+    public Boolean updateProfile(DTOProfile profile, User currentUser) {
 
         if (currentUser != null) {
             Profile profileFromDB = profileRepository.findProfileById(currentUser.getId());
@@ -145,11 +135,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void saveProfilePhoto(MultipartFile file, Long id, Principal principal) throws CustomException {
+    public void saveProfilePhoto(MultipartFile file, Long id,  User currentUser) throws CustomException {
 
-        Long currentUserId = userRepository.findByEmail(principal.getName()).getId();
-
-        if (!currentUserId.equals(id)) {
+        if (!currentUser.getId().equals(id)) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
         }
 
@@ -169,25 +157,23 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<DTOLikableProfile> getAllProfilesForRating(String userName, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException {
+    public List<DTOLikableProfile> getAllProfilesForRating(User currentUser, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException {
 
-        User user = userRepository.findByEmail(userName);
-        if (user == null) {
+        if (currentUser == null) {
             throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
         }
-        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
-        Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(user.getId());
+        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(currentUser.getEmail());
+        Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(currentUser.getId());
 
         if (StringUtils.isEmpty(searchParam)) {
-            return getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
+            return getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, currentUser.getId());
         } else {
-            return getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
+            return getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, currentUser.getId());
         }
     }
 
     @Override
-    public Boolean changeSubscription(Long profileId, Principal principal) throws CustomException {
-        User currentUser = userRepository.findByEmail(principal.getName());
+    public Boolean changeSubscription(Long profileId, User currentUser) throws CustomException {
         Profile profile = profileRepository.findOneById(profileId);
         if (currentUser.getId().equals(profileId)) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
