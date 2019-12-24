@@ -41,6 +41,14 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
         tableView.rowHeight = UITableView.automaticDimension
     }
     
+    func isEmtyCheck() {
+        if self.commentsArray.isEmpty {
+            self.tableView.setEmptyView(title: "No comments available", message: "They will appear here", titleColor: .lightGray, messageColor: .lightGray)
+        } else {
+            self.tableView.restore()
+        }
+    }
+    
     
     func fetchComments(page: Int) {
         network.fetchComments(newsID: newsID, page: page) { (comments) in
@@ -50,9 +58,12 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
                 for i in 0..<comments.count {
                     self.commentsArray.append(comments[i])
                 }
+                self.isEmtyCheck()
                 self.tableView.reloadData()
             } else {
                 print("Error")
+                self.isEmtyCheck()
+                self.tableView.reloadData()
             }
         }
     }

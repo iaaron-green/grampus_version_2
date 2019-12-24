@@ -100,7 +100,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
         network.fetchAllUsers(page: page, name: "", ratingType: ratingType) { (json) in
             if let json = json {
                 SVProgressHUD.dismiss()
-                print(json)
+//                print(json)
 //                self.json = json
                 self.filteredJson = [JSON]()
                 for i in 0..<json.count {
@@ -340,7 +340,7 @@ class RatingViewController: RootViewController, ModalViewControllerDelegate, UIS
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if let id = self.filteredJson[indexPath.row]["id"].int {
-            print(id)
+//            print(id)
             storage.saveSelectedUserId(selectedUserId: String(describing: id))
             storage.saveProfileState(state: false)
             self.performSegue(withIdentifier: SegueIdentifier.rating_to_selected_profile.rawValue, sender: self)

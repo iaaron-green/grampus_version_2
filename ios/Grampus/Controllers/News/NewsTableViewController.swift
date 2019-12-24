@@ -14,7 +14,6 @@ import SDWebImage
 
 class NewsTableTableViewController: UITableViewController, UINavigationControllerDelegate, UITableViewDataSourcePrefetching {
     
-    
     @IBOutlet weak var navegationBar: UINavigationBar!
     @IBOutlet weak var leftBarButton: UIBarButtonItem!
     @IBOutlet weak var addButton: UIBarButtonItem!
@@ -47,12 +46,20 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
         tableView.backgroundColor = .clear
         view.backgroundColor = #colorLiteral(red: 0.1125021651, green: 0.1299118698, blue: 0.1408866942, alpha: 1)
         tableView.refreshControl = myRefreshControl
-
+        
         NotificationCenter.default.addObserver(self, selector: #selector(loadNews), name: NSNotification.Name(rawValue: "loadNews"), object: nil)
         if revealViewController() != nil {
             leftBarButton.target = self.revealViewController()
             leftBarButton.action = #selector(SWRevealViewController().revealToggle(_:))
             self.view.addGestureRecognizer(revealViewController().panGestureRecognizer())
+        }
+    }
+    
+    func isEmtyCheck() {
+        if self.newsArray.isEmpty {
+            self.tableView.setEmptyView(title: "No news available", message: "They will appear here", titleColor: .lightGray, messageColor: .lightGray)
+        } else {
+            self.tableView.restore()
         }
     }
     
@@ -72,6 +79,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     
     @objc func pullToRefresh(sender: UIRefreshControl) {
         fetchNews(page: 0)
+        print(newsArray.count)
         page = 1
         limit = 0
         sender.endRefreshing()
@@ -81,16 +89,19 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     
     func fetchNews(page: Int) {
         network.fetchNews(page: page) { (news) in
+            self.newsArray = [JSON]()
             if let news = news {
-                self.newsArray = [JSON]()
 //                print(news)
                 SVProgressHUD.dismiss()
                 for i in 0..<news.count {
                     self.newsArray.append(news[i])
                 }
+                self.isEmtyCheck()
                 self.tableView.reloadData()
             } else {
                 print("Error")
+                self.isEmtyCheck()
+                self.tableView.reloadData()
             }
         }
     }

@@ -32,13 +32,11 @@ class NotificationService {
 
                 ch.ack(message.deliveryTag)
                 
-                //Эти 4 строчки задают вид нашего оповещения, которое будет отображаться
                 let content = UNMutableNotificationContent()
                 content.title = "Congratulation!"
                 content.body =  messageText!
                 content.sound = UNNotificationSound.default
-                // Когда получим сообщение от брокера, то через 2 секунды нам придет уведомление
-                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2, repeats: false)
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0, repeats: false)
 
                 let request = UNNotificationRequest(identifier: "TestIdentifier", content: content, trigger: trigger)
                 UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)

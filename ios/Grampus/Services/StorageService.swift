@@ -82,7 +82,7 @@ class StorageService {
         def.set(state, forKey: UserDefKeys.isLoggedIn.rawValue)
     }
     
-    func saveUserId( userId: String ) {
+    func saveUserId(userId: String ) {
         def.set("\(userId)", forKey: UserDefKeys.userId.rawValue)
     }
     

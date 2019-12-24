@@ -1538,15 +1538,16 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="dQc-ia-LUH">
-                                <rect key="frame" x="0.0" y="56" width="414" height="718"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="dQc-ia-LUH">
+                                <rect key="frame" x="0.0" y="56" width="414" height="713"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="10" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C0f-dM-L3N">
-                                <rect key="frame" x="5" y="774" width="404" height="34"/>
+                                <rect key="frame" x="5" y="769" width="404" height="34"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" clearsOnBeginEditing="YES" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TZI-4p-VQQ">
                                         <rect key="frame" x="0.0" y="0.0" width="362" height="34"/>
+                                        <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
@@ -1567,7 +1568,7 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="C0f-dM-L3N" firstAttribute="bottom" secondItem="1nu-dm-cCA" secondAttribute="bottom" id="3WP-Rh-gPf"/>
+                            <constraint firstItem="C0f-dM-L3N" firstAttribute="bottom" secondItem="1nu-dm-cCA" secondAttribute="bottom" constant="-5" id="3WP-Rh-gPf"/>
                             <constraint firstItem="C0f-dM-L3N" firstAttribute="top" secondItem="dQc-ia-LUH" secondAttribute="bottom" id="59S-e4-gSr"/>
                             <constraint firstItem="C0f-dM-L3N" firstAttribute="leading" secondItem="1nu-dm-cCA" secondAttribute="leading" constant="5" id="BOm-Zw-90J"/>
                             <constraint firstItem="dQc-ia-LUH" firstAttribute="top" secondItem="L8M-7x-b6f" secondAttribute="bottom" id="QgC-cc-EQx"/>
@@ -1582,6 +1583,8 @@
                     </view>
                     <connections>
                         <outlet property="messageTextField" destination="TZI-4p-VQQ" id="sff-jT-cI5"/>
+                        <outlet property="navigationBar" destination="L8M-7x-b6f" id="lau-FO-5zv"/>
+                        <outlet property="stackViewBottomConstraint" destination="3WP-Rh-gPf" id="na2-Zb-Sbr"/>
                         <outlet property="tableView" destination="dQc-ia-LUH" id="JSE-CI-nCj"/>
                     </connections>
                 </viewController>
@@ -1741,7 +1744,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="Plf-mn-PaB"/>
         <segue reference="5jN-kP-CSK"/>
-        <segue reference="i1B-xH-khV"/>
+        <segue reference="msn-EC-Cqj"/>
         <segue reference="aW1-4Z-rxf"/>
         <segue reference="xAE-M7-WWY"/>
     </inferredMetricsTieBreakers>

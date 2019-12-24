@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     var window: UIWindow?
     let storage = StorageService()
     let notifications = NotificationService()
+    let socket = SocketService()
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -27,6 +28,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
 //            self.notifications.getMessage()
         }
+        
+        socket.connectToSocket()
+        
         return true
     }
     
@@ -65,10 +69,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let exampleViewController: SWRevealViewController = mainStoryboard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
         self.window?.rootViewController = exampleViewController
-        
         self.window?.makeKeyAndVisible()
         exampleViewController.performSegue(withIdentifier: "goToChat", sender: nil)
+    }
     
+    func goToChat() {
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let newViewController: SWRevealViewController = mainStoryboard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
+        self.window?.rootViewController = newViewController
+        self.window?.makeKeyAndVisible()
+        newViewController.performSegue(withIdentifier: "goToChat", sender: nil)
     }
     
     

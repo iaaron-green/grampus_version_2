@@ -103,7 +103,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         profileCheck()
         addSkeleton()
         chartView.delegate = self
-        createChatButton()
 
         SVProgressHUD.setMinimumDismissTimeInterval(2)
         SVProgressHUD.setDefaultStyle(.dark)
@@ -160,6 +159,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
             likeButton.isHidden = true
             dislikeButton.isHidden = true
         } else {
+            createChatButton()
             skillsAddButton.isHidden = true
             skypeAddButton.isHidden = true
             telephoneAddButton.isHidden = true
@@ -780,6 +780,14 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         performSegue(withIdentifier: "goToChat", sender: self)
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToChat" {
+            let vc = segue.destination as? ChatViewController
+            vc?.userId = userID!
+            vc?.titleChat = fullName!
+        }
+    }
+    
     
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -813,7 +821,6 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
