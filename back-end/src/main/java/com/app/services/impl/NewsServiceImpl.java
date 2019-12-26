@@ -49,7 +49,7 @@ public class NewsServiceImpl implements NewsService {
     private ProfileService profileService;
 
     @Override
-    public void saveDTONews(String title, String content, MultipartFile file, Principal principal) throws CustomException {
+    public void saveDTONews(String title, String content, MultipartFile file, User currentUser) throws CustomException {
         if (title.length() > 100 && content.length() < 1000)
             throw new CustomException(messageSource.getMessage("title.type.is.not.in.size", null, LocaleContextHolder.getLocale()), Errors.TITLE_IS_EMPTY);
         News newNews = new News();
@@ -64,7 +64,7 @@ public class NewsServiceImpl implements NewsService {
         SimpleDateFormat df = new SimpleDateFormat("HH:mm dd.MM.yyy");
         newNews.setDate(df.format(new Date().getTime()));
 
-        newNews.setProfileID(userRepository.findByEmail(principal.getName()).getId());
+        newNews.setProfileID(userRepository.findByEmail(currentUser.getEmail()).getId());
         newsRepository.save(newNews);
     }
 
@@ -101,8 +101,7 @@ public class NewsServiceImpl implements NewsService {
 //    }
 
     @Override
-    public Page<DTONews> getAllNews(Principal principal, Integer page, Integer size) throws CustomException {
-        User currentUser = userRepository.findByEmail(principal.getName());
+    public Page<DTONews> getAllNews(User currentUser, Integer page, Integer size) throws CustomException {
         Set<Long> subscriptions = newsRepository.allSubscriptionId(currentUser.getId());
         subscriptions.add(currentUser.getId());
         Set<Long> newsForProfile = newsRepository.newsForProfile(subscriptions);
@@ -123,7 +122,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Boolean deleteNews(Long id, Principal principal) throws CustomException {
+    public Boolean deleteNews(Long id, User currentUser) throws CustomException {
         Long currentNewsCreatorProfileId;
         if(id == null)
             throw new CustomException(messageSource.getMessage("null.news.id", null, LocaleContextHolder.getLocale()), Errors.NEWS_NULL_ID_EMPTY);
@@ -132,7 +131,7 @@ public class NewsServiceImpl implements NewsService {
 
         if(currentNewsCreatorProfileId == null)
             throw new CustomException(messageSource.getMessage("news.not.exist", null, LocaleContextHolder.getLocale()), Errors.NEWS_NOT_EXIST);
-        User currentUserId = userRepository.findByEmail(principal.getName());
+        User currentUserId = userRepository.findByEmail(currentUser.getEmail());
         Set<Long> devAndPm = newsRepository.getAllDevAndPm();
 
         if (currentNewsCreatorProfileId.equals(currentUserId.getId()) || devAndPm.contains(currentNewsCreatorProfileId)) {
@@ -144,17 +143,15 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public DTONewsComment saveComment(Long id, String textComment, Principal principal) throws CustomException {
+    public DTONewsComment saveComment(Long id, String textComment, User currentUser) throws CustomException {
         News s = newsRepository.findOneById(id);
         if (s == null)
             throw new CustomException(messageSource.getMessage("news.not.exist", null, LocaleContextHolder.getLocale()), Errors.NEWS_NOT_EXIST);
 
-
-        User user = userRepository.findByEmail(principal.getName());
-        Profile profile = user.getProfile();
+        Profile profile = currentUser.getProfile();
 
         SimpleDateFormat df = new SimpleDateFormat("HH:mm dd.MM.yyy");
-        Comment newComment = new Comment(userRepository.findByEmail(principal.getName()).getProfile().getId(),user.getFullName(), profile.getProfilePicture(), textComment, df.format(new Date().getTime()), s);
+        Comment newComment = new Comment(userRepository.findByEmail(currentUser.getEmail()).getProfile().getId(),currentUser.getFullName(), profile.getProfilePicture(), textComment, df.format(new Date().getTime()), s);
 
         return getDtoComment(commentRepository.save(newComment));
     }

@@ -31,7 +31,8 @@ import javax.mail.internet.MimeMessage;
 import static com.app.configtoken.Constants.TOKEN_PREFIX;
 
 @Service
-public class ActivationServiceImpl implements ActivationService {
+public class
+ActivationServiceImpl implements ActivationService {
 
     private UserRepository userRepository;
     private ActivationRepository activationRepository;

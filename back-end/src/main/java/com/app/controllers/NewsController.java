@@ -1,6 +1,7 @@
 package com.app.controllers;
 
 import com.app.DTO.DTONewsComment;
+import com.app.configtoken.IAuthenticationFacade;
 import com.app.exceptions.CustomException;
 import com.app.mq.Producer;
 import com.app.repository.UserRepository;
@@ -27,34 +28,35 @@ public class NewsController {
     @Autowired
     Producer producer;
 
+    @Autowired
+    IAuthenticationFacade authenticationFacade;
+
     @GetMapping("")
     public ResponseEntity<?>getAllDTONews(@RequestParam(value = "page", defaultValue = "0") Integer page,
-                                          @RequestParam(value = "size", defaultValue = "10") Integer size,
-                                          Principal principal) throws CustomException {
-
-       // return new ResponseEntity<>(newsService.getAllNews(principal, page, size).getContent(), HttpStatus.OK);
-        return new ResponseEntity<>(newsService.getAllNews(principal, page, size).getContent() , HttpStatus.OK);
+                                          @RequestParam(value = "size", defaultValue = "10") Integer size
+                                          ) throws CustomException {
+        return new ResponseEntity<>(newsService.getAllNews(authenticationFacade.getUser(), page, size).getContent() , HttpStatus.OK);
     }
 
     @PostMapping("")
     public ResponseEntity<?> saveNews(@RequestParam("title") String title,
                                       @RequestParam("content") String content,
-                                      @RequestParam(value = "file", required = false) MultipartFile file,
-                                      Principal principal)  throws CustomException {
-        newsService.saveDTONews(title,content,file, principal);
+                                      @RequestParam(value = "file", required = false) MultipartFile file
+                                      )  throws CustomException {
+        newsService.saveDTONews(title,content,file, authenticationFacade.getUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @PostMapping("/comment")
-    public ResponseEntity<?> addComment(@Valid @RequestBody DTONewsComment dtoNewsComment,
-                                        Principal principal) throws CustomException {
-        return new ResponseEntity<>(newsService.saveComment(dtoNewsComment.getId(), dtoNewsComment.getText(), principal),HttpStatus.OK) ;
+    public ResponseEntity<?> addComment(@Valid @RequestBody DTONewsComment dtoNewsComment
+                                        ) throws CustomException {
+        return new ResponseEntity<>(newsService.saveComment(dtoNewsComment.getId(), dtoNewsComment.getText(), authenticationFacade.getUser()),HttpStatus.OK) ;
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteNews(@PathVariable Long  id, Principal principal) throws CustomException {
-        return new ResponseEntity<>(newsService.deleteNews(id, principal),HttpStatus.OK) ;
+    public ResponseEntity<?> deleteNews(@PathVariable Long  id) throws CustomException {
+        return new ResponseEntity<>(newsService.deleteNews(id, authenticationFacade.getUser()),HttpStatus.OK) ;
     }
 
     @GetMapping("/comment/{newsId}")

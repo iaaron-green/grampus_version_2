@@ -88,6 +88,7 @@ public class RatingServiceImpl implements RatingService {
         return achievementData;
     }
 
+
     @Override
     public List<DTOLikableProfile> addDTOInfoAchievement() {
 
@@ -124,10 +125,10 @@ public class RatingServiceImpl implements RatingService {
         } else return profile;
     }
 
-    public Boolean addRatingType(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws MessagingException, CustomException {
+     @Override
+    public Boolean addRatingType(DTOLikeDislike dtoLikeDislike, Long profileId,  User currentUser) throws MessagingException, CustomException {
 
         Profile profile = checkProfile(profileId, dtoLikeDislike);
-        User currentUser = userRepository.findByEmail(principal.getName());
         if (!currentUser.getId().equals(profile.getId()) && ratingRepository.checkLike(profile.getId(), currentUser.getEmail()) == null) {
 
             Rating dbRating = ratingRepository.countRatingType(profileId);
