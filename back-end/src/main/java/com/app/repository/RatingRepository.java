@@ -18,15 +18,15 @@ import java.util.Set;
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 
     @Query(
-            value = "SELECT id, profile_id, rating_source_username,profile_id as user_id, rating_type, COUNT(rating_type) as raiting_count FROM " + Constants.DATABASE + ".ratings GROUP BY profile_id, rating_type",
+            value = "SELECT id, profile_id, rating_source_username,profile_id as user_id, rating_type, COUNT(rating_type) as raiting_count FROM ratings GROUP BY profile_id, rating_type",
             nativeQuery = true)
     List<Rating> findAllRatingById();
 
-    @Query(value = "SELECT COUNT(rating_type) FROM " + Constants.DATABASE + ".ratings WHERE profile_id = ? AND rating_type = ?",
+    @Query(value = "SELECT COUNT(rating_type) FROM ratings WHERE profile_id = ? AND rating_type = ?",
             nativeQuery = true)
     Long countRatingType(Long id, String ratingType);
 
-    @Query(value = "SELECT * FROM " + Constants.DATABASE + ".ratings WHERE profile_id = ? AND rating_type is null",
+    @Query(value = "SELECT * FROM ratings WHERE profile_id = ? AND rating_type is null",
             nativeQuery = true)
     Rating countRatingType(Long id);
 
@@ -34,7 +34,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
             "FROM  Rating r WHERE r.ratingType = :ratingType")
     Set<DTOLikableProfile> findProfileByRatingType(@Param("ratingType") Mark ratingType);
 
-    @Query (value = "SELECT rating_type FROM " + Constants.DATABASE + ".ratings WHERE profile_id = ? AND rating_source_username = ?",
+    @Query (value = "SELECT rating_type FROM ratings WHERE profile_id = ? AND rating_source_username = ?",
             nativeQuery = true)
     String checkLike(Long profileId, String currentUserEmail);
 

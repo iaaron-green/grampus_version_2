@@ -1,6 +1,5 @@
 package com.app.entities;
 
-import com.app.DTO.DTOChatMessage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

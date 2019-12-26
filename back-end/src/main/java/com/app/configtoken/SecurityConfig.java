@@ -28,9 +28,6 @@ import static com.app.configtoken.Constants.SIGN_UP_URLS;
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-   @Autowired
-   private MessageSource messageSource;
-
    private JwtAuthenticationEntryPoint unauthorizedHandler;
    private CustomUserDetailsService customUserDetailsService;
    private BCryptPasswordEncoder bCryptPasswordEncoder;

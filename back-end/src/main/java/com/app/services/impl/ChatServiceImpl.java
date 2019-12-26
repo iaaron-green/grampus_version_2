@@ -1,8 +1,9 @@
 package com.app.services.impl;
 
+import com.app.DTO.DTOChatData;
 import com.app.DTO.DTOChatInit;
-import com.app.DTO.DTOChatMessage;
-import com.app.DTO.DTOTest;
+import com.app.DTO.DTOChatSendMessage;
+import com.app.DTO.DTOChatReceivedMessage;
 import com.app.entities.ChatMember;
 import com.app.entities.ChatMessage;
 import com.app.entities.Room;
@@ -14,9 +15,15 @@ import com.app.repository.UserRepository;
 import com.app.services.ChatService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -38,7 +45,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public void chatInitTest(String dto, String currentUserEmail) {
+    public void chatInit(String dto, String currentUserEmail) {
 
         if (StringUtils.isEmpty(dto)) {
             System.out.println("throw exception wrong input data ");
@@ -53,67 +60,36 @@ public class ChatServiceImpl implements ChatService {
         }
 
         Long currentRoomId = roomRepository.getRoomIdByMembersIdAndChatType(currentUser.getId(),
-                dtoChatInit.getTargetUserId(), dtoChatInit.getChatType());
+                dtoChatInit.getTargetUserId(), dtoChatInit.getChatType().toString());
+
+        String roomURL;
+        Page<DTOChatSendMessage> chatMessages = new PageImpl<>(new ArrayList<>());
 
         if (currentRoomId == null) {
-            ChatMember currentChatMember = new ChatMember();
-            currentChatMember.setMemberId(currentUser.getId());
-            ChatMember targetChatMember = new ChatMember();
-            targetChatMember.setMemberId(dtoChatInit.getTargetUserId());
+
             Room newRoom = new Room();
             newRoom.setChatType(dtoChatInit.getChatType());
             newRoom = roomRepository.save(newRoom);
-            currentRoomId = newRoom.getId();
+
+            ChatMember currentChatMember = new ChatMember();
+            currentChatMember.setMemberId(currentUser.getId());
             currentChatMember.setRoom(newRoom);
+            ChatMember targetChatMember = new ChatMember();
+            targetChatMember.setMemberId(dtoChatInit.getTargetUserId());
             targetChatMember.setRoom(newRoom);
             chatMemberRepository.save(currentChatMember);
             chatMemberRepository.save(targetChatMember);
 
+            roomURL = "/topic/chat" + newRoom.getId();
+
+        } else {
+            roomURL = "/topic/chat" + currentRoomId;
+            chatMessages = chatMessageRepository.getMessagesByRoomId(currentRoomId, pageRequest(dtoChatInit.getPage(), dtoChatInit.getSize()));
         }
 
-        String roomDestination = "/topic/chat/" + currentRoomId;
-
-        simpMessagingTemplate.convertAndSend("/topic/chatListener", new Gson().toJson(new DTOTest(currentUser.getId(), dtoChatInit.getTargetUserId(), currentRoomId)));
+        simpMessagingTemplate.convertAndSend("/topic/chatListener",
+                new Gson().toJson(new DTOChatData(currentUser.getId(), dtoChatInit.getTargetUserId(), roomURL, chatMessages.getContent())));
     }
-
-    @Override
-    public void chatInit(DTOChatInit dtoChatInit, String currentUserEmail) {
-
-        if (StringUtils.isEmpty(dtoChatInit)) {
-            System.out.println("throw exception wrong input data ");
-        }
-
-        User currentUser = userRepository.findByEmail(currentUserEmail);
-
-        if (dtoChatInit.getTargetUserId() == null || StringUtils.isEmpty(dtoChatInit.getChatType())) {
-            System.out.println("throw exception wrong input data ");
-        }
-
-        Long currentRoomId = roomRepository.getRoomIdByMembersIdAndChatType(currentUser.getId(),
-                dtoChatInit.getTargetUserId(), dtoChatInit.getChatType());
-
-        String roomDestination;
-        if (currentRoomId != null)
-            roomDestination = "/topic/chat/" + currentRoomId;
-        else {
-            ChatMember currentChatMember = new ChatMember();
-            currentChatMember.setMemberId(currentUser.getId());
-            ChatMember targetChatMember = new ChatMember();
-            targetChatMember.setMemberId(dtoChatInit.getTargetUserId());
-            Room newRoom = new Room();
-            newRoom.setChatType(dtoChatInit.getChatType());
-            newRoom = roomRepository.save(newRoom);
-            currentChatMember.setRoom(newRoom);
-            targetChatMember.setRoom(newRoom);
-            chatMemberRepository.save(currentChatMember);
-            chatMemberRepository.save(targetChatMember);
-
-            roomDestination = "/topic/chat/" + newRoom.getId();
-        }
-
-        simpMessagingTemplate.convertAndSend("/topic/chatListener", roomDestination);
-    }
-
 
 
     @Override
@@ -124,16 +100,24 @@ public class ChatServiceImpl implements ChatService {
             //throw new CustomException();
         }
 
-        DTOChatMessage dtoChatMessageFromJSON = new Gson().fromJson(dtoChatMessage, DTOChatMessage.class);
+        DTOChatReceivedMessage dtoChatReceivedMessageFromJSON = new Gson().fromJson(dtoChatMessage, DTOChatReceivedMessage.class);
 
-        Room chatRoom = roomRepository.getById(dtoChatMessageFromJSON.getRoomId());
+        Room chatRoom = roomRepository.getById(dtoChatReceivedMessageFromJSON.getRoomId());
         if (chatRoom != null){
 
-            ChatMessage message = new ChatMessage(loggedUser.getId(), dtoChatMessageFromJSON.getTextMessage(), chatRoom);
-            chatMessageRepository.save(message);
-            simpMessagingTemplate.convertAndSend("/topic/chat/" + chatRoom.getId(), message.getMessage());
+            ChatMessage message = new ChatMessage(loggedUser.getId(), dtoChatReceivedMessageFromJSON.getTextMessage(), chatRoom);
+            message = chatMessageRepository.save(message);
+
+            DTOChatSendMessage dtoChatSendMessage = new DTOChatSendMessage(loggedUser.getId(), loggedUser.getProfile().getProfilePicture(),
+                    loggedUser.getFullName(), message.getCreateDate(), message.getMessage());
+
+            simpMessagingTemplate.convertAndSend("/topic/chat" + chatRoom.getId(), new Gson().toJson(dtoChatSendMessage));
         } else {
             //throw new CustomException();
         }
+    }
+
+    private Pageable pageRequest(int page, int size) {
+        return PageRequest.of(page, size);
     }
 }

@@ -21,8 +21,7 @@ public class WebSocketChatController {
 
     @MessageMapping({"/chat.chatInit"})
     public void chatInit(String dtoChatMessage, Principal principal) {
-//      chatService.chatInit(dtoChatMessage, principal.getName());
-        chatService.chatInitTest(dtoChatMessage, principal.getName());
+      chatService.chatInit(dtoChatMessage, principal.getName());
     }
 
     @MessageMapping({"/chat.sendMessage"})

@@ -10,12 +10,12 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class DTOChatMessage {
+public class DTOChatReceivedMessage {
 
     private String textMessage;
     private Long roomId;
 
-    public DTOChatMessage(String textMessage, Long roomId) {
+    public DTOChatReceivedMessage(String textMessage, Long roomId) {
         this.textMessage = textMessage;
         this.roomId = roomId;
     }
