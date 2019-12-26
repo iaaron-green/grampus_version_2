@@ -24,5 +24,7 @@ public class Constants {
     public static final String ACHIEVE_NOTIFIC_MAIL_MESSAGE = "You got new achievement";
 
 
+    public static final int DEFAULT_SIZE_MESSAGE_HISTORY = 20;
+
     public static List<Locale> SUPPORTED_LOCALES =  Arrays.asList(new Locale("en"), new Locale("ru"));
 }

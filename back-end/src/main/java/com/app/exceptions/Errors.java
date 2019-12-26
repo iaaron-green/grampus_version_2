@@ -11,6 +11,7 @@ public class Errors {
     public static final int USER = 6;
     public static final int PROFILE = 7;
     public static final int RATING = 8;
+    public static final int CHAT = 9;
 
     public static final int FTP_CONNECTION_ERROR = getError(CRITICAL, COMMON, 0); // 40500
     public static final int AUTHORIZATION_ERROR = getError(HIGH, COMMON, 0); // 30500
@@ -25,6 +26,11 @@ public class Errors {
     public static final int MARKTYPE_NOT_EXIST = getError(MIDDLE,PROFILE, 3); // 20703
     public static final int WRONG_PROFILE_ID = getError(MIDDLE, PROFILE, 2); //20702
     public static final int RATING_TYPE_IS_EMPTY = getError(MIDDLE, RATING, 0); //20800
+    public static final int WRONG_INPUT_DATA_CHAT = getError(MIDDLE, CHAT, 0); //20900
+    public static final int WRONG_CHAT_TARGET_ID = getError(MIDDLE, CHAT, 1); //20901
+    public static final int WRONG_CHAT_TYPE = getError(MIDDLE, CHAT, 2); //20902
+    public static final int CHAT_ROOM_NOT_EXIST = getError(MIDDLE, CHAT, 3); //20903
+    public static final int WRONG_PAGE_AS_PARAMETER = getError(MIDDLE, COMMON, 3); //20502
 
 
     public static int getError(int priority, int code, int order){

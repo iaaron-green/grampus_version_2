@@ -14,7 +14,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     @Query("SELECT NEW com.app.DTO.DTOChatSendMessage(p.id, p.profilePicture, u.fullName, cm.createDate, cm.message) " +
             "FROM  Profile p JOIN ChatMessage cm ON p.id = cm.userId " +
-            "JOIN User u ON u.id = cm.userId WHERE cm.room.id = :roomId ORDER BY cm.createDate ASC")
+            "JOIN User u ON u.id = cm.userId WHERE cm.room.id = :roomId ORDER BY cm.createDate DESC")
     Page<DTOChatSendMessage> getMessagesByRoomId(@Param("roomId") Long roomId, Pageable p);
 
 }
