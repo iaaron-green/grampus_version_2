@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -111,11 +112,15 @@ public class ChatServiceImpl implements ChatService {
             ChatMessage message = new ChatMessage(loggedUser.getId(), dtoChatReceivedMsgFromJSON.getTextMessage(), chatRoom);
             message = chatMessageRepository.save(message);
 
-            DTOChatSendMsgWithMillis dtoChatSendMsgWithMillis = new DTOChatSendMsgWithMillis(loggedUser.getId(), loggedUser.getProfile().getProfilePicture(),
-                    loggedUser.getFullName(), message.getCreateDate().getTimeInMillis(), message.getMessage());
+            DTOChatSendMsgWithMillis dtoChatSendMsgWithMillis = new DTOChatSendMsgWithMillis(loggedUser.getId(),
+                    loggedUser.getProfile().getProfilePicture(), loggedUser.getFullName(),
+                    message.getCreateDate().getTimeInMillis(), message.getMessage());
 
-            simpMessagingTemplate.convertAndSend("/topic/chat" + chatRoom.getId(), new Gson().toJson(dtoChatSendMsgWithMillis));
-            simpMessagingTemplate.convertAndSend("/topic/chatListener" + dtoChatReceivedMsgFromJSON.getTargetUserId(), new Gson().toJson(dtoChatSendMsgWithMillis));
+            simpMessagingTemplate.convertAndSend("/topic/chat" + chatRoom.getId(),
+                    new Gson().toJson(dtoChatSendMsgWithMillis));
+
+            simpMessagingTemplate.convertAndSend("/topic/chatListener" + dtoChatReceivedMsgFromJSON.getTargetUserId(),
+                    new Gson().toJson(dtoChatSendMsgWithMillis));
         }
     }
 
@@ -136,6 +141,26 @@ public class ChatServiceImpl implements ChatService {
 
         simpMessagingTemplate.convertAndSend("/topic/chat" + dtoChatMsgPagination.getRoomId(),
                 new Gson().toJson(chatMessagesWithMillis));
+    }
+
+    @Override
+    public List<DTOChatSendMsgWithMillis> getAllChatRoomsWithLastMsgByUserId(String email, Integer page, Integer size) {
+
+        User currentUser = userRepository.findByEmail(email);
+        List<Long> chatRoomsIdByCurrentUser = roomRepository.getAllRoomsIdByCurrentMemberId(currentUser.getId(),
+                pageRequest(page, size));
+
+        List<DTOChatSendMsg> chatMessages =
+                chatMessageRepository.getAllLastMessagesForChatRoomsByRoomsId(chatRoomsIdByCurrentUser);
+
+        List<DTOChatSendMsgWithMillis> chatMessagesWithMillis = new ArrayList<>();
+
+        chatMessages.forEach(msg -> {
+            chatMessagesWithMillis.add(new DTOChatSendMsgWithMillis(msg.getProfileId(), msg.getProfilePicture(),
+                    msg.getProfileFullName(), msg.getCreateDate().getTimeInMillis(), msg.getMessage()));
+        });
+
+        return chatMessagesWithMillis;
     }
 
 
