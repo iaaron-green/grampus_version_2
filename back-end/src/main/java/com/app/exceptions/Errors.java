@@ -31,6 +31,7 @@ public class Errors {
     public static final int NEWS_IS_EMPTY = getError(MIDDLE, NEWS, 0); //20900
     public static final int NEWS_NULL_ID_EMPTY = getError(MIDDLE, NEWS, 0); //20900
     public static final int WITHOUT_PERMISSION = getError(MIDDLE, NEWS, 0); //20900
+    public static final int EMAIL_NOT_FOUNT = getError(MIDDLE, USER, 1);//20601
 
     public static int getError(int priority, int code, int order){
 

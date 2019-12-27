@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
             newUser.setPassword("******");
 
             activationRepository.save(new ActivationCode(newUser.getUserId(), String.valueOf(UUID.randomUUID())));
-            activationService.sendMail(newUser.getEmail(), Constants.REG_MAIL_SUBJECT, Constants.REG_MAIL_ARTICLE, Constants.REG_MAIL_MESSAGE + newUser.getUserId());
+            activationService.sendMail(newUser.getEmail(), Constants.REG_MAIL_SUBJECT, Constants.REG_MAIL_ARTICLE, Constants.REG_MAIL_MESSAGE  + Constants.REG_URL_ACTIVATE + newUser.getUserId());
             return newUser;
         }
     }

@@ -68,38 +68,6 @@ public class NewsServiceImpl implements NewsService {
         newsRepository.save(newNews);
     }
 
-//    @Override
-//    public List<DTONews> getAllNews(Principal principal, Integer page, Integer size) throws CustomException {
-//
-//        Page<News> allNews = newsRepository.findAllBy(pageRequest(page, size));
-//        List<DTONews> updatedNews = new ArrayList<>();
-//                allNews.forEach(news -> {
-//                    User user = userRepository.getById(news.getProfileID());
-//                    if (user.getJobTitle() != null && (user.getJobTitle().equals("HR") || user.getJobTitle().equals("PM"))
-//                            || news.getProfileID().equals(userRepository.findByEmail(principal.getName()).getId())) {
-//                        DTONews dtonews = new DTONews();
-//                        List<Comment> c = newsRepository.findAllCommentById(1L);
-//                        try {
-//                            dtonews = DTONews.builder()
-//                                    .id(user.getId())
-//                                    .title(news.getTitle())
-//                                    .content(news.getContent())
-//                                    .picture(news.getPicture())
-//                                    .imgProfile(profileService.getProfileById(news.getProfileID()).getProfilePicture())
-//                                    .nameProfile(userRepository.getById(news.getProfileID()).getFullName())
-//                                    .date(news.getDate())
-//                                    .countOfLikes(news.getCountOfLikes())
-//                                    .comment(c)
-//                                    .build();
-//                        } catch (CustomException e) {
-//                            e.printStackTrace();
-//                        }
-//                        updatedNews.add(dtonews);
-//                    }
-//                });
-//        return updatedNews;
-//    }
-
     @Override
     public Page<DTONews> getAllNews(User currentUser, Integer page, Integer size) throws CustomException {
         Set<Long> subscriptions = newsRepository.allSubscriptionId(currentUser.getId());
