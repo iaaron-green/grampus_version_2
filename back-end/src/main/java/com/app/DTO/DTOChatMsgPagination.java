@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class DTOChatMessagesPagination {
+public class DTOChatMsgPagination {
 
     private Integer page;
     private Integer size;

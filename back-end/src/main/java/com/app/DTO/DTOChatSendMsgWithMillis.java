@@ -5,21 +5,19 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Calendar;
-
 @Getter
 @Setter
 @EqualsAndHashCode
 @ToString
-public class DTOChatSendMessage {
+public class DTOChatSendMsgWithMillis {
 
     private Long profileId;
     private String profilePicture;
     private String profileFullName;
-    private Calendar createDate;
+    private Long createDate;
     private String message;
 
-    public DTOChatSendMessage(Long profileId, String profilePicture, String profileFullName, Calendar createDate, String message) {
+    public DTOChatSendMsgWithMillis(Long profileId, String profilePicture, String profileFullName, Long createDate, String message) {
         this.profileId = profileId;
         this.profilePicture = profilePicture;
         this.profileFullName = profileFullName;

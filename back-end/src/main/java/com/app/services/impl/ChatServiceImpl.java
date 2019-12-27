@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -26,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -59,8 +59,7 @@ public class ChatServiceImpl implements ChatService {
                 dtoChatInit.getTargetUserId(), dtoChatInit.getChatType().toString());
 
         String roomURL;
-        Page<DTOChatSendMessage> chatMessages = new PageImpl<>(new ArrayList<>());
-
+        List<DTOChatSendMsgWithMillis> chatMessagesWithMillis = new ArrayList<>();
         if (currentRoomId == null) {
 
             Room newRoom = new Room();
@@ -80,11 +79,16 @@ public class ChatServiceImpl implements ChatService {
 
         } else {
             roomURL = "/topic/chat" + currentRoomId;
-            chatMessages = chatMessageRepository.getMessagesByRoomId(currentRoomId, pageRequest(dtoChatInit.getPage(), dtoChatInit.getSize()));
+
+            Page<DTOChatSendMsg> chatMessages = chatMessageRepository.getMessagesByRoomId(currentRoomId, pageRequest(dtoChatInit.getPage(), dtoChatInit.getSize()));
+            chatMessages.forEach(msg -> {
+                chatMessagesWithMillis.add(new DTOChatSendMsgWithMillis(msg.getProfileId(), msg.getProfilePicture(),
+                        msg.getProfileFullName(), msg.getCreateDate().getTimeInMillis(), msg.getMessage()));
+            });
         }
 
-        simpMessagingTemplate.convertAndSend("/topic/chatListener",
-                new Gson().toJson(new DTOChatData(currentUser.getId(), dtoChatInit.getTargetUserId(), roomURL, chatMessages.getContent())));
+        simpMessagingTemplate.convertAndSend("/topic/chatListener"+currentUser.getId(),
+                new Gson().toJson(new DTOChatData(currentUser.getId(), dtoChatInit.getTargetUserId(), roomURL, chatMessagesWithMillis)));
     }
 
 
@@ -96,33 +100,42 @@ public class ChatServiceImpl implements ChatService {
             //throw new CustomException();
         }
 
-        DTOChatReceivedMessage dtoChatReceivedMessageFromJSON = new Gson().fromJson(dtoChatMessage, DTOChatReceivedMessage.class);
+        DTOChatReceivedMsg dtoChatReceivedMsgFromJSON = new Gson().fromJson(dtoChatMessage, DTOChatReceivedMsg.class);
 
-        Room chatRoom = roomRepository.getById(dtoChatReceivedMessageFromJSON.getRoomId());
-        if (chatRoom != null){
+        Room chatRoom = roomRepository.getById(dtoChatReceivedMsgFromJSON.getRoomId());
 
-            ChatMessage message = new ChatMessage(loggedUser.getId(), dtoChatReceivedMessageFromJSON.getTextMessage(), chatRoom);
+        if (chatRoom == null){
+            throw new CustomException(messageSource.getMessage("chat.room.not.exist", null,
+                    LocaleContextHolder.getLocale()), Errors.CHAT_ROOM_NOT_EXIST);
+        } else {
+            ChatMessage message = new ChatMessage(loggedUser.getId(), dtoChatReceivedMsgFromJSON.getTextMessage(), chatRoom);
             message = chatMessageRepository.save(message);
 
-            DTOChatSendMessage dtoChatSendMessage = new DTOChatSendMessage(loggedUser.getId(), loggedUser.getProfile().getProfilePicture(),
-                    loggedUser.getFullName(), message.getCreateDate(), message.getMessage());
+            DTOChatSendMsgWithMillis dtoChatSendMsgWithMillis = new DTOChatSendMsgWithMillis(loggedUser.getId(), loggedUser.getProfile().getProfilePicture(),
+                    loggedUser.getFullName(), message.getCreateDate().getTimeInMillis(), message.getMessage());
 
-            simpMessagingTemplate.convertAndSend("/topic/chat" + chatRoom.getId(), new Gson().toJson(dtoChatSendMessage));
-        } else {
-            throw new CustomException(messageSource.getMessage("chat.room.not.exist", null, LocaleContextHolder.getLocale()), Errors.CHAT_ROOM_NOT_EXIST);
+            simpMessagingTemplate.convertAndSend("/topic/chat" + chatRoom.getId(), new Gson().toJson(dtoChatSendMsgWithMillis));
+            simpMessagingTemplate.convertAndSend("/topic/chatListener" + dtoChatReceivedMsgFromJSON.getTargetUserId(), new Gson().toJson(dtoChatSendMsgWithMillis));
         }
     }
 
     @Override
     public void getMessagesByPage(String chatMessagesPagination) throws CustomException {
 
-        DTOChatMessagesPagination dtoChatMessagesPagination = validateDTOChatMessagesPagination(chatMessagesPagination);
+        DTOChatMsgPagination dtoChatMsgPagination = validateDTOChatMessagesPagination(chatMessagesPagination);
 
-        Page<DTOChatSendMessage> chatMessages = chatMessageRepository.getMessagesByRoomId(dtoChatMessagesPagination.getRoomId(),
-                pageRequest(dtoChatMessagesPagination.getPage(), dtoChatMessagesPagination.getSize()));
+        Page<DTOChatSendMsg> chatMessages = chatMessageRepository.getMessagesByRoomId(dtoChatMsgPagination.getRoomId(),
+                pageRequest(dtoChatMsgPagination.getPage(), dtoChatMsgPagination.getSize()));
 
-        simpMessagingTemplate.convertAndSend("/topic/chat" + dtoChatMessagesPagination.getRoomId(),
-                new Gson().toJson(chatMessages.getContent()));
+        List<DTOChatSendMsgWithMillis> chatMessagesWithMillis = new ArrayList<>();
+
+        chatMessages.forEach(msg -> {
+            chatMessagesWithMillis.add(new DTOChatSendMsgWithMillis(msg.getProfileId(), msg.getProfilePicture(),
+                    msg.getProfileFullName(), msg.getCreateDate().getTimeInMillis(), msg.getMessage()));
+        });
+
+        simpMessagingTemplate.convertAndSend("/topic/chat" + dtoChatMsgPagination.getRoomId(),
+                new Gson().toJson(chatMessagesWithMillis));
     }
 
 
@@ -159,31 +172,31 @@ public class ChatServiceImpl implements ChatService {
         return dtoChatInit;
     }
 
-    private DTOChatMessagesPagination validateDTOChatMessagesPagination(String input) throws CustomException {
+    private DTOChatMsgPagination validateDTOChatMessagesPagination(String input) throws CustomException {
 
-        DTOChatMessagesPagination dtoChatMessagesPagination;
+        DTOChatMsgPagination dtoChatMsgPagination;
 
         try {
-            dtoChatMessagesPagination = new Gson().fromJson(input, DTOChatMessagesPagination.class);
+            dtoChatMsgPagination = new Gson().fromJson(input, DTOChatMsgPagination.class);
         } catch (Exception e) {
             throw new CustomException(messageSource.getMessage("wrong.input.data.chat", null,
                     LocaleContextHolder.getLocale()), Errors.WRONG_INPUT_DATA_CHAT);
         }
 
-        if (dtoChatMessagesPagination.getRoomId() == null || dtoChatMessagesPagination.getRoomId() == 0) {
+        if (dtoChatMsgPagination.getRoomId() == null || dtoChatMsgPagination.getRoomId() == 0) {
             throw new CustomException(messageSource.getMessage("chat.room.not.exist", null,
                     LocaleContextHolder.getLocale()), Errors.CHAT_ROOM_NOT_EXIST);
         }
 
-        if (dtoChatMessagesPagination.getPage() == null) {
+        if (dtoChatMsgPagination.getPage() == null) {
             throw new CustomException(messageSource.getMessage("wrong.page.as.parameter", null,
                     LocaleContextHolder.getLocale()), Errors.WRONG_PAGE_AS_PARAMETER);
         }
 
-        if (dtoChatMessagesPagination.getSize() == null || dtoChatMessagesPagination.getSize() == 0) {
-            dtoChatMessagesPagination.setSize(Constants.DEFAULT_SIZE_MESSAGE_HISTORY);
+        if (dtoChatMsgPagination.getSize() == null || dtoChatMsgPagination.getSize() == 0) {
+            dtoChatMsgPagination.setSize(Constants.DEFAULT_SIZE_MESSAGE_HISTORY);
         }
-        return dtoChatMessagesPagination;
+        return dtoChatMsgPagination;
     }
 
     private Pageable pageRequest(int page, int size) {

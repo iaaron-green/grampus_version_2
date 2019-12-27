@@ -16,9 +16,9 @@ public class DTOChatData {
     private Long currentUserId;
     private Long targetUserId;
     private String roomURL;
-    private List<DTOChatSendMessage> chatMessages;
+    private List<DTOChatSendMsgWithMillis> chatMessages;
 
-    public DTOChatData(Long currentUserId, Long targetUserId, String roomURL, List<DTOChatSendMessage> chatMessages) {
+    public DTOChatData(Long currentUserId, Long targetUserId, String roomURL, List<DTOChatSendMsgWithMillis> chatMessages) {
         this.currentUserId = currentUserId;
         this.targetUserId = targetUserId;
         this.roomURL = roomURL;
