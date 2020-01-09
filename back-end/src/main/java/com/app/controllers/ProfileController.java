@@ -3,6 +3,7 @@ package com.app.controllers;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
 import com.app.DTO.DTOProfile;
+import com.app.configtoken.IAuthenticationFacade;
 import com.app.entities.Rating;
 import com.app.entities.User;
 import com.app.enums.Mark;
@@ -23,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -36,50 +36,52 @@ public class ProfileController {
     private ValidationErrorService validationErrorService;
     private RatingService ratingService;
     private UserService userService;
+    private IAuthenticationFacade authenticationFacade;
 
     @Autowired
-    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService, RatingService ratingService, UserService userService) {
+    public ProfileController(ProfileService profileService, ValidationErrorService validationErrorService,
+                             RatingService ratingService, UserService userService, IAuthenticationFacade authenticationFacade) {
         this.profileService = profileService;
         this.validationErrorService = validationErrorService;
         this.ratingService = ratingService;
         this.userService = userService;
+        this.authenticationFacade = authenticationFacade;
     }
 
     @GetMapping("/{profileId}")
-    public ResponseEntity<?> getProfileById(@PathVariable Long profileId, Principal principal) throws CustomException {
-        return new ResponseEntity<>(profileService.getDTOProfileById(profileId, principal), HttpStatus.OK);
+    public ResponseEntity<?> getProfileById(@PathVariable Long profileId) throws CustomException {
+        return new ResponseEntity<>(profileService.getDTOProfileById(profileId, authenticationFacade.getUser()), HttpStatus.OK);
     }
 
 
     @PostMapping("/{profileId}/addRating")
     public ResponseEntity<?> addDislikeToProfile(@Valid @RequestBody DTOLikeDislike dtoLikeDislike,
-                                                 BindingResult result, @PathVariable Long profileId, Principal principal) throws CustomException, MessagingException {
+                                                 BindingResult result, @PathVariable Long profileId) throws CustomException, MessagingException {
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(ratingService.addRatingType(dtoLikeDislike, profileId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.addRatingType(dtoLikeDislike, profileId, authenticationFacade.getUser()), HttpStatus.OK);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> updateProfileById(@Valid @RequestBody DTOProfile profile, BindingResult result,
-                                               Principal principal) {
+    public ResponseEntity<?> updateProfileById(@Valid @RequestBody DTOProfile profile, BindingResult result) {
 
         ResponseEntity<?> errorMap = validationErrorService.mapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<>(profileService.updateProfile(profile, principal.getName()), HttpStatus.OK);
+        return new ResponseEntity<>(profileService.updateProfile(profile, authenticationFacade.getUser()), HttpStatus.OK);
     }
 
     @PostMapping("/{profileId}/photo")
-    public void uploadPhoto(@RequestParam("file") MultipartFile file, @PathVariable Long profileId, Principal principal) throws CustomException {
-        profileService.saveProfilePhoto(file, profileId, principal);
+    public void uploadPhoto(@RequestParam("file") MultipartFile file, @PathVariable Long profileId) throws CustomException {
+        profileService.saveProfilePhoto(file, profileId, authenticationFacade.getUser());
     }
 
     @GetMapping("/{profileId}/change-subscription")
-    public ResponseEntity<?> changeSubscription(@PathVariable Long profileId, Principal principal) throws CustomException {
+    public ResponseEntity<?> changeSubscription(@PathVariable Long profileId) throws CustomException {
 
 
-        return new ResponseEntity<>(profileService.changeSubscription(profileId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(profileService.changeSubscription(profileId, authenticationFacade.getUser()), HttpStatus.OK);
     }
 
     @GetMapping("/all")
@@ -87,9 +89,9 @@ public class ProfileController {
                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                       @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                       @RequestParam(value = "sortParam", defaultValue = "") RatingSortParam sortParam,
-                                                      @RequestParam(value = "ratingType", defaultValue = "") Mark ratingType,
-                                                      Principal principal) throws CustomException {
-        return  profileService.getAllProfilesForRating(principal.getName(), searchParam, page, size, sortParam, ratingType);
+                                                      @RequestParam(value = "ratingType", defaultValue = "") Mark ratingType
+                                                        ) throws CustomException {
+        return  profileService.getAllProfilesForRating(authenticationFacade.getUser(), searchParam, page, size, sortParam, ratingType);
     }
 
     @GetMapping("/achieve")
@@ -115,9 +117,9 @@ public class ProfileController {
         return userService.findAllByJobTitle(jobTitle, page, size);
     }
 
-
     @GetMapping("/catalogueDTO")
     public List<DTOLikableProfile> getAllDTOInfo() {
         return ratingService.addDTOInfoAchievement();
     }
+
 }

@@ -32,19 +32,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
    private CustomUserDetailsService customUserDetailsService;
    private BCryptPasswordEncoder bCryptPasswordEncoder;
    private JwtTokenProvider jwtTokenProvider;
+   private MessageSource messageSource;
 
    @Autowired
    public SecurityConfig(JwtAuthenticationEntryPoint unauthorizedHandler, CustomUserDetailsService customUserDetailsService,
-                         BCryptPasswordEncoder bCryptPasswordEncoder, JwtTokenProvider jwtTokenProvider) {
+                         BCryptPasswordEncoder bCryptPasswordEncoder, JwtTokenProvider jwtTokenProvider, MessageSource messageSource) {
       this.unauthorizedHandler = unauthorizedHandler;
       this.customUserDetailsService = customUserDetailsService;
       this.bCryptPasswordEncoder = bCryptPasswordEncoder;
       this.jwtTokenProvider = jwtTokenProvider;
+      this.messageSource = messageSource;
    }
 
    @Bean
    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-      return new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService);
+      return new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService, messageSource);
    }
 
    @Override

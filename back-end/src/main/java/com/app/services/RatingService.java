@@ -4,6 +4,7 @@ import com.app.DTO.DTOComment;
 import com.app.DTO.DTOLikableProfile;
 import com.app.DTO.DTOLikeDislike;
 import com.app.entities.Rating;
+import com.app.entities.User;
 import com.app.enums.Mark;
 import com.app.exceptions.CustomException;
 
@@ -20,7 +21,7 @@ public interface RatingService {
 
     List<DTOLikableProfile> getUserRatingByMarkType(Mark markType) throws CustomException;
 
-    Boolean addRatingType(DTOLikeDislike dtoLikeDislike, Long profileId, Principal principal) throws MessagingException, CustomException;
+    Boolean addRatingType(DTOLikeDislike dtoLikeDislike, Long profileId,  User currentUser) throws MessagingException, CustomException;
 
     Map<Mark, Object> getAndCountLikesByProfileId(Long id) throws CustomException;
 

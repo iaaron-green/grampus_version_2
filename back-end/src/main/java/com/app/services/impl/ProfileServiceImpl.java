@@ -12,8 +12,10 @@ import com.app.exceptions.Errors;
 import com.app.repository.ProfileRepository;
 import com.app.repository.RatingRepository;
 import com.app.repository.UserRepository;
+import com.app.services.NewsService;
 import com.app.services.ProfileService;
 import com.app.services.RatingService;
+import com.app.services.UserService;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -26,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Comparator;
@@ -59,17 +62,9 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.save(entity);
     }
 
-    @Override
-    public Profile getProfileById(Long id) throws CustomException {
-        Profile profile = profileRepository.findProfileById(id);
-        if (profile != null) {
-            return profile;
-        } else
-            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
-    }
 
     @Override
-    public DTOProfile getDTOProfileById(Long id, Principal principal) throws CustomException {
+    public DTOProfile getDTOProfileById(Long id, User currentUser) throws CustomException {
 
         if (id == null || id == 0) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
@@ -101,8 +96,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Boolean updateProfile(DTOProfile profile, String principalName) {
-        User currentUser = userRepository.findByEmail(principalName);
+    public Boolean updateProfile(DTOProfile profile, User currentUser) {
 
         if (currentUser != null) {
             Profile profileFromDB = profileRepository.findProfileById(currentUser.getId());
@@ -142,39 +136,20 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void saveProfilePhoto(MultipartFile file, Long id, Principal principal) throws CustomException {
+    public void saveProfilePhoto(MultipartFile file, Long id,  User currentUser) throws CustomException {
 
-        Long currentUserId = userRepository.findByEmail(principal.getName()).getId();
-
-        if (!currentUserId.equals(id)) {
+        if (!currentUser.getId().equals(id)) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
         }
 
         Profile profile = profileRepository.findOneById(id);
-        if (profile == null) {
-            throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
-        }
-
-        if (file != null) {
-            String contentType = file.getContentType();
-            String profilePictureType = contentType.substring(contentType.indexOf("/") + 1);
-            String pictureFullName = "img/" + profile.getId() + "." + profilePictureType;
-            FTPClient client = new FTPClient();
-            try {
-                client.connect(Constants.FTP_SERVER, Constants.FTP_PORT);
-                client.login("grampus", "password");
-                client.setFileType(FTPClient.BINARY_FILE_TYPE);
-                if (client.storeFile(pictureFullName, file.getInputStream())) {
-                    client.logout();
-                    client.disconnect();
-                }
-            } catch (IOException e) {
-                throw new CustomException(messageSource.getMessage("ftp.connection.error", null, LocaleContextHolder.getLocale()), Errors.FTP_CONNECTION_ERROR);
+        if (profile != null) {
+                String pictureFullName = saveImgInFtp(file, "img/" + profile.getId());
+                if(pictureFullName != null)
+                    profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
+                saveProfile(profile);
             }
-            profile.setProfilePicture(Constants.FTP_IMG_LINK + pictureFullName);
-            saveProfile(profile);
-        } else
-            throw new CustomException(messageSource.getMessage("picture.is.bad", null, LocaleContextHolder.getLocale()), Errors.PROFILE_PICTURE_IS_BAD);
+        else throw new CustomException(messageSource.getMessage("profile.not.exist", null, LocaleContextHolder.getLocale()), Errors.PROFILE_NOT_EXIST);
     }
 
     public List<Profile> getAllProfiles() {
@@ -183,25 +158,23 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<DTOLikableProfile> getAllProfilesForRating(String userName, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException {
+    public List<DTOLikableProfile> getAllProfilesForRating(User currentUser, String searchParam, Integer page, Integer size, RatingSortParam sortParam, Mark ratingType) throws CustomException {
 
-        User user = userRepository.findByEmail(userName);
-        if (user == null) {
+        if (currentUser == null) {
             throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
         }
-        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(userName);
-        Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(user.getId());
+        Set<Long> profilesIdWithLike = profileRepository.getProfilesIdWithCurrentUserLike(currentUser.getEmail());
+        Set<Long> subscriptions = profileRepository.getUserSubscriptionsByUserId(currentUser.getId());
 
         if (StringUtils.isEmpty(searchParam)) {
-            return getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
+            return getAllRatingProfilesWithoutSearchParam(page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, currentUser.getId());
         } else {
-            return getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, user.getId());
+            return getAllRatingProfilesWithSearchParam(searchParam, page, size, sortParam, ratingType, profilesIdWithLike, subscriptions, currentUser.getId());
         }
     }
 
     @Override
-    public Boolean changeSubscription(Long profileId, Principal principal) throws CustomException {
-        User currentUser = userRepository.findByEmail(principal.getName());
+    public Boolean changeSubscription(Long profileId, User currentUser) throws CustomException {
         Profile profile = profileRepository.findOneById(profileId);
         if (currentUser.getId().equals(profileId)) {
             throw new CustomException(messageSource.getMessage("wrong.profile.id", null, LocaleContextHolder.getLocale()), Errors.WRONG_PROFILE_ID);
@@ -215,6 +188,29 @@ public class ProfileServiceImpl implements ProfileService {
         }
         profileRepository.save(profile);
         return true;
+    }
+    @Override
+    public String saveImgInFtp(MultipartFile file, String directory) throws CustomException {
+        String pictureFullName = null;
+
+        if (file != null) {
+            String contentType = file.getContentType();
+            String profilePictureType = contentType.substring(contentType.indexOf("/") + 1);
+            pictureFullName = directory + "." + profilePictureType;
+            FTPClient client = new FTPClient();
+            try {
+                client.connect(Constants.FTP_SERVER, Constants.FTP_PORT);
+                client.login("grampus", "password");
+                client.setFileType(FTPClient.BINARY_FILE_TYPE);
+                if (client.storeFile(pictureFullName, file.getInputStream())) {
+                    client.logout();
+                    client.disconnect();
+                }
+            } catch (IOException e) {
+                throw new CustomException(messageSource.getMessage("ftp.connection.error", null, LocaleContextHolder.getLocale()), Errors.FTP_CONNECTION_ERROR);
+            }
+        }
+        return pictureFullName;
     }
 
     private List<DTOLikableProfile> getAllRatingProfilesWithoutSearchParam(Integer page, Integer size, RatingSortParam sortParam, Mark ratingType,
@@ -290,4 +286,6 @@ public class ProfileServiceImpl implements ProfileService {
     private Pageable pageRequest(int page, int size) {
         return PageRequest.of(page, size);
     }
+
+
 }

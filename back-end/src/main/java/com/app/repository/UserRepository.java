@@ -41,5 +41,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
            "FROM  User u, Profile p WHERE u.id NOT LIKE :id AND u.fullName LIKE :searchParam% OR u.jobTitle LIKE :searchParam%")
    Page<DTOLikableProfile> findByMask(@Param("id") Long id, @Param("searchParam") String searchParam, Pageable p);
 
-
 }
