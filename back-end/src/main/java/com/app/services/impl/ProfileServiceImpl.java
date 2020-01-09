@@ -72,7 +72,6 @@ public class ProfileServiceImpl implements ProfileService {
 
         Profile profileFromDB = profileRepository.findProfileById(id);
         if (profileFromDB != null) {
-            User currentUser = userRepository.findByEmail(principal.getName());
             DTOProfile dtoProfile = new DTOProfile();
             dtoProfile.setId(profileFromDB.getId());
             dtoProfile.setDislikes(ratingRepository.countProfileDislikes(id, Mark.DISLIKE));

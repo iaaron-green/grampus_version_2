@@ -3,7 +3,6 @@ package com.app.controllers;
 import com.app.DTO.DTONewsComment;
 import com.app.configtoken.IAuthenticationFacade;
 import com.app.exceptions.CustomException;
-import com.app.mq.Producer;
 import com.app.repository.UserRepository;
 import com.app.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/news")
@@ -25,8 +23,6 @@ public class NewsController {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    Producer producer;
 
     @Autowired
     IAuthenticationFacade authenticationFacade;
