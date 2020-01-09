@@ -74,6 +74,9 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
        
        @objc func keyboardWillHide() {
            self.view.frame.origin.y = 0
+        UIView.animate(withDuration: 0.5, animations: {
+            self.view.layoutIfNeeded()
+        })
        }
        
        @objc func keyboardWillChange(notification: NSNotification) {
@@ -81,6 +84,9 @@ class AddNewsViewController: RootViewController, UIImagePickerControllerDelegate
            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if titleTextField.isFirstResponder || bodyTextView.isFirstResponder {
                    self.view.frame.origin.y = -keyboardSize.height + 110
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.view.layoutIfNeeded()
+                })
                }
            }
        }

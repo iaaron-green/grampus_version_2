@@ -115,6 +115,9 @@ class SignInViewController: RootViewController {
     
     @objc func keyboardWillHide() {
         self.view.frame.origin.y = 0
+        UIView.animate(withDuration: 0.5, animations: {
+            self.view.layoutIfNeeded()
+        })
     }
     
     @objc func keyboardWillChange(notification: NSNotification) {
@@ -125,6 +128,9 @@ class SignInViewController: RootViewController {
             } else if passwordTextField.isFirstResponder {
                 self.view.frame.origin.y = -keyboardSize.height + 100
             }
+            UIView.animate(withDuration: 0.5, animations: {
+                self.view.layoutIfNeeded()
+            })
         }
     }
 }

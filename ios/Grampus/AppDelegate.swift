@@ -12,11 +12,10 @@ import UserNotifications
 import RMQClient
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     let storage = StorageService()
-    let notifications = NotificationService()
     let socket = SocketService()
     
     
@@ -24,12 +23,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         SDImageCache.shared.clearDisk()
         
-        UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
-//            self.notifications.getMessage()
+        storage.saveCurrentUserChatId(userId: "")
+
+        if storage.getTokenString() != nil {
+            socket.connectToSocket()
         }
-        
-        socket.connectToSocket()
         
         return true
     }
@@ -54,34 +52,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     func applicationWillTerminate(_ application: UIApplication) {
         
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)
-    {
-        completionHandler([.alert, .badge, .sound])
+    func goToChat(id: String, name: String, buttonState: Bool) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let sw = storyboard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
+        self.window?.rootViewController = sw
+        
+        let destinationController = storyboard.instantiateViewController(withIdentifier: "ProfileTableViewController") as! ProfileTableViewController
+        let navigationController = UINavigationController(rootViewController: destinationController)
+        destinationController.userID = id
+        destinationController.fullName = name
+        destinationController.backButtonForChat = false
+
+        sw.pushFrontViewController(navigationController, animated: true)
+        destinationController.performSegue(withIdentifier: "goToChat", sender: nil)
     }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let exampleViewController: SWRevealViewController = mainStoryboard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
-        self.window?.rootViewController = exampleViewController
-        self.window?.makeKeyAndVisible()
-        exampleViewController.performSegue(withIdentifier: "goToChat", sender: nil)
-    }
-    
-    func goToChat() {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let newViewController: SWRevealViewController = mainStoryboard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
-        self.window?.rootViewController = newViewController
-        self.window?.makeKeyAndVisible()
-        newViewController.performSegue(withIdentifier: "goToChat", sender: nil)
-    }
-    
-    
 }
 

@@ -12,6 +12,7 @@ import Charts
 import SVProgressHUD
 import SDWebImage
 import SkeletonView
+import StompClientLib
 
 
 class ProfileTableViewController: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ChartViewDelegate {
@@ -56,9 +57,9 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     //Chart cell
     @IBOutlet weak var chartView: PieChartView!
     
+    var socket = SocketService()
     let network = NetworkService()
     let storage = StorageService()
-    let imageService = ImageService()
     let menuVC = MenuTableViewController()
     let reuseCell = "achievementCell"
     
@@ -85,6 +86,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     var mentor: Int?
     var staff = true
     var isFollowing = 0
+    var backButtonForChat : Bool?
     
     var userID: String?
     var newsSegueUsed = false
@@ -108,6 +110,13 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
         SVProgressHUD.setDefaultStyle(.dark)
         
         NotificationCenter.default.addObserver(self, selector: #selector(loadProfile(notification:)), name: NSNotification.Name(rawValue: "load"), object: nil)
+                
+        if let myDelegate = UIApplication.shared.delegate as? AppDelegate {
+            socket = myDelegate.socket
+            if !socket.socketClient.isConnected() {
+                socket.connectToSocket()
+            }
+        }
         
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -141,7 +150,7 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     
     
     override func viewWillAppear(_ animated: Bool) {
-        SVProgressHUD.show()
+//        SVProgressHUD.show()
     }
     
     
@@ -783,8 +792,13 @@ class ProfileTableViewController: UITableViewController, UICollectionViewDataSou
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToChat" {
             let vc = segue.destination as? ChatViewController
-            vc?.userId = userID!
-            vc?.titleChat = fullName!
+            if let id = userID, let name = fullName {
+                vc?.userId = id
+                vc?.titleChat = name
+            }
+            if let button = backButtonForChat {
+                vc?.backButtonEnabled = button
+            }
         }
     }
     

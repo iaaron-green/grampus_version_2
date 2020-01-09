@@ -21,7 +21,6 @@ class RatingTableViewCell: UITableViewCell {
     @IBOutlet weak var dislikeCount: UILabel!
     
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
 

@@ -27,10 +27,6 @@ class StorageService {
         return def.string(forKey: UserDefKeys.userId.rawValue)
     }
     
-//    func getSelectedUserIdProfile() -> String? {
-//        return def.string(forKey: UserDefKeys.selectedUserIdProfile.rawValue)
-//    }
-    
     func getProfileState() -> Bool {
         return def.bool(forKey: UserDefKeys.profileState.rawValue)
     }
@@ -41,6 +37,10 @@ class StorageService {
     
     func isLoggedIn() -> Bool {
         return def.bool(forKey: UserDefKeys.isLoggedIn.rawValue)
+    }
+    
+    func chatWithCurrentUser() -> String? {
+        return def.string(forKey: UserDefKeys.chatWithCurrentUser.rawValue)
     }
     
     func getUserProfile() -> User? {
@@ -65,10 +65,6 @@ class StorageService {
         def.set(selectedUserId, forKey: UserDefKeys.selectedUserId.rawValue)
     }
     
-//    func saveSelectedUserIdProfile(id: Int) {
-//        def.set("\(id)", forKey: UserDefKeys.selectedUserIdProfile.rawValue)
-//    }
-    
     func saveProfileState(state: Bool) {
         def.set(state, forKey: UserDefKeys.profileState.rawValue)
         
@@ -82,8 +78,12 @@ class StorageService {
         def.set(state, forKey: UserDefKeys.isLoggedIn.rawValue)
     }
     
-    func saveUserId(userId: String ) {
+    func saveUserId(userId: String) {
         def.set("\(userId)", forKey: UserDefKeys.userId.rawValue)
+    }
+    
+    func saveCurrentUserChatId(userId: String) {
+        def.set(userId, forKey: UserDefKeys.chatWithCurrentUser.rawValue)
     }
     
     func saveUserProfile(user: User) {

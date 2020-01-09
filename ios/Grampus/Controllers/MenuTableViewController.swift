@@ -25,7 +25,6 @@ class MenuTableViewController: UITableViewController {
     var jobTitle: String?
     let network = NetworkService()
     let storage = StorageService()
-    let imageService = ImageService()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,7 +124,7 @@ class MenuTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 7
+        return 8
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -133,7 +132,7 @@ class MenuTableViewController: UITableViewController {
         if indexPath.row == 1 {
             storage.saveProfileState(state: true)
         }
-        if indexPath.row == 6 {
+        if indexPath.row == 7 {
             storage.saveLoggedState(state: false)
             storage.saveUserToken(token: "")
         }

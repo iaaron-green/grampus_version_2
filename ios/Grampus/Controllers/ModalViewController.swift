@@ -119,6 +119,9 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
     
     @objc func keyboardWillHide() {
         self.view.frame.origin.y = 0
+        UIView.animate(withDuration: 0.5, animations: {
+            self.view.layoutIfNeeded()
+        })
     }
     
     @objc func keyboardWillChange(notification: NSNotification) {
@@ -126,6 +129,9 @@ class ModalViewController: UIViewController, UIPickerViewDelegate, UIPickerViewD
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if messageTextfield.isFirstResponder {
                 self.view.frame.origin.y = -keyboardSize.height + 100
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.view.layoutIfNeeded()
+                })
             }
         }
     }

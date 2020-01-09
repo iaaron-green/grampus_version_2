@@ -30,31 +30,32 @@
                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="Barack Obama" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mGB-kD-Kri">
                                 <rect key="frame" x="5" y="5" width="101" height="18"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
-                                <nil key="textColor"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="12.20 12.10.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1PS-mE-Tp7">
                                 <rect key="frame" x="5" y="28" width="94" height="14"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="12"/>
-                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some message from user" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uuY-9H-dWz">
                                 <rect key="frame" x="5" y="47" width="166.5" height="66"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
-                                <nil key="textColor"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.0" green="0.62745098039215685" blue="0.95294117647058818" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="1PS-mE-Tp7" firstAttribute="leading" secondItem="c86-uy-o6B" secondAttribute="leading" constant="5" id="3iF-0v-Orn"/>
                             <constraint firstItem="mGB-kD-Kri" firstAttribute="leading" secondItem="c86-uy-o6B" secondAttribute="leading" constant="5" id="7kM-wi-EJt"/>
                             <constraint firstItem="uuY-9H-dWz" firstAttribute="leading" secondItem="c86-uy-o6B" secondAttribute="leading" constant="5" id="8yh-Pf-KLM"/>
                             <constraint firstAttribute="trailing" secondItem="uuY-9H-dWz" secondAttribute="trailing" constant="5" id="Bme-Mz-18Z"/>
                             <constraint firstItem="mGB-kD-Kri" firstAttribute="top" secondItem="c86-uy-o6B" secondAttribute="top" constant="5" id="PAw-sf-esX"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="mGB-kD-Kri" secondAttribute="trailing" constant="5" id="V8i-qd-SeO"/>
                             <constraint firstItem="uuY-9H-dWz" firstAttribute="top" secondItem="1PS-mE-Tp7" secondAttribute="bottom" constant="5" id="ftp-Kv-mAg"/>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="176.5" id="j7l-kr-x6Z"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="120" id="j7l-kr-x6Z"/>
                             <constraint firstAttribute="bottom" secondItem="uuY-9H-dWz" secondAttribute="bottom" constant="5" id="o59-gD-Yq2"/>
                             <constraint firstItem="1PS-mE-Tp7" firstAttribute="top" secondItem="mGB-kD-Kri" secondAttribute="bottom" constant="5" id="w05-El-Uk7"/>
                         </constraints>
@@ -63,7 +64,7 @@
                 <constraints>
                     <constraint firstItem="c86-uy-o6B" firstAttribute="leading" secondItem="zrO-fz-iib" secondAttribute="trailing" constant="5" id="9O4-uJ-hOG"/>
                     <constraint firstAttribute="bottom" secondItem="c86-uy-o6B" secondAttribute="bottom" constant="10" id="QWp-YI-Nl2"/>
-                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="c86-uy-o6B" secondAttribute="trailing" constant="10" id="Uj9-hk-oP9"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="c86-uy-o6B" secondAttribute="trailing" constant="55" id="Uj9-hk-oP9"/>
                     <constraint firstItem="zrO-fz-iib" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="hVH-fI-owH"/>
                     <constraint firstItem="zrO-fz-iib" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="ta0-qo-Syy"/>
                     <constraint firstItem="c86-uy-o6B" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="xw1-tT-8bl"/>

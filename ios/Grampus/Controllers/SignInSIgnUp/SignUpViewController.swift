@@ -114,8 +114,9 @@ class SignUpViewController: RootViewController {
         //For mobile numer validation
         if textField == userNameTextField {
             let allowedCharacters = CharacterSet.letters
+            let allowedCharacters2 = CharacterSet.whitespaces
             let characterSet = CharacterSet(charactersIn: string)
-            return allowedCharacters.isSuperset(of: characterSet)
+            return allowedCharacters.isSuperset(of: characterSet) || allowedCharacters2.isSuperset(of: characterSet)
         }
         return true
     }
@@ -135,6 +136,9 @@ class SignUpViewController: RootViewController {
     
     @objc func keyboardWillHide() {
         self.view.frame.origin.y = 0
+        UIView.animate(withDuration: 0.5, animations: {
+            self.view.layoutIfNeeded()
+        })
     }
     
     @objc func keyboardWillChange(notification: NSNotification) {
@@ -147,6 +151,9 @@ class SignUpViewController: RootViewController {
             } else if passwordTextField.isFirstResponder {
                 self.view.frame.origin.y = -keyboardSize.height + 100
             }
+            UIView.animate(withDuration: 0.5, animations: {
+                self.view.layoutIfNeeded()
+            })
         }
     }
 }

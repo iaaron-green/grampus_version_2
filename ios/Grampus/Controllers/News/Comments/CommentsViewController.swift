@@ -43,7 +43,7 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
     
     func isEmtyCheck() {
         if self.commentsArray.isEmpty {
-            self.tableView.setEmptyView(title: "No comments available", message: "They will appear here", titleColor: .lightGray, messageColor: .lightGray)
+            self.tableView.setEmptyView(title: "No comments available", message: "They will appear here", titleColor: .lightGray, messageColor: .lightGray, needTransform: false)
         } else {
             self.tableView.restore()
         }
@@ -190,12 +190,18 @@ class CommentsViewController: RootViewController, UITableViewDelegate, UITableVi
     
     @objc func keyboardWillHide() {
         stackViewBottomConstraint.constant = 5
+        UIView.animate(withDuration: 0.5, animations: {
+            self.view.layoutIfNeeded()
+        })
     }
     
     @objc func keyboardWillChange(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if commentTextField.isFirstResponder {
-                stackViewBottomConstraint.constant = keyboardSize.height
+                stackViewBottomConstraint.constant = keyboardSize.height + 10
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.view.layoutIfNeeded()
+                })
             }
         }
     }

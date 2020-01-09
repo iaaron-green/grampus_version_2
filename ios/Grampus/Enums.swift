@@ -16,8 +16,8 @@ enum SegueIdentifier: String {
 enum DynamicURL: String {
     //case dynamicURL = "http://mexanik.ddns.net:6001/api/" //web
      //case dynamicURL = "http://10.11.1.155:8081/api/" //host
-    case dynamicURL = "http://10.11.1.83:8081/api/" //vadim
-    //case dynamicURL = "http://10.11.1.25:6001/api/" //igor
+//    case dynamicURL = "http://10.11.1.194:8081/api/" //vadim
+    case dynamicURL = "http://10.11.1.25:6001/api/" //igor
 }
 
 enum UserDefKeys: String {
@@ -30,6 +30,7 @@ enum UserDefKeys: String {
     case selectedUserIdProfile = "selectedUserIdProfile"
     case userProfile = "userProfile"
     case isAbleToLike = "isAbleToLike"
+    case chatWithCurrentUser = "chatWithCurrentUser"
 }
 
 extension String {
@@ -53,7 +54,7 @@ extension String {
 }
 
 extension UITableView {
-    func setEmptyView(title: String, message: String, titleColor: UIColor, messageColor: UIColor) {
+    func setEmptyView(title: String, message: String, titleColor: UIColor, messageColor: UIColor, needTransform: Bool) {
         let emptyView = UIView(frame: CGRect(x: self.center.x, y: self.center.y, width: self.bounds.size.width, height: self.bounds.size.height))
         let titleLabel = UILabel()
         let messageLabel = UILabel()
@@ -74,6 +75,9 @@ extension UITableView {
         messageLabel.text = message
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .center
+        if needTransform {
+            emptyView.transform = CGAffineTransform(rotationAngle: -(CGFloat)(Double.pi))
+        }
         self.backgroundView = emptyView
     }
     func restore() {

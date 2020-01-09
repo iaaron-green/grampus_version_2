@@ -20,7 +20,6 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     
     let network = NetworkService()
     let storage = StorageService()
-    let imageService = ImageService()
     var newsArray = [JSON]()
     var UrlsToPrefetch = [URL]()
     var newsID = 0
@@ -57,7 +56,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     
     func isEmtyCheck() {
         if self.newsArray.isEmpty {
-            self.tableView.setEmptyView(title: "No news available", message: "They will appear here", titleColor: .lightGray, messageColor: .lightGray)
+            self.tableView.setEmptyView(title: "No news available", message: "They will appear here", titleColor: .lightGray, messageColor: .lightGray, needTransform: false)
         } else {
             self.tableView.restore()
         }
@@ -79,7 +78,7 @@ class NewsTableTableViewController: UITableViewController, UINavigationControlle
     
     @objc func pullToRefresh(sender: UIRefreshControl) {
         fetchNews(page: 0)
-        print(newsArray.count)
+//        print(newsArray.count)
         page = 1
         limit = 0
         sender.endRefreshing()
