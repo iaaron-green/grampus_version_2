@@ -1,8 +1,12 @@
 package com.app.configtoken;
 
 import com.app.entities.User;
+import com.app.exceptions.CustomException;
+import com.app.exceptions.Errors;
 import com.app.services.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -23,11 +27,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
    private JwtTokenProvider tokenProvider;
    private CustomUserDetailsService customUserDetailsService;
+   private MessageSource messageSource;
 
    @Autowired
-   public JwtAuthenticationFilter(JwtTokenProvider tokenProvider, CustomUserDetailsService customUserDetailsService) {
+   public JwtAuthenticationFilter(JwtTokenProvider tokenProvider, CustomUserDetailsService customUserDetailsService,
+                                  MessageSource messageSource) {
       this.tokenProvider = tokenProvider;
       this.customUserDetailsService = customUserDetailsService;
+      this.messageSource = messageSource;
    }
 
    @Override
@@ -39,6 +46,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
          if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
             Long userId = tokenProvider.getUserIdFromJWT(jwt);
             User userDetails = customUserDetailsService.loadUserById(userId);
+
+            if(userDetails == null)
+               throw new CustomException(messageSource.getMessage("user.not.exist", null, LocaleContextHolder.getLocale()), Errors.USER_NOT_EXIST);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, Collections.emptyList());

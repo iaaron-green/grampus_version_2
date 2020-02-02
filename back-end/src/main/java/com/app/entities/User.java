@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.Calendar;
 import java.util.Collection;
 
 
@@ -35,6 +37,7 @@ public class User implements UserDetails {
     private String fullName;
 
     private String jobTitle;
+    private Calendar registrationDate = Calendar.getInstance();
 
     @OneToOne(mappedBy = "user", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore

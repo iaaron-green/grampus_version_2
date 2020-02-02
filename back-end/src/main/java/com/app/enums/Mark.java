@@ -1,7 +1,7 @@
 package com.app.enums;
 
 public enum  Mark implements CharSequence {
-    BEST_LOOKER, DEADLINER, SMART_MIND, SUPER_WORKER, MOTIVATOR, TOP1, MENTOR;
+    BEST_LOOKER, DEADLINER, SMART_MIND, SUPER_WORKER, MOTIVATOR, TOP1, MENTOR, DISLIKE;
 
     public static Mark getMark(String markString) {
         return Mark.valueOf(markString.toUpperCase());

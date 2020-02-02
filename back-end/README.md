@@ -1,3 +1,5 @@
+API 1.0
+
 Coonnection to DB
 
 spring.datasource.url= jdbc:mysql://10.11.1.155:3306/grampus_db?\
@@ -11,6 +13,18 @@ In ALL methods you shoud input user token to header in POSTMAN and parameters to
 Register new User
 
 ##Content
+* Register new User
+* Login User
+* GET Profile By Id
+* add Like To Profile
+* add Dislike To Profile
+* update Profile By Id
+* upload Photo
+* get All Profiles
+* get All Achieve
+* get All Info
+* get User Rating
+* get User ByJob
 
 ##Register new User
     POST  http://localhost:8081/api/users/register
@@ -37,7 +51,7 @@ Register new User
     POST http://localhost:8081/api/users/login (Generates user token if user was already created)   
 *Input parameters*
 {
-"username":"",
+"email":"",
 "password":""
 }
 
@@ -90,16 +104,50 @@ Output example
 ##upload Photo
     POST  http://localhost:8081/api/profiles/photo
 **Description:**
-*Input parameters*
- 
+
  
 ##get All Profiles
     GET  http://localhost:8081/api/profiles/all
+
 **Description:**
+Method allows to get all likeable profiles
+   
+**Input**   
+If the parameter is not specified(optional), the default values will be applied.
+default value:   
+page = 0, size = 5
+
+| name | type | description                         |
+|------|------|-------------------------------------|
+| page | int  | page where we start viewing         |
+| size | int  | number of displayed values per page |
+
+**Output example**
+
+```json
+
+    [
+        {
+            "id": 12,
+            "fullName": "natata",
+            "jobTitle": "CEO",
+            "profilePicture": null,
+            "isAbleToLike": true
+        },
+        {
+            "id": 13,
+            "fullName": "NameSmith",
+            "jobTitle": "CFO",
+            "profilePicture": "ftp://10.11.1.155/img/13.jpeg",
+            "isAbleToLike": true
+        }
+    ]
+
+```
 
 ##get All Achieve
-**Description:**
- GET  http://localhost:8081/api/profiles/achive
+**Description:**     
+    GET  http://localhost:8081/api/profiles/achive
  
  
 ##get All Info
@@ -116,11 +164,41 @@ Output example
 ##get User ByJob
     GET  http://localhost:8081/api/profiles/userJobTitle/{jobTitle}
     
-**jobTitle example:** DEVELOPER, TESTER, ANALYST, CEO   
-**Description:**
- Output example
-```json
+**valid jobTitle:**   
+DEVELOPER, TESTER, ANALYST, CEO   
 
+**Description:**
+Allows you to get the users by jobTitle
+
+**Input**   
+If the parameter is not specified(it is optional), the default values will be applied.
+default value:   
+page = 0, size = 2
+
+| name | type | description                         |
+|------|------|-------------------------------------|
+| page | int  | page where we start viewing         |
+| size | int  | number of displayed values per page |
+
+**Output example**
+
+```json
+[
+    {
+        "profileId": 3,
+        "picture": "ftp://10.11.1.155/img/3.png",
+        "fullName": "222222@gmail.com",
+        "jobTitle": "PM",
+        "isAbleToLike": null
+    },
+    {
+        "profileId": 9,
+        "picture": "ftp://10.11.1.155/img/9.jpeg",
+        "fullName": "aaa3@gmail.com",
+        "jobTitle": "PM",
+        "isAbleToLike": null
+    }
+]
 ```
  
  
